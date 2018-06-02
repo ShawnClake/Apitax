@@ -1,10 +1,10 @@
-import ConfigParser
+import configparser
 
 
 # Reads the config and allows us to retrieve values from it
 class Config:
     def __init__(self):
-        self.cp = ConfigParser.RawConfigParser()
+        self.cp = configparser.RawConfigParser()
         cFilePath = 'config.txt'
         self.cp.read(cFilePath)
 

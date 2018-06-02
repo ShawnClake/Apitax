@@ -6,9 +6,9 @@ from apitax.grammar.Ah2Listener import Ah2Listener
 from apitax.grammar.Ah2Visitor import Ah2Visitor
 
 
-def main(argv):
+def GrammarTest(filepath):
     # input = FileStream(argv[1])
-    input = FileStream("scripts/test.ah")
+    input = FileStream(filepath)
     lexer = Ah2Lexer(input)
     stream = CommonTokenStream(lexer)
     parser = Ah2Parser(stream)
@@ -24,4 +24,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    GrammarTest(sys.argv)

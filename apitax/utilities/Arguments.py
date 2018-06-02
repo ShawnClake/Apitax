@@ -6,6 +6,11 @@ class SystemCommands:
     def __init__(self):
         self.args = sys.argv[1:]
 
+    def isEmpty(self):
+        if(len(self.args) < 1):
+            return True
+        return False
+
     def isArg(self, arg):
         if (arg in self.args):
             return True
