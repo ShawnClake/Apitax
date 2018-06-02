@@ -1,0 +1,8 @@
+.idea/
+venv/
+3415-ref/
+*.g4
+*.jar
+*.bat
+grammar/src/
+*.log
