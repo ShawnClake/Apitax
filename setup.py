@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
 setup(
   name = 'apitax',
   packages = find_packages(), # this must be the same as the name above
-  version = '2.0.1',
-  description = 'Apitax combines the power of Scriptax and COmmandtax into a quick and easy to use Python package to facillitate powerful Restful API Request Scripting',
+  version = '2.0.2',
+  description = 'Apitax combines the power of Scriptax and Commandtax into a quick and easy to use Python package to facillitate powerful Restful API Request Scripting',
   long_description=long_description,
   long_description_content_type="text/markdown",
   author = 'Shawn Clake',

@@ -2,9 +2,8 @@
 import click
 
 # Application import
-from custom import Custom
-from httpPlug import HttpPlug
-from headerBuilder import HeaderBuilder
+from apitax.ah.commandtax.commands.Custom import Custom
+from apitax.ah.HeaderBuilder import HeaderBuilder
 
 
 # Handles creating an authentication request for tokenable drivers

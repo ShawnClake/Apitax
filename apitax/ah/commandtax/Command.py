@@ -2,10 +2,9 @@
 import shlex
 
 # Application import
-from ahRequests.script import Script
-from ahRequests.custom import Custom
-from ahRequests.request import Request
-from ahRequests.driverCommandsFactory import DriverCommandsFactory
+from apitax.ah.commandtax.commands.Script import Script
+from apitax.ah.commandtax.commands.Custom import Custom
+from apitax.drivers.DriverCommandsFactory import DriverCommandsFactory
 
 
 # Command is used to distribute the workload amoung a heirarchy of possible handlers

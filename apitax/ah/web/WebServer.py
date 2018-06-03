@@ -5,7 +5,7 @@ import json
 from bottle import route, run, template, request, static_file, post, Bottle
 
 # Application import
-from connector import Connector
+from apitax.ah.Connector import Connector
 
 
 # from command import Command

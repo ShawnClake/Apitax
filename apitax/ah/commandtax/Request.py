@@ -6,7 +6,7 @@ import re
 import requests
 
 # Application import
-from log import Log
+from apitax.logs.Log import Log
 
 
 # Request is the 'legs' of the application.

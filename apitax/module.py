@@ -1,4 +1,4 @@
-# API Middleware
+# Apitax
 # Originally created by Shawn Clake
 # shawn.clake@gmail.com
 # May 2018
@@ -14,11 +14,9 @@
 import click
 
 # Application imports
-from .ah.Connector import Connector
 from .ah.web.WebServer import *
 from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
-from .utilities.Arguments import SystemCommands
 
 
 class Apitax:

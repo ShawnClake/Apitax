@@ -6,9 +6,8 @@ import shlex
 import click
 
 # Application import
-from ahRequests.request import Request
-from httpPlug import HttpPlug
-from headerBuilder import HeaderBuilder
+from apitax.ah.commandtax.Request import Request
+from apitax.ah.HeaderBuilder import HeaderBuilder
 
 
 # Handles custom commands

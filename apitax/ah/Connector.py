@@ -1,9 +1,8 @@
-from command import Command
-from ahRequests.authentication import *
-from httpPlug import HttpPlug
-from httpPlugFactory import HttpPlugFactory
-from headerBuilder import HeaderBuilder
-from config import Config
+from apitax.ah.commandtax.Command import Command
+from apitax.ah.commandtax.Authentication import *
+from apitax.drivers.HttpPlugFactory import HttpPlugFactory
+from apitax.ah.HeaderBuilder import HeaderBuilder
+from apitax.config.Config import Config
 
 
 # The 'heart' of the application
