@@ -12,13 +12,16 @@ class AuthRequest(Custom):
     def __init__(self, username, password, http, debug, config):
         self.http = http
 
+        if(not self.http.isAuthenticated()):
+            return
+
         header = HeaderBuilder()
         header.build(http.getContentTypeJSON())
 
         if (not http.isCredentialsPosted):
             header.build(http.getPasswordAuthHeader(username, password))
 
-        Custom.__init__(self, header, debug, True)
+        Custom.__init__(self, config, header, debug, True)
 
         if (http.isCredentialsPosted):
             self.setPostData(self.http.getPasswordAuthData(username, password))
@@ -29,7 +32,11 @@ class AuthRequest(Custom):
         self.custom = '--post --url ' + http.getAuthEndpoint(config) + ' --data-path \'{"user":"' + username + '"}\''
 
     def authenticate(self):
+        if(not self.http.isAuthenticated()):
+            return
         self.handle(self.custom)
 
     def getToken(self):
+        if(not self.http.isAuthenticated()):
+            return None
         return self.http.getToken(self)  # request.headers.get('X-Subject-Token')

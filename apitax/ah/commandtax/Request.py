@@ -61,6 +61,8 @@ class Request:
 
     def getResponseBody(self):
         if (self.customResponse):
+            if(isinstance(self.request['text'], dict)):
+                return json.dumps(self.request['text'])
             return self.request['text']
         else:
             return self.request.text

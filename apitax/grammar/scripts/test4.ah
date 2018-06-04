@@ -1,0 +1,10 @@
+
+name test4apitaxtest
+
+set magic = "magic"
+
+set nooby = "at some point im not surprised this is working - its {{magic}}"
+
+export nooby
+
+

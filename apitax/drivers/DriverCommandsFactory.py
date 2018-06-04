@@ -10,4 +10,4 @@ class DriverCommandsFactory:
         if (name in globals()):
             constructor = globals()[name]
             return constructor()
-        return False
+        return None

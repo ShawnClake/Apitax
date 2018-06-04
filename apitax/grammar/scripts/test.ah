@@ -40,7 +40,7 @@ ct("domain list all")
 
 ct("domain list all")
 
-export ct("script scripts/scriptax2.ah")
+export ct("script apitax/grammar/scripts/test2.ah")
 
 name {{ derp }}
 

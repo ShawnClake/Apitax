@@ -1,0 +1,10 @@
+[Config]
+auth-endpoint = "http://172.25.190.14:5000/v3/auth/tokens"
+driver = ApitaxTests
+port = 5080
+ip = 172.25.190.4
+log = true
+log-file = log.txt
+default-mode = cli
+default-username = api_admin
+default-password = apiadmin123

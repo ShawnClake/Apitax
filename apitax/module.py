@@ -17,6 +17,7 @@ import click
 from .ah.web.WebServer import *
 from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
+from .logs.Log import Log
 
 
 class Apitax:
@@ -37,12 +38,13 @@ class Apitax:
         password = ''
         command = ''
         script = ''
+        log = Log()
 
-        print('')
-        print('')
-        print(">>>  Apitax - Combining the power of Commandtax and Scriptax")
-        print('')
-        print('')
+        log.log('')
+        log.log('')
+        log.log(">>>  Apitax - Combining the power of Commandtax and Scriptax")
+        log.log('')
+        log.log('')
 
 
         config = ConfigConsumer()
@@ -86,13 +88,46 @@ class Apitax:
         # This is to turn the '-s' flag into a command behind the scenes
         if (script != ''):
             command = 'script ' + script
+            
+        
+        log.log('>> Runtime Settings:')
+        if(debug):
+            log.log('    * Debug: True')
+        else:
+            log.log('    * Debug: False')
+                
+        if(sensitive):
+            log.log('    * Sensitive: True')
+        else:
+            log.log('    * Sensitive: False')   
+            
+        log.log('')
+        log.log('')
 
         if (usage == 'cli'):
             # Authentication is incorporated into Connector
+            
+            if(debug):
+                log.log(">>> Starting Processing")
+                log.log("")
+                log.log("")
+            
             connector = Connector(debug=debug, sensitive=sensitive, command=command, username=username, password=password,
                                   json=True)
             result = connector.execute()
-            print(json.dumps(result.getRequest().data.dataStore))
+            
+            if(debug):
+                log.log(">>> Finished Processing")
+                log.log("")
+                log.log("")
+            
+            if(debug and command.split(' ')[0] == 'script'):
+                log.log("Dumping Current DataStore State:")
+                log.log(" * I recommend this website for looking at the data: http://json.parser.online.fr/")
+                log.log("")
+                log.log(json.dumps(result.getRequest().parser.data.dataStore))
+                log.log("")
+                log.log("")
             # print(result.getRequest().data.getData('5.3.role_assignments.0.links.assignment'))
 
         elif (usage == 'web'):
@@ -101,4 +136,6 @@ class Apitax:
 
         elif(usage == 'grammar-test'):
             GrammarTest(script)
+            
+
 

@@ -10,16 +10,24 @@ class HttpPlug:
         return config.get('auth-endpoint')
 
     def getPasswordAuthHeader(self, username, password):
+        if(not self.isAuthenticated()):
+            return {}
         temp = username + ':' + password
         return {'Authorization': 'Basic ' + base64.b64encode(temp.encode('utf-8'))}
 
     def getPasswordAuthData(self, username, password):
+        if(not self.isAuthenticated()):
+            return {}
         return {'username': username, 'password': password}
 
     def getTokenAuthHeader(self, token):
+        if(not self.isAuthenticated()):
+            return {}
         return {'Authorization': 'Token token="' + token + '"'}
 
     def getContentTypeJSON(self):
+        if(not self.isAuthenticated()):
+            return {}
         return {'Content-type': 'application/json'}
 
     def getToken(self, response):
@@ -34,3 +42,6 @@ class HttpPlug:
     # authentication request
     def isCredentialsPosted(self):
         return False
+        
+    def isAuthenticated(self):
+        return True

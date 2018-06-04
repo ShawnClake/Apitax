@@ -26,7 +26,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         
         if (request.getResponseBody().strip() != ''):
             if (isinstance(request, ScriptCommand)):
-                self.data.importScriptsExports(request.data, export=export)
+                self.data.importScriptsExports(request.parser.data, export=export)
             else:
                 self.data.storeRequest(request.getResponseBody(), export=export)
 
@@ -53,7 +53,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.parser = ctx.parser
         temp = self.visitChildren(ctx)
         # print('proj: '+str(temp))
-        return temp
+        return self
 
     # Visit a parse tree produced by Ah210Parser#statements.
     def visitStatements(self, ctx):
@@ -155,11 +155,22 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#exports.
     def visitExports(self, ctx):
         
-        request = self.visit(ctx.execute())
-        self.importCommandRequest(request['commandHandler'], export=True)
+        exportation = ""
+        
+        if(ctx.labels()):
+            exportation = self.visit(ctx.labels())
+            self.data.exportVar(exportation)
+            
+        
+        if(ctx.execute()):
+            request = self.visit(ctx.execute())
+            self.importCommandRequest(request['commandHandler'], export=True)
+            exportation = request['command']
+        
+        
         
         if (self.debug):
-            self.log.log('> Exporting: ' + request['command'])
+            self.log.log('> Exporting: ' + exportation)
             self.log.log('')
 
     # Visit a parse tree produced by Ah210Parser#imports.
