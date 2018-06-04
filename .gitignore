@@ -1,7 +1,6 @@
 .idea/
 venv/
 3415-ref/
-*.g4
 *.jar
 *.bat
 grammar/src/
@@ -18,3 +17,5 @@ grammar/src/
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
 /*.egg
+
+__pycache__/
