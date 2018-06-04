@@ -1,4 +1,4 @@
-# Generated from D:/Programming/Projects/Apitax/grammar/src\Ah2.g4 by ANTLR 4.7
+# Generated from D:/Programming/Projects/Apitax/apitax/grammar/src\Ah2.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Ah2Parser import Ah2Parser
@@ -113,6 +113,78 @@ class Ah2Listener(ParseTreeListener):
 
     # Exit a parse tree produced by Ah2Parser#variable_types.
     def exitVariable_types(self, ctx:Ah2Parser.Variable_typesContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#log.
+    def enterLog(self, ctx:Ah2Parser.LogContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#log.
+    def exitLog(self, ctx:Ah2Parser.LogContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#labels.
+    def enterLabels(self, ctx:Ah2Parser.LabelsContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#labels.
+    def exitLabels(self, ctx:Ah2Parser.LabelsContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#casting.
+    def enterCasting(self, ctx:Ah2Parser.CastingContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#casting.
+    def exitCasting(self, ctx:Ah2Parser.CastingContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#cast_str.
+    def enterCast_str(self, ctx:Ah2Parser.Cast_strContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#cast_str.
+    def exitCast_str(self, ctx:Ah2Parser.Cast_strContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#cast_num.
+    def enterCast_num(self, ctx:Ah2Parser.Cast_numContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#cast_num.
+    def exitCast_num(self, ctx:Ah2Parser.Cast_numContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#cast_dict.
+    def enterCast_dict(self, ctx:Ah2Parser.Cast_dictContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#cast_dict.
+    def exitCast_dict(self, ctx:Ah2Parser.Cast_dictContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#cast_list.
+    def enterCast_list(self, ctx:Ah2Parser.Cast_listContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#cast_list.
+    def exitCast_list(self, ctx:Ah2Parser.Cast_listContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah2Parser#complex_variables.
+    def enterComplex_variables(self, ctx:Ah2Parser.Complex_variablesContext):
+        pass
+
+    # Exit a parse tree produced by Ah2Parser#complex_variables.
+    def exitComplex_variables(self, ctx:Ah2Parser.Complex_variablesContext):
         pass
 
 

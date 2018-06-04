@@ -1,6 +1,9 @@
 # Apitax
 
+Pronounced: *ahhp-ehh-tax*
+
 ### Build Instructions
+* Use either Powershell or Bash
 * Building the package: `python setup.py sdist bdist_wheel`
 * Upload the package to Pypi: `twine upload dist/* -r pypi`
 * More information can be found here: https://gist.github.com/ShawnClake/759e9d09af868ef18f8c7b39d1684ad4

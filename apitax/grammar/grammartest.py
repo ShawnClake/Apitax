@@ -15,7 +15,7 @@ def GrammarTest(filepath):
     tree = parser.prog()
     printer = Ah2Listener()
 
-    visitor = Ah2Visitor()
+    visitor = Ah2Visitor(None, None)
     result = visitor.visit(tree)
     # print(result)
 

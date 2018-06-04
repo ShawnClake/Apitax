@@ -22,7 +22,7 @@ from .grammar.grammartest import GrammarTest
 class Apitax:
 
     # Entry point of the program
-    def apitax(self, args):
+    def apitax(self, args: list):
         # General procedure is as follows
         # Sets up logical defaults for parameters
         # Checks config for any overrides to those params
