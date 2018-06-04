@@ -1,4 +1,4 @@
-from apitax import Apitax
+from .apitax import Apitax
 
 def main():
 

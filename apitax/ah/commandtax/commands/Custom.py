@@ -13,7 +13,7 @@ from apitax.ah.HeaderBuilder import HeaderBuilder
 # Handles custom commands
 # This allows a user to access an arbitrary endpoint
 class Custom(Request):
-    def __init__(self, header, debug, sensitive):
+    def __init__(self, config, header, debug, sensitive):
         Request.__init__(self, '', header.get(), '', debug=debug, sensitive=sensitive)
 
     # Executes the passed command

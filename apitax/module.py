@@ -38,6 +38,13 @@ class Apitax:
         command = ''
         script = ''
 
+        print('')
+        print('')
+        print(">>>  Apitax - Combining the power of Commandtax and Scriptax")
+        print('')
+        print('')
+
+
         config = ConfigConsumer()
 
         if (config.has('default-username')):
@@ -48,8 +55,6 @@ class Apitax:
 
         if (config.has('default-mode')):
             usage = config.get('default-mode')
-
-        print("Automation Haven")
 
         if ('--cli' in args):
             usage = 'cli'

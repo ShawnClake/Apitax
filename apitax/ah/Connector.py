@@ -1,4 +1,4 @@
-from apitax.ah.commandtax.Command import Command
+from apitax.ah.commandtax.Commandtax import Commandtax
 from apitax.ah.commandtax.Authentication import *
 from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 from apitax.ah.HeaderBuilder import HeaderBuilder
@@ -49,6 +49,6 @@ class Connector:
     def execute(self, command=''):
         if (command != ''):
             self.command = command
-        self.commandHandler = Command(self.header, self.command, self.config, debug=self.debug,
+        self.commandHandler = Commandtax(self.header, self.command, self.config, debug=self.debug,
                                       sensitive=self.sensitive)
         return self.commandHandler

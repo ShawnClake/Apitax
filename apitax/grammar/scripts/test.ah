@@ -77,11 +77,21 @@ set somestring = "heck no: " + {{derp}} + " :( " + derp
 
 set come.on = "noway"
 
-set come.here = dict("{'myname': 'is not cool', 'youknow' : '?'}")
+set come.here = dict('{"myname": "is not cool", "youknow" : "?"}')
 
 log({{derp}} + " " + somestring + " ===> " + cast(come, str))
 
 set ksjhdg = '{"myname": "is not cool", "youknow" : "?"}'
 
 set something = cast(ksjhdg, dict)
+
+set heck.no = cast(mynum, dict)
+
+set cough = '["test0", "test1", "test2"]'
+
+set heck.yes = cast(cough, dict)
+
+{{heck.yes.1}}
+
+set me = "blah blah blah {{heck.yes.1}}"
 

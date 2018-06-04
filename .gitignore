@@ -1,3 +1,10 @@
+*.cpython-36.pyc
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+
 .idea/
 venv/
 3415-ref/
@@ -19,3 +26,6 @@ grammar/src/
 /*.egg
 
 __pycache__/
+
+
+__pycache__
