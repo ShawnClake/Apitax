@@ -13,6 +13,8 @@ venv/
 grammar/src/
 *.log
 
+log.txt
+
 /build/
 
 # Compiled python modules.

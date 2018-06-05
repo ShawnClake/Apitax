@@ -9,6 +9,8 @@
 # It includes a CLI as well as web interface
 # However the web interface will need to be customized per API usage
 
+# System imports
+from time import time
 
 # Default imports
 import click
@@ -18,6 +20,7 @@ from .ah.web.WebServer import *
 from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
 from .logs.Log import Log
+from apitax.utilities.Booleans import str2bool
 
 
 class Apitax:
@@ -38,15 +41,11 @@ class Apitax:
         password = ''
         command = ''
         script = ''
-        log = Log()
-
-        log.log('')
-        log.log('')
-        log.log(">>>  Apitax - Combining the power of Commandtax and Scriptax")
-        log.log('')
-        log.log('')
-
-
+        
+        doLog = True
+        logPath = 'logs/log.log'
+        logColorize = True
+        
         config = ConfigConsumer()
 
         if (config.has('default-username')):
@@ -57,6 +56,23 @@ class Apitax:
 
         if (config.has('default-mode')):
             usage = config.get('default-mode')
+            
+        if (config.has('log')):
+            doLog = str2bool(config.get('log'))
+            
+        if (config.has('log-file')):
+            logPath = config.get('log-file')
+            
+        if (config.has('log-colorize')):
+            logColorize = str2bool(config.get('log-colorize'))
+        
+        log = Log(logPath, doLog=doLog, logColorize=logColorize)
+        
+        log.log('')
+        log.log('')
+        log.log(">>>  Apitax - Combining the power of Commandtax and Scriptax")
+        log.log('')
+        log.log('')
 
         if ('--cli' in args):
             usage = 'cli'
@@ -90,19 +106,24 @@ class Apitax:
             command = 'script ' + script
             
         
+        loggingSettings = log.getLoggerSettings()
+        
         log.log('>> Runtime Settings:')
-        if(debug):
-            log.log('    * Debug: True')
-        else:
-            log.log('    * Debug: False')
-                
-        if(sensitive):
-            log.log('    * Sensitive: True')
-        else:
-            log.log('    * Sensitive: False')   
+
+        log.log('    * Debug: ' + str(debug))
+               
+        log.log('    * Sensitive: ' + str(sensitive))
+
+        log.log('    * Logging: ' + str(loggingSettings.get('doLog')))
+        
+        if(loggingSettings.get('doLog')):
+            log.log('      * Log Filepath: ' + str(loggingSettings.get('path')))
+            log.log('      * Colorize CLI: ' + str(loggingSettings.get('colorize')))
             
         log.log('')
         log.log('')
+        
+        t0 = time()
 
         if (usage == 'cli'):
             # Authentication is incorporated into Connector
@@ -122,8 +143,9 @@ class Apitax:
                 log.log("")
             
             if(debug and command.split(' ')[0] == 'script'):
-                log.log("Dumping Current DataStore State:")
-                log.log(" * I recommend this website for looking at the data: http://json.parser.online.fr/")
+                log.log(">> Dumping Current DataStore State:")
+                log.log("    * I recommend this website for looking at the data: http://json.parser.online.fr/")
+                log.log("")
                 log.log("")
                 log.log(json.dumps(result.getRequest().parser.data.dataStore))
                 log.log("")
@@ -137,5 +159,10 @@ class Apitax:
         elif(usage == 'grammar-test'):
             GrammarTest(script)
             
-
+        t1 = time()
+        
+        if(debug):
+            log.log(">> Apitax finished processing in {0:.2f}s".format(t1-t0))
+            log.log("")
+            log.log("")
 

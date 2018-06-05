@@ -1,72 +1,9 @@
-grammar Ah210;
 
-//options { tokenVocab=AhLex210; }
+lexer grammar AhLex210;
 
-/***********
-PARSER RULES
-***********/
-
-prog : statements EOF ;
-
-statements : statement+ ;
-
-statement :
-      inject
-      | execute
-      | expr
-      | set_var
-      | scoping
-      | log
-      | NEWLINE ;
-
-expr :
-      variable_types
-      | casting
-      | labels
-      | inject
-      | LPAREN expr RPAREN
-      | <assoc=right> expr POW expr
-      | expr (MUL|DIV) expr
-      | expr (PLUS|MINUS) expr ;
-
-set_var : SET labels EQUAL (expr | execute) ;
-
-scoping : imports | exports | name ;
-
-name : NAME expr;
-
-exports : EXPORT (labels | execute);
-
-imports : IMPORT execute ;
-
-execute : COMMANDTAX expr RPAREN ;
-
-inject : MUSTACHEOPEN REQUEST? labels MUSTACHECLOSE ;
-
-variable_types : BOOLEAN | NUMBER | string | complex_variables ;
-
-log : LOG expr RPAREN ;
-
-labels : LABEL | DOT_LABEL ;
-
-casting : cast_dict | cast_list | cast_num | cast_str ;
-
-cast_str : CAST labels COMMA 'str' RPAREN ;
-
-cast_num : CAST labels COMMA 'num' RPAREN ;
-
-cast_dict : CAST labels COMMA 'dict' RPAREN ;
-
-cast_list : CAST labels COMMA 'list' RPAREN ;
-
-complex_variables : (LIST | DICT) string RPAREN ;
-
-string : STRING ;
-
-
-
-
-
+/**********
+LEXER RULES
+**********/
 
 
 
@@ -145,18 +82,41 @@ LABEL : (LETTER|ULINE)(LETTER|DIGIT|ULINE)+ ;
 
 DOT_LABEL : (LABEL | DIGIT | DOT)+ ;
 
+//VARIABLE : '{{' LABEL '}}' ;
+
+//DOT_VARIABLE : '{{' DOT_LABEL '}}' ;
+
+//WORD : LETTER+ ;
+
 HEX : ('0x'|'0X')(HEXDIGIT)HEXDIGIT*;
 
+
+//INLINE_COMMAND : EXECUTEOPEN COMMANDTAX EXECUTECLOSE ;
+//INSTANT_COMMAND : COMMANDTAX ;
+
+//
 
 NEWLINE : '\r'? '\n' ;
 WS : (' ' | '\t')+ -> channel(HIDDEN) ;
 
-BLOCK_COMMENT : DIV MUL .*? MUL DIV -> channel(HIDDEN) ;
-LINE_COMMENT : DIV DIV ~[\r\n]* -> channel(HIDDEN) ;
+BLOCK_COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
+LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
+
+//WS : (' ' | '\t')+ -> channel(HIDDEN) ;
+
 
 //STRING: '"' (ESC|.)*? '"' ;
 
+//LQUOTE : '"' -> more, mode(STR) ;
+
+//mode STR;
+//STRING : '"' -> mode(DEFAULT_MODE) ; // token we want parser to see
+//TEXT : . -> more ; // collect more text for string
 STRING : QUOTE WORDS QUOTE | SQUOTE WORDS SQUOTE ;
+
+
+//
+
 
 
 

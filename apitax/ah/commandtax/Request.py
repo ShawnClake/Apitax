@@ -62,10 +62,12 @@ class Request:
     def getResponseBody(self):
         if (self.customResponse):
             if(isinstance(self.request['text'], dict)):
-                return json.dumps(self.request['text'])
-            return self.request['text']
+                return json.dumps(self.request['text'], separators=(',', ':'), indent=None).replace("\n", "")
+            return self.request['text'].replace("\n", "")
         else:
-            return self.request.text
+            if(isinstance(self.request.text, dict) or isinstance(self.request.text, list)):
+                return json.dumps(self.request.text, separators=(',', ':'), indent=None).replace("\n", "")
+            return self.request.text.replace("\n", "")
 
     def getResponseBodyAsStructure(self):
         return json.loads(self.getResponseBody())

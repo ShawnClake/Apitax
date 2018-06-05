@@ -18,7 +18,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.config = config
         self.parser = None
         
-        # Replace the below functionality
+        # Replace the below functionality if possible
         self.regexVar = '{{[ ]{0,}[A-z0-9_.\-]{1,}[ ]{0,}}}'
 
     def importCommandRequest(self, commandHandler, export=False):
@@ -118,12 +118,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
         label = self.visit(ctx.labels())
 
-        # if (ctx.variable_types()):
-        #   self.data.storeVar(label, self.visit(ctx.variable_types()))
-
         if (ctx.execute()):
             self.data.storeVar(label, self.visit(ctx.execute())['commandHandler'].getRequest().getResponseBody())
-            # self.variables[ctx.LABEL().getText()] = ctx.COMMANDTAX().getText()
 
         if(ctx.expr()):
             self.data.storeVar(label, self.visit(ctx.expr()))
@@ -132,8 +128,6 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.log.log('> Assigning Variable: ' + label + ' = ' + str(self.data.getVar(label)))
             self.log.log('')
 
-        # print('set var:')
-        # print(self.data.dataStore)
 
     # Visit a parse tree produced by Ah210Parser#scoping.
     def visitScoping(self, ctx):
@@ -142,11 +136,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#name.
     def visitName(self, ctx):
-        if ctx.LABEL() is not None:
-            self.data.name = ctx.LABEL().getText()
-
-        if ctx.inject() is not None:
-            self.data.name = self.visit(ctx.inject())
+        if ctx.expr():
+            self.data.name = self.visit(ctx.expr())
 
         if (self.debug):
             self.log.log('> Setting Script Name: ' + self.data.name)
@@ -209,8 +200,6 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#variable.
     def visitVariable_types(self, ctx: Ah210Parser.Variable_typesContext):
 
-        # print('visit variable')
-
         if (ctx.NUMBER()):
             return float(ctx.NUMBER().getText())
 
@@ -223,14 +212,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
         if(ctx.complex_variables()):
             return self.visit(ctx.complex_variables())
 
-        # print('Impossible Variable')
-
-        # return self.visitChildren(ctx)
-
     # Visit a parse tree produced by Ah210Parser#log.
     def visitLog(self, ctx: Ah210Parser.LogContext):
-        # if(ctx.STRING()):
-        #   self.log.log('> Logging: ' + json.dumps(ctx.STRING().getText()))
         if (ctx.expr()):
             self.log.log('> Logging: ' + json.dumps(self.visit(ctx.expr())))
         self.log.log('')

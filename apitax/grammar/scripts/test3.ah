@@ -26,9 +26,9 @@
 
 
 
-name bobbyjoe
+name "bobbyjoe"
 
-name keystones
+name "keystones"
 
 set keystone = "http://172.25.190.14:5000/v3"
 
@@ -38,7 +38,7 @@ set derp = "thederpiest"
 
 
 
-name {{ derp }}
+name derp
 
 {{ keystone }}
 
@@ -56,7 +56,7 @@ set mynum = 3
 
 1 + 1 + {{mynum}}
 
-name {{derp}}
+name derp
 
 
 set jimmy = {{mynum}} + 3
