@@ -8,6 +8,9 @@ Pronounced: *ahhp-ehh-tax*
 * Upload the package to Pypi: `twine upload dist/* -r pypi`
 * More information can be found here: https://gist.github.com/ShawnClake/759e9d09af868ef18f8c7b39d1684ad4
 
+### Readme Conversion Instructions
+* Install `pandoc` if it is not already installed: `sudo apt-get install pandoc`
+* Run the command: `pandoc -o readme.docx -f markdown -t docx README.md`
 
 ### Scriptax - Control Flow, Scoping, and Automation
 
