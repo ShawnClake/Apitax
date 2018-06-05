@@ -1,0 +1,26 @@
+
+set jen = 6.9 / 69
+
+set paris = {{jen}} + 5
+
+set tristan = "runescape"
+
+log(tristan + "hi")
+
+ct("domain list all")
+
+export ct("script apitax/grammar/scripts/jen.ah")
+
+log(quinn.jordan.shawn)
+
+import ct("custom --get --url https://jsonplaceholder.typicode.com/posts")
+
+set noway = {{r:1.0.title}}
+
+
+
+
+
+
+
+

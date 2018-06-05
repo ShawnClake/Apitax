@@ -1,0 +1,16 @@
+
+name jordan
+
+set shawn = 55
+
+export shawn
+
+set whynotme = '["first", "second", "third"]'
+
+set whyme = cast(whynotme, dict)
+
+
+
+
+
+

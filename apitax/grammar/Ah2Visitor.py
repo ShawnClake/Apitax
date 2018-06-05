@@ -21,19 +21,19 @@ class Ah2Visitor(Ah210VisitorOriginal):
         # Replace the below functionality
         self.regexVar = '{{[ ]{0,}[A-z0-9_.\-]{1,}[ ]{0,}}}'
 
-    def importCommandRequest(self, request, export=False):
+    def importCommandRequest(self, commandHandler, export=False):
         from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
         
-        if (request.getResponseBody().strip() != ''):
-            if (isinstance(request, ScriptCommand)):
-                self.data.importScriptsExports(request.parser.data, export=export)
+        if (commandHandler.getRequest().getResponseBody().strip() != ''):
+            if (isinstance(commandHandler.getRequest(), ScriptCommand)):
+                self.data.importScriptsExports(commandHandler.getRequest().parser.data, export=export)
             else:
-                self.data.storeRequest(request.getResponseBody(), export=export)
+                self.data.storeRequest(commandHandler.getRequest().getResponseBody(), export=export)
 
     def executeCommand(self, command):
         from apitax.ah.commandtax.Commandtax import Commandtax
      
-        return Commandtax(self.header, command, self.config, debug=self.debug, sensitive=self.sensitive).getRequest()
+        return Commandtax(self.header, command, self.config, debug=self.debug, sensitive=self.sensitive)
 
     def getVariable(self, label, isRequest=False, convert=True):
         if(convert):
@@ -122,7 +122,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         #   self.data.storeVar(label, self.visit(ctx.variable_types()))
 
         if (ctx.execute()):
-            self.data.storeVar(label, self.visit(ctx.execute()))
+            self.data.storeVar(label, self.visit(ctx.execute())['commandHandler'].getRequest().getResponseBody())
             # self.variables[ctx.LABEL().getText()] = ctx.COMMANDTAX().getText()
 
         if(ctx.expr()):
