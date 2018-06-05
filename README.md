@@ -12,25 +12,33 @@ Pronounced: *ahhp-ehh-tax*
 ### Scriptax - Control Flow, Scoping, and Automation
 
 #### Existing keys
-* {% \<someCommand\> %} 
-    * Inline execution
+* ct("\<someCommand\>") 
+    * Commandtax execution
     * A command is executed during the parsing of the line and its response is returned
-* \> \<someCommand\>
-    * Command execution
-    * The command is executed after line parsing and the response is ignored
-* set \<someVar\> = \<someValue\>, set \<someVar\> = {% \<someCommand\> %}
+* set \<someVar\> = \<someValue\>
     * Sets a variable
-* {{ someVar }}
+    * Supports expressions, strings, numbers, booleans, dictionaries, lists, and commandtax responses
+* "this is a string {{ someVar }}"
     * Injects the contents of a variable
-    * Fancy stuff is possible such as: set newVar = {% {{someVar}} %}
-* {{ r: someResponseVar }}
-    * Injects the response of some variable
-* import {% someCommand %}
+    * Fancy stuff is possible such as: set newVar = ct("{{someVar}}")
+* {{ r: someResponse }}
+    * Injects the response of some request
+* import ct("some commandtax")
     * Executes a command and imports the response to the current scope
-* export {% someCommand %}, export someVar 
+* export ct("some commandtax"), export someVar 
     * Imports the values to the current scope and exports them to allow a parent scope to access these values 
 * name \<someName\>
-    * Sets the reference name of the script. If this is not specified, it'll default to the file name
+    * Sets the reference name of the script.
+    * Supports strings and expressions
+* log("log some output to the console & log file")
+    * Supports expressions
+* cast(\<someVar\>, type)
+    * Casts a variable to a type
+    * Valid types are: str, num, dict, list 
+* // some comment
+    * Inline comment
+* /* some comment spanning multiple lines */
+    * Block comment
 
 #### Coming Soon
 * {% if \<someCondition\> %}   \<someExecution\>
@@ -55,6 +63,7 @@ Pronounced: *ahhp-ehh-tax*
     * set someVar.1 = num1
     * set someVar.2 = num2
     * set someVar.{{counter}} = num3
+    * When doing this, the first usage of a variable must either be someVar = "{}" or an index as part of that object. Failure to do this will result in errors being thrown.
 
 
 ### Commandtax - Data Gathering, Manipulating, Usage
@@ -68,10 +77,7 @@ Pronounced: *ahhp-ehh-tax*
 
 #### Coming Soon
 * shell \<someCommand\>
-    * Runs the command in the shell and returns the response from the shell
-* eval \<someExpression\>
-    * Evaluate the provided expression and return the result
-		
+    * Runs the command in the shell and returns the response from the shell		
 
 Tidbits
 
