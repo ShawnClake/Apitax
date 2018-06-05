@@ -6,6 +6,7 @@ from bottle import route, run, template, request, static_file, post, Bottle
 
 # Application import
 from apitax.ah.Connector import Connector
+from apitax.logs.Log import Log
 
 
 # from command import Command
@@ -17,32 +18,35 @@ from apitax.ah.Connector import Connector
 
 @route('/')
 def index():
-    return static_file('index.html', 'webSrv/pages/')
+    return static_file('index.html', bottleServer.directory)
 
+# Hosts html file which will be invoked from browser.
+@route('/node/<staticFile>')
+def serve_node(staticFile):
+    return static_file(staticFile, bottleServer.directory+'node/dist/')
 
 # Hosts html file which will be invoked from browser.
 @route('/pages/<staticFile>')
 def serve_static_file(staticFile):
-    filePath = 'webSrv/pages/'
-    return static_file(staticFile, filePath)
+    return static_file(staticFile, bottleServer.directory)
 
 
 # host css files which will be invoked implicitly by your html files.
 @route('/pages/css/<cssFile>')
 def serve_css_files(cssFile):
-    filePath = 'webSrv/pages/css/'
+    filePath = bottleServer.directory+'css/'
     return static_file(cssFile, filePath)
 
 
 # host js files which will be invoked implicitly by your html files.
 @route('/pages/js/<jsFile>')
 def serve_js_files(jsFile):
-    filePath = 'webSrv/pages/js/'
+    filePath = bottleServer.directory +'js/'
     return static_file(jsFile, filePath)
 
 
 # Authentication endpoint is used to facilitate simpler authentication
-@route('/api/auth/', method='POST')
+@route('/apitax/auth/', method='POST')
 def execute_api_auth():
     connector = Connector(sensitive=True, username=request.json['user'], password=request.json['pass'])
 
@@ -53,9 +57,13 @@ def execute_api_auth():
         return json.dumps({"status": 400,
                            "auth": "authentication does not support tokens, please pass username and password with each API request"})
 
+@route('/dummy/<filename:path>')
+def serve_dummy(filename):
+    return static_file(filename, root='/directory/to/files')
+
 
 # Command endpoint is used to facilitate simpler requests
-@route('/api/command/', method='POST')
+@route('/apitax/command/', method='POST')
 def execute_api_command():
     connector = None
 
@@ -72,14 +80,26 @@ def execute_api_command():
                        "body": json.loads(commandHandler.getRequest().getResponseBody())})
 
 
-@route('/dummy/<filename:path>')
-def serve_dummy(filename):
-    return static_file(filename, root='/directory/to/files')
+# Command endpoint is used to facilitate simpler requests
+@route('/apitax/system/status', method='GET')
+def execute_system_status():
 
+    configDict = bottleServer.config.serialize(["driver", "log", "log-file", "log-colorize"])
+    configDict.update({'debug':bottleServer.debug, 'sensitive':bottleServer.sensitive})
+    return json.dumps(configDict)
 
 class bottleServer():
 
-    def start(self, ip, port):
+    directory = 'apitax/ah/web/node/'
+    log = Log()
+    config = None
+    debug = False
+    sensitive = False
+    
+    def start(self, ip, port, config=None, debug=False, sensitive=False):
         # self.app = Bottle()
-        run(host=ip, port=port, reloader=True, debug=True)
+        bottleServer.config = config
+        bottleServer.debug = debug
+        bottleServer.sensitive = sensitive
+        run(host=ip, port=port, reloader=True, debug=debug)
 

@@ -2,7 +2,7 @@
 auth-endpoint = "http://172.25.190.14:5000/v3/auth/tokens"
 driver = ApitaxTests
 port = 5080
-ip = 172.25.190.4
+ip = 0.0.0.0
 log = true
 log-file = logs/log.log
 log-colorize = true

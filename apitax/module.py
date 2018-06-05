@@ -154,7 +154,7 @@ class Apitax:
 
         elif (usage == 'web'):
             bSrv = bottleServer()
-            bSrv.start(config.get("ip"), config.get("port"))
+            bSrv.start(config.get("ip"), config.get("port"), config=config, debug=debug, sensitive=sensitive)
 
         elif(usage == 'grammar-test'):
             GrammarTest(script)
