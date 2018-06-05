@@ -2,7 +2,9 @@
 
 Pronounced: *ahhp-ehh-tax*
 
-### Build Instructions
+## Builds
+
+### Packaging Instructions
 * Use either Powershell or Bash
 * Building the package: `python setup.py sdist bdist_wheel`
 * Upload the package to Pypi: `twine upload dist/* -r pypi`
@@ -11,6 +13,26 @@ Pronounced: *ahhp-ehh-tax*
 ### Readme Conversion Instructions
 * Install `pandoc` if it is not already installed: `sudo apt-get install pandoc`
 * Run the command: `pandoc -o readme.docx -f markdown -t docx README.md`
+
+### Compile Antlr Grammar from another directory
+This is sometimes nessecary due to a bug in the antlr compiler with regards to paths
+* Download the antlr compiler .jar file and save it somewhere.
+* Inside of the directory where the .jar was saved, create the following folder heirarchy
+    * build
+    * src
+    * scripts
+    * logs
+* Create a .bat or .sh file (dependent on OS) and add the following script:
+``` bash
+java -jar ~/grammar/antlr-4.7.1-complete.jar -Dlanguage=Python3 ~/grammar/src/AhLex210.g4
+java -jar ~/grammar/antlr-4.7.1-complete.jar -lib ~/grammar/src -o ~/grammar/build -listener -visitor -Dlanguage=Python3 ~/grammar/src/Ah210.g4
+cp -r ~/grammar/build/* ~/Apitax/apitax/grammar/build
+cp ~/grammar/src/AhLex210.g4 ~/Apitax/apitax/grammar/src
+cp ~/grammar/src/Ah210.g4 ~/Apitax/apitax/grammar/src
+```
+* Anytime you want to make changes to the grammar, do it from the new ~/grammar/src directory and run the script
+
+## Documentation and Usage
 
 ### Scriptax - Control Flow, Scoping, and Automation
 
