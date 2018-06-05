@@ -177,16 +177,16 @@ default-password = <someAuthPassword>
 ### Examples of Apitax in Action:
 
 #### Commandtax Examples
-    ```
-    custom --get --url <someEndpoint>
-    custom --get --url <someEndpoint> --data-param '{"is_domain": true}'
-    custom --post --url <someEndpoint> --data-post '{"title": "im the title"}'
-    custom --put --url <someEndpoint> 
-    custom --patch --url <someEndpoint>
-    custom --delete --url <someEndpoint> 
-    custom --get --url <someEndpoint> --data-param '{"user.id": "1"}'
-    custom --get --url <someEndpoint>/with/some/{ohyear}/url/params/{981} --data-param '{"is_domain": true}' --data-path '{"ohyeah":"no", "981": "yes"}'
-    ```
+```
+custom --get --url <someEndpoint>
+custom --get --url <someEndpoint> --data-param '{"is_domain": true}'
+custom --post --url <someEndpoint> --data-post '{"title": "im the title"}'
+custom --put --url <someEndpoint> 
+custom --patch --url <someEndpoint>
+custom --delete --url <someEndpoint> 
+custom --get --url <someEndpoint> --data-param '{"user.id": "1"}'
+custom --get --url <someEndpoint>/with/some/{ohyear}/url/params/{981} --data-param '{"is_domain": true}' --data-path '{"ohyeah":"no", "981": "yes"}'
+```
 `script ~/path/to/my/script.ah`
 
 #### Scriptax Examples
