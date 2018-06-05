@@ -8,7 +8,6 @@ import requests
 # Application import
 from apitax.logs.Log import Log
 
-
 # Request is the 'legs' of the application.
 # It is responsible to act as a facade to the 'requests' library
 # This provides additional output, logging, and logic capabilities
@@ -24,7 +23,7 @@ class Request:
         self.sensitive = sensitive
         self.request = None
         self.customResponse = customResponse
-        self.log = Log('logs/log.log')
+        self.log = Log()
 
     def setDebug(self, debug):
         self.debug = debug
