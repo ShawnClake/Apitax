@@ -112,7 +112,7 @@ class Request:
         matches = re.findall('{[A-z0-9]{1,}}', self.url)
         for match in matches:
             matchStr = match[1:-1]
-            if (self.pathData.has_key(matchStr)):
+            if (matchStr in self.pathData):
                 self.url = self.url.replace(match, self.pathData.get(matchStr))
             else:
                 self.log.log('Path data did not contain key for `' + matchStr + '`')

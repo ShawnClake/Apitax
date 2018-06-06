@@ -17,6 +17,12 @@ class Commandtax:
         if (len(command) < 1):
             return
         self.request = None
+        
+        if('--debug' in command):
+            debug = True
+        if('--sensitive' in command):
+            sensitive = True
+        
         if (command[0] == 'script'):
             self.request = Script(config, header, debug, sensitive)
         elif (command[0] == 'custom'):

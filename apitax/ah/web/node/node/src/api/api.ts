@@ -36,7 +36,7 @@ export default class Api {
     }
 
 
-    request(data: any, redirect: string) {
+    request(context: any, callback: any, data: any, redirect: string) {
         //alert(JSON.stringify(data));
         var self = this;
         axios.post(API_URL, data)
@@ -53,6 +53,8 @@ export default class Api {
                 if (redirect) {
                     router.push(redirect)
                 }
+                callback(context, response);
+                //console.log("SOMETHING" + context.endpointPicker.selected)
             })
             .catch(function (error) {
                 console.log(error);

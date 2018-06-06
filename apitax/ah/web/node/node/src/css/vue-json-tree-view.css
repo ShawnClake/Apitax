@@ -1,0 +1,45 @@
+.tree-view-item-value-string
+{
+color:green;
+}
+
+.tree-view-item-value-number
+{
+color:blue;
+}
+.tree-view-item-value-boolean
+{
+color:red;
+}
+
+.tree-view-item-value-null
+{
+color:red;
+}
+
+.tree-view-item-value-function
+{
+color:orange;
+}
+
+
+
+/*!
+ * Start Bootstrap - Scrolling Nav (https://startbootstrap.com/template-overviews/scrolling-nav)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-scrolling-nav/blob/master/LICENSE)
+ */
+
+header {
+  padding: 74px 0 60px;
+}
+
+@media (min-width: 992px) {
+  header {
+    padding: 76px 0 60px;
+  }
+}
+
+section {
+  //padding: 150px 0;
+}

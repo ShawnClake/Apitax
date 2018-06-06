@@ -11,6 +11,10 @@ import Commandtax from "./components/Commandtax.vue";
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import TreeView from "vue-json-tree-view"
+Vue.use(TreeView)
+import '../src/css/vue-json-tree-view.css'
+
 Vue.config.devtools = true;
 //Vue.config.debug = true;
 

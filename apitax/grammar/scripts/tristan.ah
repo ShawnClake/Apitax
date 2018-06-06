@@ -17,6 +17,8 @@ import ct("custom --get --url https://jsonplaceholder.typicode.com/posts")
 
 set noway = {{r:1.0.title}}
 
+//custom --debug --get --url https://jsonplaceholder.typicode.com/{testingthis} --data-path '{"testingthis":"users"}'
+
 
 
 
