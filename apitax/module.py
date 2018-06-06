@@ -11,16 +11,16 @@
 
 # System imports
 from time import time
+import json
 
 # Default imports
 import click
 
 # Application imports
-from .ah.web.WebServer import *
+from apitax.ah.Connector import Connector
 from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
 from .logs.Log import Log
-from apitax.utilities.Booleans import str2bool
 
 
 class Apitax:
@@ -58,14 +58,14 @@ class Apitax:
             usage = config.get('default-mode')
             
         if (config.has('log')):
-            doLog = str2bool(config.get('log'))
+            doLog = config.get('log')
             
         if (config.has('log-file')):
             logPath = config.get('log-file')
             
         if (config.has('log-colorize')):
-            logColorize = str2bool(config.get('log-colorize'))
-        
+            logColorize = config.get('log-colorize')
+
         log = Log(logPath, doLog=doLog, logColorize=logColorize)
         
         log.log('')
@@ -153,6 +153,7 @@ class Apitax:
             # print(result.getRequest().data.getData('5.3.role_assignments.0.links.assignment'))
 
         elif (usage == 'web'):
+            from .ah.web.WebServer import bottleServer
             bSrv = bottleServer()
             bSrv.start(config.get("ip"), config.get("port"), config=config, debug=debug, sensitive=sensitive)
 

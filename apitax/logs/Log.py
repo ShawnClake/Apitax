@@ -11,7 +11,7 @@ loggers = {}
 
 # Handles printing to CLI as well as printing to log file
 class Log:
-	
+
     WHITE = '\033[97m'
     CYAN = '\033[96m'
     HEADER = '\033[95m'
@@ -22,19 +22,17 @@ class Log:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-	
+
     def __init__(self, logFile = "logs/log.log", doLog=True, logColorize=True):
         # logging.basicConfig(filename=filepath,level=logging.INFO)
         # log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
 
-        
-
         if (not loggers.get('main')):
-        	
+
             directorypath = Path(logFile)
-            #print("/".join(directorypath.parts[:-1]))
+            # print("/".join(directorypath.parts[:-1]))
             Path("/".join(directorypath.parts[:-1])).mkdir(parents=True, exist_ok=True) 
-        	
+
             log_formatter = logging.Formatter('%(asctime)s %(levelname)s  %(message)s')
 
             # Each log file can be up to 25MB big and keeps a max of 3 backup files.
@@ -48,6 +46,7 @@ class Log:
             app_log.setLevel(logging.INFO)
 
             app_log.addHandler(my_handler)
+
             loggers.update({'main': app_log, 'settings':{'doLog': doLog, 'colorize':logColorize,'path':directorypath.resolve()}})
 
     def log(self, text):

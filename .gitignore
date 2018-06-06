@@ -17,6 +17,8 @@ log.txt
 
 /build/
 
+dist/
+
 # Compiled python modules.
 *.pyc
 
@@ -24,7 +26,9 @@ log.txt
 /dist/
 
 # Node distribution folder
-/apitax/ah/web/node/dist
+/apitax/ah/web/node/dist/
+
+*-lock.json
 
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info

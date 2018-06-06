@@ -5,7 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack --progress",
+    "build-verbose": "webpack --progress --info-verbosity verbose",
+    "build-watch": "webpack --watch --progress"
   },
   "author": "",
   "license": "ISC",

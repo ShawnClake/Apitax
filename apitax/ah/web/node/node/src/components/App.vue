@@ -148,7 +148,6 @@
         <div class="row">
           <div class="col-lg-8 mx-auto">
             <h2>System Status</h2>
-            
               <div v-if="system_status" class="row">
               	<div class="col">
               	  <p class="lead">Loaded Driver: 
@@ -167,14 +166,14 @@
               	</div>
               	<div class="col">
               		<p class="lead">Logging: 
-              		<span v-if="system_status.logging" style="color:green;">True</span>
+              		<span v-if="system_status.log" style="color:green;">True</span>
 									<span v-else style="color:red;">False</span>
               		</p>
               		<p class="lead">Log Filepath: 
               		<strong>{{system_status['log-file']}}</strong>
               		</p>
               		<p class="lead">Colorize CLI: 
-              		<span v-if="system_status.logColorize" style="color:green;">True</span>
+              		<span v-if="system_status['log-colorize']" style="color:green;">True</span>
 									<span v-else style="color:red;">False</span>
               		</p>
               	</div>

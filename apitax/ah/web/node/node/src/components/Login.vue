@@ -13,7 +13,7 @@
   		<br>
   		<input type="checkbox" id="catalog" value="Catalog" checked>
   		<label for="catalog">Catalog</label>
-  		<small id="usernameHelp" class="form-text text-muted">Returns the catalog. Usually it is best to leave this on.</small>
+  		<small id="catalogHelp" class="form-text text-muted">Returns the catalog. Usually it is best to leave this on.</small>
 		</div>
 		<button @click="submit()" class="btn btn-primary">Login</button>
 	</div>
@@ -51,7 +51,7 @@ export default {
         // We need to pass the component's this context
         // to properly make use of http in the auth service
         var api = new Api()
-        api.request(this, credentials, 'dashboard')
+        api.request(credentials, 'dashboard')
       }
     }
 }
