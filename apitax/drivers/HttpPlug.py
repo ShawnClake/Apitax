@@ -45,3 +45,9 @@ class HttpPlug:
         
     def isAuthenticated(self):
         return True
+        
+    def getCatalog(self):
+        return {"endpoints": {"tests": {"label": "Placeholder Test", "value": "https://jsonplaceholder.typicode.com"}}, "selected": "https://jsonplaceholder.typicode.com"}
+        
+    def serialize(self, config):
+        return {"authenticated": self.isAuthenticated(), "auth-tokens": self.isTokenable(), "auth-endpoint": self.getAuthEndpoint(config)}

@@ -3,6 +3,7 @@
 //const SIGNUP_URL = API_URL + 'users/'
 
 const SYSTEM_URL = '/apitax/system/status'
+const CATALOG_URL = '/apitax/system/catalog'
 const API_URL = '/apitax/command/'
 const AUTH_URL = '/apitax/auth/'
 
@@ -59,6 +60,23 @@ export default class Api {
             .catch(function (error) {
                 console.log(error);
             });
+    }
+    
+    
+    catalog(context: any, callback: any) {
+        var self = this;
+        axios.get(CATALOG_URL)
+            .then(function (response) {
+                console.log(response);
+
+                console.log((response as any).request.responseText)
+
+                callback(context, response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    
     }
 
 

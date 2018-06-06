@@ -181,12 +181,7 @@
             <h2>System Status</h2>
             
               <div v-if="system_status" class="row">
-              	<div class="col">
-              	  <p class="lead">Loaded Driver: 
-              		<strong>{{system_status.driver}}</strong>
-              		</p>
-              	</div>
-              	<div class="col">
+                <div class="col">
               	  <p class="lead">Debug: 
               		<span v-if="system_status.debug" style="color:green;">True</span>
 									<span v-else style="color:red;">False</span>
@@ -209,7 +204,19 @@
 									<span v-else style="color:red;">False</span>
               		</p>
               	</div>
-              	
+              	<div v-if="driver_status.driver" class="col">
+              	  <p class="lead">Loaded Driver: 
+              		<strong>{{system_status.driver}}</strong>
+              		</p>
+              		<p v-if="driver_status" class="lead">Authenticated: 
+              		<span v-if="driver_status.driver.authenticated" style="color:green;">True</span>
+									<span v-else style="color:red;">False</span>
+              		</p>
+              		<p v-if="driver_status" class="lead">Tokenable: 
+              		<span v-if="driver_status.driver['auth-tokens']" style="color:green;">True</span>
+									<span v-else style="color:red;">False</span>
+              		</p>
+              	</div>
               </div>
             
           </div>
@@ -239,6 +246,7 @@
         return {
         		errors: [],
         		system_status: {},
+        		driver_status: {},
             authenticated: Api.authenticated
             
         }
@@ -250,13 +258,24 @@
       }
     },
       created() {
-    axios.get(`/apitax/system/status`)
-    .then(response => {
-      // JSON responses are automatically parsed.
-      this.system_status = response.data;
-    })
-    .catch(e => {
-      this.errors.push(e);
-    })}
+			    axios.get(`/apitax/system/status`)
+			    .then(response => {
+			      // JSON responses are automatically parsed.
+			      this.system_status = response.data;
+			    })
+			    .catch(e => {
+			      this.errors.push(e);
+			    })
+			    
+			   axios.get(`/apitax/system/driver/status`)
+			    .then(response => {
+			      // JSON responses are automatically parsed.
+			      this.driver_status = response.data;
+			      console.log(response)
+			    })
+			    .catch(e => {
+			      this.errors.push(e);
+			    })
+    }
   }
 </script>

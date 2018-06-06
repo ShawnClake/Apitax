@@ -6,7 +6,9 @@ from bottle import route, run, template, request, static_file, post, Bottle
 
 # Application import
 from apitax.ah.Connector import Connector
+from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 from apitax.logs.Log import Log
+
 
 
 # from command import Command
@@ -87,6 +89,20 @@ def execute_system_status():
     configDict = bottleServer.config.serialize(["driver", "log", "log-file", "log-colorize"])
     configDict.update({'debug':bottleServer.debug, 'sensitive':bottleServer.sensitive})
     return json.dumps(configDict)
+    
+# Command endpoint is used to facilitate simpler requests
+@route('/apitax/system/driver/status', method='GET')
+def execute_system_driver_status():
+    http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
+    driverDict = {"driver": {"name":bottleServer.config.get('driver')}}
+    driverDict['driver'].update(http.serialize(bottleServer.config))
+    return json.dumps(driverDict)
+    
+# Command endpoint is used to facilitate simpler requests
+@route('/apitax/system/catalog', method='GET')
+def execute_system_catalog():
+    http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
+    return json.dumps(http.getCatalog())
 
 class bottleServer():
 

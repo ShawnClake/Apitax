@@ -216,6 +216,10 @@
         if (endpointPicker != '' && endpointPicker != 'custom') {
             let temp = command.split('--url ');
             returner = temp[0] + '--url ' + endpointPicker;
+            if(endpointPicker.slice(-1) != '/')
+            {
+            		returner += "/";
+            }
             if (temp.length > 1) {
                 returner += temp[1]
             }
@@ -294,10 +298,9 @@
                 endpointPicker: {
                     endpoints: {
                         custom: {label: "Custom", value: "custom"},
-                        temp: {label: "Test", value: "https://jsonplaceholder.typicode.com"}
-                    }, selected: "https://jsonplaceholder.typicode.com"
+                    }, selected: "custom"
                 },
-                endpoint: 'https://jsonplaceholder.typicode.com',
+                endpoint: '',
                 requestTypePicker: {
                     requestTypes: {
                         custom: {label: "Custom", value: "custom"},
@@ -391,8 +394,7 @@
             }
         },
         created() {
-        //this.$refs.thetesting.appendChild(renderjson({ hello: [1,2,3,4], there: { a:1, b:2, c:["hello", null] } }));
-//this.response = String(renderjson({ hello: [1,2,3,4], there: { a:1, b:2, c:["hello", null] } }));
+						api.catalog(this, function(context, response) { console.log(response); context.endpointPicker.endpoints = {...context.endpointPicker.endpoints, ...response.data.endpoints}; context.endpointPicker.selected = response.data.selected; context.endpoint = response.data.selected;});
         }
     }
 </script>
