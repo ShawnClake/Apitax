@@ -65,8 +65,8 @@
 		    		  <b-table hover striped small :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :items="scripts">
 					       <!---<span slot="options" slot-scope="data" v-html="data.value"> -->
 					       <template slot="options" slot-scope="data">
-					       <b-btn size="sm" @click.stop="doScript(data.value,$event.target)" class="btn-success">Run</b-btn>  
-					       <b-btn size="sm" @click.stop="viewScript(data.value,$event.target)" class="btn-primary">View/Edit</b-btn>
+					       <b-btn size="sm" @click.stop="doScript(data.value,$event.target)" class="btn-success"><i class="fas fa-play"></i></b-btn>  
+					       <b-btn size="sm" @click.stop="viewScript(data.value,$event.target)" class="btn-primary"><i class="fas fa-pencil-alt"></i> / <i class="fas fa-eye"></i></b-btn>
 					       </template>  
 					     <!--- </span>--->
 					    </b-table>

@@ -14,7 +14,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.min.css';
 Vue.use(BootstrapVue);
 
-//import 'bootstrap';
+import fontawesome from '@fortawesome/fontawesome'
+import solid from '@fortawesome/fontawesome-free-solid'
+import regular from '@fortawesome/fontawesome-free-regular'
+import brands from '@fortawesome/fontawesome-free-brands'
+
+fontawesome.library.add(solid)
+fontawesome.library.add(regular)
+fontawesome.library.add(brands)
 
 
 import TreeView from "vue-json-tree-view"
