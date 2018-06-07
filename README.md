@@ -28,13 +28,18 @@ This is sometimes nessecary due to a bug in the antlr compiler with regards to p
     * logs
 * Create a .bat or .sh file (dependent on OS) and add the following script:
 ``` bash
-java -jar ~/grammar/antlr-4.7.1-complete.jar -Dlanguage=Python3 ~/grammar/src/AhLex210.g4
-java -jar ~/grammar/antlr-4.7.1-complete.jar -lib ~/grammar/src -o ~/grammar/build -listener -visitor -Dlanguage=Python3 ~/grammar/src/Ah210.g4
-cp -r ~/grammar/build/* ~/Apitax/apitax/grammar/build
-cp ~/grammar/src/AhLex210.g4 ~/Apitax/apitax/grammar/src
-cp ~/grammar/src/Ah210.g4 ~/Apitax/apitax/grammar/src
+#!/bin/bash
+grammardir=~/grammar
+apitaxdir=~/apitax-dev/Apitax/apitax/grammar
+antlr='antlr-4.7.1-complete.jar'
+java -jar $grammardir/$antlr -Dlanguage=Python3 $grammardir/src/$2
+java -jar $grammardir/$antlr  -lib $grammardir/src -o $grammardir/build -listener -visitor -Dlanguage=Python3 $grammardir/src/$1
+cp -r $grammardir/build/* $apitaxdir/build
+cp $grammardir/src/$2 $apitaxdir/src
+cp $grammardir/src/$1 $apitaxdir/src
 ```
 * Anytime you want to make changes to the grammar, do it from the new ~/grammar/src directory and run the script
+    * You must pass in your parser and lexer grammars as arguments `bash ~/grammar/run.sh Ah210.g4 AhLex210.g4`
 
 ## Documentation and Usage
 
