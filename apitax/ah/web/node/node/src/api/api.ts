@@ -4,6 +4,7 @@
 
 const SYSTEM_URL = '/apitax/system/status'
 const CATALOG_URL = '/apitax/system/catalog'
+const SCRIPTS_URL = '/apitax/system/scripts'
 const API_URL = '/apitax/command/'
 const AUTH_URL = '/apitax/auth/'
 
@@ -82,7 +83,39 @@ export default class Api {
     
     catalogScripts(context: any, callback: any) {
         var self = this;
-        axios.get(CATALOG_URL + '/scripts')
+        axios.get(SCRIPTS_URL + '/catalog')
+            .then(function (response) {
+                console.log(response);
+
+                console.log((response as any).request.responseText)
+
+                callback(context, response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    
+    }
+    
+    getScriptContents(context: any, callback: any, data: any) {
+        var self = this;
+        axios.post(SCRIPTS_URL, data)
+            .then(function (response) {
+                console.log(response);
+
+                console.log((response as any).request.responseText)
+
+                callback(context, response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    
+    }
+    
+    saveScript(context: any, callback: any, data: any) {
+        var self = this;
+        axios.post(SCRIPTS_URL + '/save', data)
             .then(function (response) {
                 console.log(response);
 

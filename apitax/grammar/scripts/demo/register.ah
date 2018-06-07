@@ -1,0 +1,18 @@
+name "register"
+
+set response = ct("custom --debug --post --url https://reqres.in/{inject} --data-post '{\"username\":\"test\",\"email\": \"test@apitax.com\",\"password\":\"test123\"}' --data-path '{\"inject\":\"api/register\"}'")
+
+set token = response.token
+
+export token
+
+
+
+
+
+
+
+
+
+
+

@@ -11,3 +11,8 @@ export ct("script apitax/grammar/scripts/shawn.ah")
 set iam.hope.this.works = ct("custom --get --url https://jsonplaceholder.typicode.com/users")
 
 export iam
+
+set test = "hello"
+
+
+

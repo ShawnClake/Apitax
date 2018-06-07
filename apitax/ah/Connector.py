@@ -23,6 +23,10 @@ class Connector:
         self.token = token
         self.commandHandler = None
 
+        self.command = self.command.replace('\\"', '"');
+        self.command = self.command.replace('\\\'', '\'');
+
+
         self.config = Config()
         self.http = HttpPlugFactory.make(self.config.get('driver') + 'Driver')
 
@@ -52,3 +56,4 @@ class Connector:
         self.commandHandler = Commandtax(self.header, self.command, self.config, debug=self.debug,
                                       sensitive=self.sensitive)
         return self.commandHandler
+        

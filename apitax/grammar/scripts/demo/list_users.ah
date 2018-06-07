@@ -1,0 +1,8 @@
+name "listUsers"
+
+set response = ct("custom --debug --get --url https://reqres.in/{inject} --data-post '{}' --data-query '{\"page\":\"2\"}' --data-path '{\"inject\":\"api/users\"}'")
+
+set users = response.data
+
+export users
+

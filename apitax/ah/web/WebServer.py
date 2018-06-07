@@ -8,6 +8,7 @@ from bottle import route, run, template, request, static_file, post, Bottle
 from apitax.ah.Connector import Connector
 from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 from apitax.logs.Log import Log
+from apitax.utilities.Files import readFile
 
 
 
@@ -99,8 +100,8 @@ def execute_system_driver_status():
     return json.dumps(driverDict)
     
 # Command endpoint is used to facilitate simpler requests
-@route('/apitax/system/catalog/scripts', method='GET')
-def execute_system_catalog():
+@route('/apitax/system/scripts/catalog', method='GET')
+def execute_system_scripts_catalog():
     http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
     return json.dumps(http.getScriptsCatalog())
     
@@ -109,6 +110,22 @@ def execute_system_catalog():
 def execute_system_catalog():
     http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
     return json.dumps(http.getCatalog())
+    
+# Command endpoint is used to facilitate simpler requests
+@route('/apitax/system/scripts', method='POST')
+def execute_system_scripts():
+    # http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
+    return json.dumps({"contents": readFile(request.json['file'])})
+    	
+    	
+# Command endpoint is used to facilitate simpler requests
+@route('/apitax/system/scripts/save', method='POST')
+def execute_system_scripts_create():
+    # http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
+    with open(request.json['file-name'], "w") as text_file:
+        print(request.json['file'], file=text_file)
+    # print(request.json['file'])
+    return json.dumps({'status':200})
 
 class bottleServer():
 

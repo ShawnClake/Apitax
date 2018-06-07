@@ -1,0 +1,7 @@
+name "listPosts"
+
+export ct("custom --debug --get --url https://jsonplaceholder.typicode.com/{inject} --data-path '{\"inject\":\"posts\"}'")
+
+log("Just listed some posts")
+
+

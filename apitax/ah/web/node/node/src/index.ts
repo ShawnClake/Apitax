@@ -21,6 +21,13 @@ import TreeView from "vue-json-tree-view"
 Vue.use(TreeView)
 import '../src/css/vue-json-tree-view.css'
 
+import VueCodemirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/display/autorefresh.js'
+Vue.use(VueCodemirror, { 
+  options: { theme: 'Paraiso-Light', autoRefresh: true},
+} )
+
 Vue.config.devtools = true;
 //Vue.config.debug = true;
 
@@ -40,3 +47,4 @@ const app = new Vue({
   router,
   render: h => h(App)
 }).$mount('#app');
+

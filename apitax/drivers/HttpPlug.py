@@ -27,8 +27,8 @@ class HttpPlug:
         return {'Authorization': 'Token token="' + token + '"'}
 
     def getContentTypeJSON(self):
-        if(not self.isAuthenticated()):
-            return {}
+        #if(not self.isAuthenticated()):
+         #   return {}
         return {'Content-type': 'application/json'}
 
     def getToken(self, response):

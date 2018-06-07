@@ -1,0 +1,10 @@
+name "login"
+  
+import ct("custom --debug --post --url https://reqres.in/{inject} --data-post '{ \"email\": \"test@apitax.com\", \"password\": \"test123\" }' --data-path '{\"inject\":\"api/login\"}'")
+
+set token = {{r:1.token}}
+
+export token
+  
+
+

@@ -53,8 +53,8 @@ class Custom(Request):
         if ('--data-post' in command):
             postData = command[command.index('--data-post') + 1]
 
-        if ('--data-param' in command):
-            paramData = command[command.index('--data-param') + 1]
+        if ('--data-query' in command):
+            paramData = command[command.index('--data-query') + 1]
 
         if ('--data-path' in command):
             pathData = command[command.index('--data-path') + 1]

@@ -72,6 +72,11 @@
                                 <small id="sensitiveHelp" class="form-text text-muted">Prevents post data sent with the
                                     request from being output/logged.
                                 </small>
+                                <br>
+                                <input type="checkbox" id="escape" value="Escape" v-on:change="commandChange" v-model="commandtaxParams">
+                                <label for="escape">Escape</label>
+                                <small id="escapeHelp" class="form-text text-muted">Escapes double quotes. Useful when generating commands for Scriptax
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -277,7 +282,12 @@
 				    data.path[label] = {"label": label, "value": value, "id": "id_path_"+label}
 				}
         
-        return returner.join(" ");
+        returner = returner.join(" ");
+        
+        if (commandtaxParams.includes('Escape'))
+            returner = returner.split('"').join('\\"');
+        
+        return returner
     }
 
     function capitalizeFirstLetter(string) {
