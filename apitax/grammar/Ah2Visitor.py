@@ -204,7 +204,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             return float(ctx.NUMBER().getText())
 
         if (ctx.string()):
-            return self.visit(ctx.string())[1:-1]
+            return self.visit(ctx.string())
 
         if (ctx.BOOLEAN()):
             return str(ctx.BOOLEAN().getText()).lower() == "true"
@@ -294,7 +294,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#complex_variables.
     def visitComplex_variables(self, ctx:Ah210Parser.Complex_variablesContext):
-        value = self.visit(ctx.string())[1:-1]
+        value = self.visit(ctx.string())
         if(ctx.LIST()):
             return list(str(value).split(","))
         if (ctx.DICT()):
@@ -302,14 +302,19 @@ class Ah2Visitor(Ah210VisitorOriginal):
             
     # Visit a parse tree produced by Ah210Parser#string.
     def visitString(self, ctx:Ah210Parser.StringContext):
-        line = ctx.STRING().getText()
+        line = ctx.STRING().getText()[1:-1]
+        # print(line)
+        line = line.replace('\\"', '"');
+        line = line.replace('\\\'', '\'');
+        # print(line)
+        # line = line.replace("\\\\\"", "\"");
         matches = re.findall(self.regexVar, line)
         for match in matches:
             label = match[2:-2].strip()
             replacer = self.getVariable(label, convert=False)
             line = line.replace(match, replacer)
             if(self.debug):
-                self.log.log('> Injecting Variable \'' + label + '\': ' + line)
+                self.log.log('> Injecting Variable into String \'' + label + '\': ' + line)
                 self.log.log('')
         return line
 

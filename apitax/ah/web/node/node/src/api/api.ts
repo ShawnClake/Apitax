@@ -63,9 +63,26 @@ export default class Api {
     }
     
     
-    catalog(context: any, callback: any) {
+    catalogEndpoints(context: any, callback: any) {
         var self = this;
         axios.get(CATALOG_URL)
+            .then(function (response) {
+                console.log(response);
+
+                console.log((response as any).request.responseText)
+
+                callback(context, response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    
+    }
+    
+    
+    catalogScripts(context: any, callback: any) {
+        var self = this;
+        axios.get(CATALOG_URL + '/scripts')
             .then(function (response) {
                 console.log(response);
 

@@ -1,6 +1,7 @@
 import base64
 import json
-
+from apitax.utilities.Files import getAllFiles
+from pathlib import Path
 
 # Base class for driver plugs
 # Defines many customizable properties for interfacing to a new API type
@@ -48,6 +49,14 @@ class HttpPlug:
         
     def getCatalog(self):
         return {"endpoints": {"tests": {"label": "Placeholder Test", "value": "https://jsonplaceholder.typicode.com"}}, "selected": "https://jsonplaceholder.typicode.com"}
+        	
+    def getScriptsCatalog(self):
+        files = getAllFiles("apitax/grammar/scripts/**/*.ah")
+        returner = {"scripts": []}
+        for file in files:
+            returner['scripts'].append({"label": file.split('/')[-1].split('.')[0].title(),"relative-path":file,"path": str(Path(file).resolve())})
+        # print(returner)
+        return returner
         
     def serialize(self, config):
         return {"authenticated": self.isAuthenticated(), "auth-tokens": self.isTokenable(), "auth-endpoint": self.getAuthEndpoint(config)}

@@ -92,7 +92,7 @@
                    			</div>
                    			<div class="form-check form-check-inline">
                    			<input class="form-check-input" type="checkbox" id="path" value="Path" v-model="dataMakers">
-                        <label class="form-check-label" for="path">Path Injection</label>
+                        <label class="form-check-label" for="path">Path Injection <span v-if="(totalPaths > 0)" class="badge badge-pill badge-danger">{{totalPaths}}</span></label>
                    			</div>
                    			</div>
                    			
@@ -393,8 +393,17 @@
                 this.generatedCommandtax = commandMaker(this.command, this.endpoint, this.commandtaxParams, this.data, this.requestType)
             }
         },
-        created() {
-						api.catalog(this, function(context, response) { console.log(response); context.endpointPicker.endpoints = {...context.endpointPicker.endpoints, ...response.data.endpoints}; context.endpointPicker.selected = response.data.selected; context.endpoint = response.data.selected;});
+        computed: {
+            totalPaths: function () {
+            		
+            		return Object.keys(this.data.path).length;
+            
+            }
+        
+        },
+        mounted() {
+						api.catalogEndpoints(this, function(context, response) { console.log(response); context.endpointPicker.endpoints = {...context.endpointPicker.endpoints, ...response.data.endpoints}; context.endpointPicker.selected = response.data.selected; context.endpoint = response.data.selected;});
+            //api.catalogScripts(this, function(context, response) { console.log(response); });
         }
     }
 </script>

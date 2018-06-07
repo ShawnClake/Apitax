@@ -156,14 +156,14 @@ LINE_COMMENT : DIV DIV ~[\r\n]* -> channel(HIDDEN) ;
 
 //STRING: '"' (ESC|.)*? '"' ;
 
-STRING : QUOTE WORDS QUOTE | SQUOTE WORDS SQUOTE ;
+STRING : QUOTE (ESC|~["\r\n])*? QUOTE | SQUOTE (ESC|~['\r\n])*? SQUOTE ;
 
 
 
 /********
 FRAGMENTS
 ********/
-fragment ESC : '\\"' | '\\\\' ; // 2-char sequences \" and \\
+fragment ESC : '\\"' | '\\\'' | '\\\\' ; // 2-char sequences \" and \\
 
 fragment WORDS : (LETTER|DIGIT|ULINE|MINUS|DOT|QUOTE|SQUOTE|LPAREN|RPAREN|':'|'\\'|'/'|'?'|'.'|'!'|','|'#'|'$'|'&'|'@'|' '|'='|'>'|'<'|'('|')'|'['|']'|'{'|'}')+ ;
 

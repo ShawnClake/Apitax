@@ -7,9 +7,15 @@ import Dashboard from "./components/Dashboard.vue";
 import App from "./components/App.vue";
 import Home from "./components/Home.vue";
 import Commandtax from "./components/Commandtax.vue";
+import Scriptax from "./components/Scriptax.vue";
 
-import 'bootstrap';
+import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-vue/dist/bootstrap-vue.min.css';
+Vue.use(BootstrapVue);
+
+//import 'bootstrap';
+
 
 import TreeView from "vue-json-tree-view"
 Vue.use(TreeView)
@@ -26,6 +32,7 @@ export var router:any = new VueRouter({
     {path:'/login', component: Login},
     {path:'/dashboard', component: Dashboard},
     {path:'/commandtax', component: Commandtax},
+    {path:'/scriptax', component: Scriptax},
   ],
 });
 
