@@ -22,8 +22,6 @@
 
 <script>
 
-import Vue from "vue";
-//import axios, { AxiosResponse } from 'axios';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Api from '../api/api';
@@ -43,8 +41,8 @@ export default {
     methods: {
       submit() {
         var credentials = {
-          user: (this).credentials.username,
-          pass: (this).credentials.password,
+          user: this.credentials.username,
+          pass: this.credentials.password,
           debug: true,
           command: "custom --get --url http://sdibcportal.ims.tsisd.ca/com.broadsoft.xsi-actions/v2.0/user/3067190005@imstas.stb1.com/services?format=json"
         }
