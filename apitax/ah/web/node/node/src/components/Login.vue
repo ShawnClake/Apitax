@@ -20,7 +20,7 @@
 </div>
 </template>
 
-<script lang="ts">
+<script>
 
 import Vue from "vue";
 //import axios, { AxiosResponse } from 'axios';
@@ -43,8 +43,8 @@ export default {
     methods: {
       submit() {
         var credentials = {
-          user: (this as any).credentials.username,
-          pass: (this as any).credentials.password,
+          user: (this).credentials.username,
+          pass: (this).credentials.password,
           debug: true,
           command: "custom --get --url http://sdibcportal.ims.tsisd.ca/com.broadsoft.xsi-actions/v2.0/user/3067190005@imstas.stb1.com/services?format=json"
         }
