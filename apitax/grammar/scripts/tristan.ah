@@ -22,6 +22,7 @@ set noway = {{r:1.0.title}}
 
 ct("custom --debug --get --url https://jsonplaceholder.typicode.com/{testingthis} --data-path '{\"testingthis\" :   \"users\"}'")
 
+ct("custom --debug --get --url https://jsonplaceholder.typicode.com/posts/{inject} --data-path '{\"inject\":\"1\"}'")
 
 
 
