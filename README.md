@@ -9,7 +9,7 @@ Finally, as Apitax features an exponential amount of various interactions, not a
 ## Builds
 
 ### Jenkins
-Coming Soon
+Coming Soon.
 
 ### Packaging Instructions
 * Use either Powershell or Bash
