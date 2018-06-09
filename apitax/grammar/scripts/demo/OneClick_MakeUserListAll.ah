@@ -2,7 +2,7 @@ name "oneClick"
   
 set path = "apitax/grammar/scripts/demo"
   
-import ct("script {{path}}/register.ah")
+ct("script {{path}}/register.ah")
 
 import ct("script {{path}}/login.ah")
 
@@ -13,6 +13,7 @@ set users = users.vars.users
 set posts = ct("script {{path}}/list_posts.ah")
 
 set posts = posts.requests.1
+
 
 
 
