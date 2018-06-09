@@ -16,7 +16,7 @@ Finally, as Apitax features an exponential amount of various interactions, not a
 * Build artificats will likely be pushed to a downloads server in the near future
     * Only non-dependency versions will be offered. On average, these are about 7.5% of the size of the versions which includes dependencies
     * Major and minor releases will also feature a dependency build, however bug and security releases will not feature a dependency version
-    * It is best practice to always download the no-deps version and ensure you download the dependencies yourself.
+    * It is best practice to always download the no-deps version and ensure you download the dependencies yourself
 
 ### Packaging Instructions
 * Use either Powershell or Bash
