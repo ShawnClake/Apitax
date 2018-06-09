@@ -1,0 +1,9 @@
+include config.txt
+include build.sh
+include install_python.sh
+include install_node.sh
+include test.sh
+include LICENSE
+include readme.docx
+include README.md
+recursive-include apitax/ah/web/node *
