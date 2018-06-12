@@ -79,7 +79,7 @@ def serializedATN():
         buf.write("\u00bc\5\b\5\2\u00ba\u00bb\7\27\2\2\u00bb\u00bd\5\b\5")
         buf.write("\2\u00bc\u00ba\3\2\2\2\u00bc\u00bd\3\2\2\2\u00bd\u00be")
         buf.write("\3\2\2\2\u00be\u00bf\7#\2\2\u00bf-\3\2\2\2\u00c0\u00c2")
-        buf.write("\7$\2\2\u00c1\u00c3\5\34\17\2\u00c2\u00c1\3\2\2\2\u00c2")
+        buf.write("\7$\2\2\u00c1\u00c3\5\b\5\2\u00c2\u00c1\3\2\2\2\u00c2")
         buf.write("\u00c3\3\2\2\2\u00c3/\3\2\2\2\20\66@KVX`emx\177\u0088")
         buf.write("\u0094\u00bc\u00c2")
         return buf.getvalue()
@@ -1825,8 +1825,8 @@ class Ah210Parser ( Parser ):
         def RETURNS(self):
             return self.getToken(Ah210Parser.RETURNS, 0)
 
-        def labels(self):
-            return self.getTypedRuleContext(Ah210Parser.LabelsContext,0)
+        def expr(self):
+            return self.getTypedRuleContext(Ah210Parser.ExprContext,0)
 
 
         def getRuleIndex(self):
@@ -1862,7 +1862,7 @@ class Ah210Parser ( Parser ):
             la_ = self._interp.adaptivePredict(self._input,13,self._ctx)
             if la_ == 1:
                 self.state = 191
-                self.labels()
+                self.expr(0)
 
 
         except RecognitionException as re:

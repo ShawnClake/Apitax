@@ -5,8 +5,8 @@ from apitax.drivers.plugins.commandtax.apitaxtests import *
 # Openstack Command Driver for handling custom commands when the openstack driver is used
 class ApitaxTestsCommands(DriverCommands):
     
-  def handle(self, config, header, command, debug = False, sensitive = False):
-    super().handle(config, header, command, debug, sensitive)
+  def handle(self, config, header, parameters, command, debug = False, sensitive = False):
+    super().handle(config, header, parameters, command, debug, sensitive)
     #super(ApitaxTestsCommands, self).handle(config, header, command, debug, sensitive)
     if(self.command[0] == 'project'):
       self.request = Projects(self.header, self.debug, self.sensitive)

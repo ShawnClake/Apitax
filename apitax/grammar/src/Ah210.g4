@@ -66,7 +66,7 @@ string : STRING ;
 
 user_input : INPUT labels COMMA expr COMMA expr (COMMA expr)? RPAREN ; // input(some.destination.var, "The Name of this Input", "A description of the input", "an optional argument which details how to render the field; it falls back to textbox")
 
-return_statement : RETURNS labels? ;
+return_statement : RETURNS expr? ;
 
 
 

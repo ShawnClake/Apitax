@@ -14,5 +14,12 @@ export iam
 
 set test = "hello"
 
+//return '{"cool": "beans"}'
+
+log(params.0)
+
+log(params.1)
+
+return params.1
 
 

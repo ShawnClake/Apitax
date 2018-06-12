@@ -9,7 +9,7 @@ import re
 
 class Ah2Visitor(Ah210VisitorOriginal):
 
-    def __init__(self, config, header, debug=True, sensitive=False):
+    def __init__(self, config, header, parameters=[], debug=True, sensitive=False):
         self.data = DataStore()
         self.log = Log('logs/log.log')
         self.debug = debug
@@ -18,6 +18,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.config = config
         self.parser = None
         self.options = {}
+        self.data.storeVar("params", parameters)
         self.flow = {'return': False, 'exit': False, 'crash': False}
         
         # Replace the below functionality if possible
@@ -32,10 +33,10 @@ class Ah2Visitor(Ah210VisitorOriginal):
             else:
                 self.data.storeRequest(commandHandler.getRequest().getResponseBody(), export=export)
 
-    def executeCommand(self, command):
+    def executeCommand(self, command, parameters=[]):
         from apitax.ah.commandtax.Commandtax import Commandtax
      
-        return Commandtax(self.header, command, self.config, debug=self.debug, sensitive=self.sensitive)
+        return Commandtax(self.header, command, self.config, debug=self.debug, sensitive=self.sensitive, parameters=parameters)
 
     def getVariable(self, label, isRequest=False, convert=True):
         if(convert):
@@ -122,11 +123,18 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#set_var.
     def visitSet_var(self, ctx: Ah210Parser.Set_varContext):
-
+        from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
         label = self.visit(ctx.labels())
 
         if (ctx.execute()):
-            self.data.storeVar(label, self.visit(ctx.execute())['commandHandler'].getRequest().getResponseBody())
+            commandHandler = self.visit(ctx.execute())['commandHandler']
+            returned = None
+            if (isinstance(commandHandler.getRequest(), ScriptCommand)):
+                returned = commandHandler.getRequest().parser.data.getReturn()
+            if(returned is not None):
+                self.data.storeVar(label, returned)
+            else:
+                self.data.storeVar(label, commandHandler.getRequest().getResponseBody())
 
         if(ctx.expr()):
             self.data.storeVar(label, self.visit(ctx.expr()))
@@ -185,11 +193,19 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#execute.
     def visitExecute(self, ctx):
-        command = self.visit(ctx.expr())
+        command = self.visit(ctx.expr(0))
+
+        parameters = []
+        i = 0
+        while(ctx.COMMA(i)):
+            parameters.append(self.visit(ctx.expr(i+1)))
+            i += 1
+            
         if (self.debug):
-            self.log.log('> Executing Commandtax: \'' + command + '\'')
+            self.log.log('> Executing Commandtax: \'' + command + '\' ' + 'with parameters: ' + str(parameters))
             self.log.log('')
-        return dict({"command": command, "commandHandler": self.executeCommand(command)})
+            
+        return dict({"command": command, "commandHandler": self.executeCommand(command, parameters=parameters)})
 
     # Visit a parse tree produced by Ah210Parser#inject.
     def visitInject(self, ctx: Ah210Parser.InjectContext):
@@ -333,7 +349,16 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#return_statement.
     def visitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
-        if(ctx.labels()):
-            exportation = self.visit(ctx.labels())
-            self.data.exportVar(exportation)
+        exportation = ""
+        if(ctx.expr()):
+            exportation = self.visit(ctx.expr())
+            self.data.setReturn(exportation)
+        else:
+            self.data.setReturn({})
         self.flow['return'] = True
+        if(self.debug):
+            if(exportation != ""):
+                self.log.log('> Returning with value: ' + str(exportation))
+            else:
+                self.log.log('> Returning ')
+            self.log.log('')

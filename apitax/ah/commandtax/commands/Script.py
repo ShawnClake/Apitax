@@ -12,13 +12,14 @@ from apitax.ah.scriptax.Scriptax import Scriptax
 
 # Script is used to automate the execution of many commands
 class Script(Request):
-    def __init__(self, config, header, debug, sensitive):
+    def __init__(self, config, header, parameters, debug, sensitive):
         Request.__init__(self, '', header.get(), '', debug=debug, sensitive=sensitive, customResponse=True)
         self.config = config
         self.header = header
         self.debug = debug
         self.sensitive = sensitive
-        self.scriptax = Scriptax(self.config, self.header, self.debug, self.sensitive)
+        self.parameters = parameters
+        self.scriptax = Scriptax(self.config, self.header, self.parameters, self.debug, self.sensitive)
         self.parser = None
         
     def handle(self, command):

@@ -9,9 +9,13 @@ log(tristan + "hi")
 
 ct("domain list all")
 
-export ct("script apitax/grammar/scripts/jen.ah")
+set quinn = ct("script apitax/grammar/scripts/jen.ah", "bottle", tristan)
 
-log(quinn.jordan.shawn)
+log(quinn)
+
+//return quinn.iam.hope.this.works
+
+return
 
 import ct("custom --get --url https://jsonplaceholder.typicode.com/posts")
 
