@@ -10,7 +10,7 @@ from apitax.logs.Log import Log
 class ScriptData:
     def __init__(self):
         self.dataStore = dict(
-            {"urls": {}, "vars": {"params": []}, "requests": {}, "exports": {"urls": {}, "vars": {}, "requests": {}, "return": None}}
+            {"flow": {'return': False, 'exit': False, 'error': False}, "urls": {}, "vars": {"params": {}}, "requests": {}, "exports": {"urls": {}, "vars": {}, "requests": {}, "return": None}}
         )
         self.name = ""
         self.index = 1
@@ -44,6 +44,14 @@ class ScriptData:
         
     def getReturn(self):
         key = "exports.return"
+        return self.getDotNotation(key)
+        
+    def setFlow(self, name, value):
+        key = "flow." + name 
+        self.storeDotNotation(value, key)
+        
+    def getFlow(self, name):
+        key = "flow." + name
         return self.getDotNotation(key)
 
     # Used for current script interactions

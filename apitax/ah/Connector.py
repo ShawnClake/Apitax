@@ -14,7 +14,7 @@ from apitax.config.Config import Config
 # and likely nothing else. Connector handles the rest.
 class Connector:
 
-    def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True):
+    def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True, parameters=[]):
         self.debug = debug
         self.sensitive = sensitive
         self.command = command
@@ -22,6 +22,7 @@ class Connector:
         self.password = password
         self.token = token
         self.commandHandler = None
+        self.parameters = parameters
 
         self.command = self.command.replace('\\"', '"');
         self.command = self.command.replace('\\\'', '\'');
@@ -54,6 +55,6 @@ class Connector:
         if (command != ''):
             self.command = command
         self.commandHandler = Commandtax(self.header, self.command, self.config, debug=self.debug,
-                                      sensitive=self.sensitive)
+                                      sensitive=self.sensitive, parameters=self.parameters)
         return self.commandHandler
         

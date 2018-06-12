@@ -18,8 +18,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.config = config
         self.parser = None
         self.options = {}
-        self.data.storeVar("params", parameters)
-        self.flow = {'return': False, 'exit': False, 'crash': False}
+        self.data.storeVar("params.passed", parameters)
         
         # Replace the below functionality if possible
         self.regexVar = '{{[ ]{0,}[A-z0-9_.\-]{1,}[ ]{0,}}}'
@@ -51,6 +50,29 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.log.log('')
             return None
 
+    def useOptions(self):
+        if(self.options['params']):
+
+            if(len(self.options['params']) != len(self.data.getVar('params.passed'))):
+                errorMessage = 'Insufficient parameters. Expected: ' + str(self.options['params']) + ' but received: ' + str(self.data.getVar('params.passed'))
+                self.log.error(errorMessage)
+                self.data.setFlow('error', {'message': errorMessage})
+            else:
+        	
+                i = 0
+                for param in self.options['params']:
+                    self.data.storeVar('params.' + param, self.data.getVar('params.passed.'+str(i)))
+                    i += 1
+                
+    def isError(self):
+        return self.data.getFlow('error')
+        
+    def isExit(self):
+        return self.data.getFlow('exit')
+        
+    def isReturn(self):
+        return self.data.getFlow('return')
+
     # Visit a parse tree produced by Ah210Parser#prog.
     def visitProg(self, ctx):
         self.parser = ctx.parser
@@ -60,7 +82,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#statements.
     def visitStatements(self, ctx):
-        if(self.flow['return']):
+        if(self.data.getFlow('return') or self.data.getFlow('error')):
             return
         temp = self.visitChildren(ctx)
         # print('result: '+str(temp))
@@ -68,7 +90,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#statement.
     def visitStatement(self, ctx):
-        if(self.flow['return']):
+        if(self.data.getFlow('return') or self.data.getFlow('error')):
             return
     	
         line = ctx.getText().strip()
@@ -193,6 +215,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#execute.
     def visitExecute(self, ctx):
+        from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
         command = self.visit(ctx.expr(0))
 
         parameters = []
@@ -205,7 +228,13 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.log.log('> Executing Commandtax: \'' + command + '\' ' + 'with parameters: ' + str(parameters))
             self.log.log('')
             
-        return dict({"command": command, "commandHandler": self.executeCommand(command, parameters=parameters)})
+        commandHandler = self.executeCommand(command, parameters=parameters)
+        
+        if (isinstance(commandHandler.getRequest(), ScriptCommand)): 
+            if(commandHandler.getRequest().parser.isError()):
+                 self.data.setFlow('error', commandHandler.getRequest().parser.isError())
+            
+        return dict({"command": command, "commandHandler": commandHandler})
 
     # Visit a parse tree produced by Ah210Parser#inject.
     def visitInject(self, ctx: Ah210Parser.InjectContext):
@@ -342,10 +371,11 @@ class Ah2Visitor(Ah210VisitorOriginal):
         return line
 
 
-    # Visit a parse tree produced by Ah210Parser#user_input.
-    def visitUser_input(self, ctx:Ah210Parser.User_inputContext):
-        return self.visitChildren(ctx)
-
+    # Visit a parse tree produced by Ah210Parser#options_statement.
+    def visitOptions_statement(self, ctx:Ah210Parser.Options_statementContext):
+        self.options = self.visit(ctx.expr())
+        self.useOptions()
+        
 
     # Visit a parse tree produced by Ah210Parser#return_statement.
     def visitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
@@ -355,7 +385,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.data.setReturn(exportation)
         else:
             self.data.setReturn({})
-        self.flow['return'] = True
+        self.data.setFlow('return', True)
         if(self.debug):
             if(exportation != ""):
                 self.log.log('> Returning with value: ' + str(exportation))

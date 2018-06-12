@@ -70,12 +70,17 @@ def serve_dummy(filename):
 def execute_api_command():
     connector = None
 
+    parameters = []
+    
+    if(request.json['parameters']):
+        parameters = request.json['parameters']
+
     if ('token' in request.json):
         connector = Connector(token=request.json['token'], command=request.json['command'],
-                              debug=request.json['debug'], sensitive=request.json['sensitive'])
+                              debug=request.json['debug'], sensitive=request.json['sensitive'], parameters=parameters)
     else:
         connector = Connector(username=request.json['user'], password=request.json['pass'],
-                              command=request.json['command'], debug=request.json['debug'], sensitive=True)
+                              command=request.json['command'], debug=request.json['debug'], sensitive=True, parameters=parameters)
 
     commandHandler = connector.execute()
 

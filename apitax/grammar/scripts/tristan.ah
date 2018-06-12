@@ -1,4 +1,10 @@
 
+options dict('{"params":["xp", "sword", "thing"]}')
+
+log("xp: " + cast(params.xp,str))
+log("sword: " + params.sword)
+log("thing: " + cast(params.thing, str))
+
 set jen = 6.9 / 69
 
 set paris = {{jen}} + 5

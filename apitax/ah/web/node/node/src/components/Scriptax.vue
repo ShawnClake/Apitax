@@ -106,6 +106,38 @@
  						</div></div>
 		      </div>
 		    </b-modal>
+		    
+		    
+		    <b-modal ref="scriptParamsModal" hide-footer centered title="Parameters are required to run this script">
+		      <div class="d-block">
+		        <h4 style="text-transform:capitalize;">{{selectedScript.name}}</h4>
+		        <div class="row">
+		        <div class="col">
+		        
+		        
+		        <div v-for="scriptparam in data.params" class="row" style="margin-top:15px;">
+                                      
+              <div class="col-2">
+                  <label style="text-transform:capitalize;" class="lead" :for="scriptparam.id"><strong>{{scriptparam.label}}:</strong></label>
+                  </div>
+                  <div class="col-10">
+                  <input type="text" v-model="scriptparam.value" placeholder="Type a value here"
+                         class="form-control"
+                         :id="scriptparam.id">
+
+              </div>
+           </div>
+		        
+		        
+		        
+		        </div></div>
+		        <hr>
+		        		        <div class="row">
+		        <div class="col">
+ 						<button v-on:click="executeScript(selectedScript.label,$event.target)" class="btn btn-success float-right">Execute</button>
+ 						</div></div>
+		      </div>
+		    </b-modal>
 		
 		</div>
 </template>
@@ -128,6 +160,7 @@
                 authenticated: Api.authenticated,
                 response: '',
                 selectedScript: {label:'', code:'', name:''},
+                data: {params: {}},
                 codeMirror : {},
                 timer: '',
                 alert: {text: '', style: 'success', dismiss: {secs:10, countdown:0}},
@@ -175,20 +208,97 @@
         		{
         				this.codeMirror.refresh()
         		},
-        		doScript: function(scriptName, event)
+        		
+        		executeScript : function(scriptName, event)
         		{
-        				let command = 'script ' + scriptName;
-        				api.request(this, function(context, response) { console.log(response); context.response = response.data }, {
+        		
+        				this.$refs.scriptParamsModal.hide()
+        		
+        			  var params = []
+        		
+        		    if(!(Object.keys(this.data.params).length === 0 && this.data.params.constructor === Object))
+				        {
+				        		Object.keys(this.data.params).forEach(key => {
+											params.push(this.data.params[key]['value']);
+										});
+				        }
+        		
+        		    let command = 'script ' + scriptName;
+        				api.request(this, function(context, response) { 
+		        				console.log(response); 
+		        				context.response = response.data 
+		        				if(response.data.status == 500)
+		        				{
+		        						context.showAlert(response.data.body.flow.error.message, 'danger');
+		        				} else {
+		        						context.showAlert("Request was executed successfully", 'success');
+		        				}
+		        				
+        				}, {
                     'token': '',
                     'debug': this.globals.debug,
                     'sensitive': this.globals.sensitive,
-                    'command': command
+                    'command': command,
+                    'parameters': params,
                 }, null);
+        		
+        		},
+        		
+        		doScript: function(scriptName, event)
+        		{
+        		
+        		
+        			this.data.params = {};
+        		
+        		   api.getScriptContents(this, function(context, response) { 
+
+		        				context.selectedScript.label = scriptName;
+		        				context.selectedScript.name = scriptName.split("/").slice(-1)[0].split('.')[0];
+		        				context.selectedScript.code = response.data.contents
+		        					
+		        				var scriptContents = response.data.contents.replace(/\s/g, "").replace(/\n/g, "").replace(/\r/g, "");
+		        				
+		        				
+		        				console.log(scriptContents);
+		        				
+		        				var reg = /optionsdict\('{[A-z0-9":\[\]{},]{0,}}'\)/g;
+										var result;
+										var detected = false;
+										while((result = reg.exec(scriptContents)) !== null) {
+												detected = true;
+										    console.log(result);
+										    var params = JSON.parse(result[0].slice(13, -2))['params'];
+										    console.log(params)
+										    if(params)
+										    {
+										    		var newParams = {};
+												    for (var i = 0; i < params.length; i++) {
+												    		var label = params[i];
+																newParams[label] = {"label": label, "value": "", "id": "id_param_"+label};
+																//console.log(JSON.stringify(context.data))
+														}
+														context.data.params = newParams;
+										    
+										     		context.$refs.scriptParamsModal.show()
+										    } 
+ 
+										}
+										
+										if(!detected)
+										{
+										    context.executeScript(scriptName, event);
+										}
+
+        				},
+        				{'file': scriptName});
+        													    
+
+
         		},
         		
         		viewScript: function(scriptName, event)
         		{
-        				let command = 'script ' + scriptName;
+        				//let command = 'script ' + scriptName;
         				api.getScriptContents(this, function(context, response) { 
 		        				console.log(response); 
 		        				//context.response = response.data 

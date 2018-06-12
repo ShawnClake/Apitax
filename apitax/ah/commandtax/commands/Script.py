@@ -27,6 +27,9 @@ class Script(Request):
         #print("thing: " + self.parser)
         self.request = {}
         self.request['text'] = self.parser.data.dataStore
-        self.request['status_code'] = 200
+        if(self.parser.isError()):
+            self.request['status_code'] = 500
+        else:
+            self.request['status_code'] = 200
         # Todo: Generate a suitable response for the command and save it into the inheirted request obj
         # Possibly just a status code & the dataStore object saved in the visitor

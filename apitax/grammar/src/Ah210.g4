@@ -18,6 +18,7 @@ statement :
       | scoping
       | log
       | return_statement
+      | options_statement
       | NEWLINE ;
 
 expr :
@@ -64,7 +65,7 @@ complex_variables : (LIST | DICT) string RPAREN ;
 
 string : STRING ;
 
-user_input : INPUT labels COMMA expr COMMA expr (COMMA expr)? RPAREN ; // input(some.destination.var, "The Name of this Input", "A description of the input", "an optional argument which details how to render the field; it falls back to textbox")
+options_statement : OPTIONS expr ;
 
 return_statement : RETURNS expr? ;
 
@@ -120,6 +121,7 @@ RPAREN : ')';
 
 
 /** KEYWORDS **/
+OPTIONS : O P T I O N S ;
 RETURNS : R E T U R N ;
 FALSE : F A L S E ;
 TRUE : T R U E ;
@@ -140,7 +142,6 @@ CAST : C A S T LPAREN ;
 DICT : D I C T LPAREN ;
 LIST : L I S T LPAREN ;
 
-INPUT : I N P U T LPAREN ;
 
 
 /** KEYCHANGERS **/
