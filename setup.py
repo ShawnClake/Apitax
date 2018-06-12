@@ -15,6 +15,7 @@ setup(
   url = 'https://github.com/ShawnClake/Apitax', # use the URL to the github repo
   #download_url = '', # I'll explain this in a second
   keywords = ['restful', 'api', 'commandtax', 'scriptax'], # arbitrary keywords
+  include_package_data=True,
   classifiers = (
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
