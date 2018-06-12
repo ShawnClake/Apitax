@@ -197,3 +197,21 @@ class Ah210Listener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Ah210Parser#user_input.
+    def enterUser_input(self, ctx:Ah210Parser.User_inputContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#user_input.
+    def exitUser_input(self, ctx:Ah210Parser.User_inputContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#return_statement.
+    def enterReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#return_statement.
+    def exitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
+        pass
+
+

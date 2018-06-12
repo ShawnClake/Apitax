@@ -114,5 +114,15 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#user_input.
+    def visitUser_input(self, ctx:Ah210Parser.User_inputContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#return_statement.
+    def visitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
+        return self.visitChildren(ctx)
+
+
 
 del Ah210Parser

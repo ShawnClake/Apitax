@@ -17,6 +17,7 @@ statement :
       | set_var
       | scoping
       | log
+      | return_statement
       | NEWLINE ;
 
 expr :
@@ -39,7 +40,7 @@ exports : EXPORT (labels | execute);
 
 imports : IMPORT execute ;
 
-execute : COMMANDTAX expr RPAREN ;
+execute : COMMANDTAX expr (COMMA expr)* RPAREN ;
 
 inject : MUSTACHEOPEN REQUEST? labels MUSTACHECLOSE ;
 
@@ -62,6 +63,10 @@ cast_list : CAST labels COMMA 'list' RPAREN ;
 complex_variables : (LIST | DICT) string RPAREN ;
 
 string : STRING ;
+
+user_input : INPUT labels COMMA expr COMMA expr (COMMA expr)? RPAREN ; // input(some.destination.var, "The Name of this Input", "A description of the input", "an optional argument which details how to render the field; it falls back to textbox")
+
+return_statement : RETURNS labels? ;
 
 
 
@@ -115,6 +120,7 @@ RPAREN : ')';
 
 
 /** KEYWORDS **/
+RETURNS : R E T U R N ;
 FALSE : F A L S E ;
 TRUE : T R U E ;
 NAME : N A M E ;
@@ -133,6 +139,8 @@ CAST : C A S T LPAREN ;
 
 DICT : D I C T LPAREN ;
 LIST : L I S T LPAREN ;
+
+INPUT : I N P U T LPAREN ;
 
 
 /** KEYCHANGERS **/

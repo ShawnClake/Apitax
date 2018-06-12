@@ -17,6 +17,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.header = header
         self.config = config
         self.parser = None
+        self.options = {}
+        self.flow = {'return': False, 'exit': False, 'crash': False}
         
         # Replace the below functionality if possible
         self.regexVar = '{{[ ]{0,}[A-z0-9_.\-]{1,}[ ]{0,}}}'
@@ -57,12 +59,17 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#statements.
     def visitStatements(self, ctx):
+        if(self.flow['return']):
+            return
         temp = self.visitChildren(ctx)
         # print('result: '+str(temp))
         return temp
 
     # Visit a parse tree produced by Ah210Parser#statement.
     def visitStatement(self, ctx):
+        if(self.flow['return']):
+            return
+    	
         line = ctx.getText().strip()
         if(line != ""):
             self.log.log('> Now processing: ' + line)
@@ -318,3 +325,15 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 self.log.log('')
         return line
 
+
+    # Visit a parse tree produced by Ah210Parser#user_input.
+    def visitUser_input(self, ctx:Ah210Parser.User_inputContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#return_statement.
+    def visitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
+        if(ctx.labels()):
+            exportation = self.visit(ctx.labels())
+            self.data.exportVar(exportation)
+        self.flow['return'] = True
