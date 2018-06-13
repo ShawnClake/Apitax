@@ -102,7 +102,9 @@
 		        <hr>
 		        		        <div class="row">
 		        <div class="col">
- 						<button v-on:click="saveCode(selectedScript.label,$event.target)" class="btn btn-success float-right">Save</button>
+		        <router-link class="float-left align-middle" to="/scriptax/edit">Advanced Edit</router-link>
+		        <button v-on:click="saveCode(selectedScript.label,false,$event.target)" class="btn btn-success float-right">Save</button>
+		        <button v-on:click="saveCode(selectedScript.label,true,$event.target)" style="margin-right:15px;" class="btn btn-success float-right">Save and Run</button>
  						</div></div>
 		      </div>
 		    </b-modal>
@@ -193,13 +195,17 @@
 				            this.globals.debug = false;
         		
         		},
-        		saveCode: function(scriptName, event)
+        		saveCode: function(scriptName, execute, event)
         		{
         				console.log('SAVING: ' + scriptName);
         				api.saveScript(this, function(context, response) { 
 		        				console.log(response); 
 		        				context.$refs.scriptCodeModal.hide();
 		        				context.showAlert('The script was saved.', 'success');
+		        				if(execute)
+		        				{
+		        						context.doScript(scriptName);
+		        				}
 
         				},
         				{'file-name': scriptName, 'file':this.selectedScript.code});
@@ -247,7 +253,8 @@
         		doScript: function(scriptName, event)
         		{
         		
-        		
+        			this.$store.commit('useScript', {script: scriptName});
+        			
         			this.data.params = {};
         		
         		   api.getScriptContents(this, function(context, response) { 
@@ -298,6 +305,7 @@
         		
         		viewScript: function(scriptName, event)
         		{
+        				this.$store.commit('useScript', {script: scriptName});
         				//let command = 'script ' + scriptName;
         				api.getScriptContents(this, function(context, response) { 
 		        				console.log(response); 

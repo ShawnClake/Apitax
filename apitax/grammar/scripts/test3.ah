@@ -93,3 +93,7 @@ set amanda = {{test2apitaxtest.test4apitaxtest.nooby}} + " or maybe jk"
 
 log(amanda)
 
+log("this executed properly, i think")
+
+
+
