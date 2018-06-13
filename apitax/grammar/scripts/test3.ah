@@ -159,19 +159,57 @@ smack = "what";
 log(smack);
 
 
-if(5+5 == 13 - 4) 
-{
 
-	log('we are in this block');
-	
-	if(true){
-	
-			log('this is a nested block');
-	}
-}
 
 mynum = mynum + 2;
 
 log(5 + 3 + 2 + mynum);
+
+mynum = 1;
+
+
+if(5+5 == 13 - 3) 
+{
+
+	log('we are in this block');
+	while(mynum < -1)
+{
+log('my num is now: ' + cast(mynum, str));
+mynum = mynum + 1;
+}
+	if(false){
+	
+			log('this is a nested block');
+	} else if (true) {
+		log('this is the first else if');
+		if(true) {
+		log('this is the third if');
+		} else {
+		log('this is the third else');
+		}
+	} else {
+		log('this is the first else');
+	}
+} else {
+
+log('this is the second else');
+
+}
+
+
+somelist = '["first", "second", "third"]';
+
+for index in somelist
+{
+log('The list item is: ' + index);
+}
+
+
+anothernum = 5
+
+for index in anothernum
+{
+log('The list item is: ' + cast(index, str));
+}
 
 

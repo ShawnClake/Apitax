@@ -86,6 +86,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitStatements(self, ctx):
         if(self.data.getFlow('return') or self.data.getFlow('error')):
             return
+            
+       	self.log.log("")
         temp = self.visitChildren(ctx)
         # print('result: '+str(temp))
         return temp
@@ -219,22 +221,52 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#if_statement.
     def visitIf_statement(self, ctx:Ah210Parser.If_statementContext):
-        condition = self.visit(ctx.condition(0))
+    	
+        i = 0
         
-        if(condition):
-            return self.visit(ctx.block(0))
+        while(True):
+            if(ctx.condition(i) is None):
+                if(ctx.ELSE()):
+                    return self.visit(ctx.block(i))
+                else:
+                    return None
+            condition = self.visit(ctx.condition(i))
+            if(condition):
+                return self.visit(ctx.block(i))
+            else:
+                i += 1
 
 
     # Visit a parse tree produced by Ah210Parser#while_statement.
     def visitWhile_statement(self, ctx:Ah210Parser.While_statementContext):
-        self.log.log('WHILE')
-        return self.visitChildren(ctx)
+        while(self.visit(ctx.condition())):
+            self.visit(ctx.block())
 
 
     # Visit a parse tree produced by Ah210Parser#for_statement.
     def visitFor_statement(self, ctx:Ah210Parser.For_statementContext):
-        self.log.log('FOR')
-        return self.visitChildren(ctx)
+        clause = self.visit(ctx.expr())
+        label = self.visit(ctx.labels())
+        if(isinstance(clause, list)):
+            self.log.log('> Looping through list with var ' + label)
+            self.log.log('')
+            for item in clause:
+                self.log.log('> Assigning ' + label + ' = ' + str(item))
+                self.data.storeVar(label, item)
+                self.visit(ctx.block())
+        
+        elif(isinstance(clause, float)):
+            self.log.log('> Looping through range with var ' + label)
+            self.log.log('')
+            for i in range(0, int(clause)):
+                self.log.log('> Assigning ' + label + ' = ' + str(i))
+                self.data.storeVar(label, i)
+                self.visit(ctx.block())
+                
+        else:
+            self.log.error('Invalid Loop Type')
+            self.log.log('')
+
 
 
     # Visit a parse tree produced by Ah210Parser#condition.
@@ -242,14 +274,13 @@ class Ah2Visitor(Ah210VisitorOriginal):
         condition = self.visit(ctx.expr())
     	
         if (self.debug):
-            self.log.log('> Evaluated Flow Condition as: ' + str(condition))
+            self.log.log('>> Evaluated Flow Condition as: ' + str(condition))
             self.log.log('')
     	
         return condition
 
     # Visit a parse tree produced by Ah210Parser#block.
     def visitBlock(self, ctx:Ah210Parser.BlockContext):
-        self.log.log('BLOCK')
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by Ah210Parser#scoping.
