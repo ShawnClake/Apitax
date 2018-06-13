@@ -1,6 +1,6 @@
 
 options dict('{"params": ["name", "game"]}')
-
+2+2
 name "quinn"
 
 set qwer = "im in jens script"
@@ -26,7 +26,11 @@ log(params.name)
 
 log(params.game)
 
+log(2+2)
+
 return params.passed.1
+
+
 
 
 

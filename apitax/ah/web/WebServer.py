@@ -9,7 +9,10 @@ from apitax.ah.Connector import Connector
 from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 from apitax.logs.Log import Log
 from apitax.utilities.Files import readFile
-
+from apitax.utilities.Files import saveFile
+from apitax.utilities.Files import deleteFile
+from apitax.utilities.Files import renameFile
+from apitax.utilities.Files import getPath
 
 
 # from command import Command
@@ -120,16 +123,26 @@ def execute_system_catalog():
 @route('/apitax/system/scripts', method='POST')
 def execute_system_scripts():
     # http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
-    return json.dumps({"contents": readFile(request.json['file'])})
+    return json.dumps({'status':200, "contents": readFile(request.json['file-name'])})
     	
     	
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts/save', method='POST')
-def execute_system_scripts_create():
-    # http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
-    with open(request.json['file-name'], "w") as text_file:
-        print(request.json['file'], file=text_file)
-    # print(request.json['file'])
+def execute_system_scripts_save():
+    saveFile(request.json['file-name'], request.json['file'])
+    return json.dumps({'status':200, 'file-name': getPath(request.json['file-name'])})
+    	
+# Command endpoint is used to facilitate simpler requests
+@route('/apitax/system/scripts/rename', method='POST')
+def execute_system_scripts_rename():
+    if(not renameFile(request.json['file-name-original'], request.json['file-name-new'])):
+        return json.dumps({'status':500,'message':'Cannot rename to an existing file.'})
+    return json.dumps({'status':200, 'file-name': getPath(request.json['file-name-new'])})
+    	
+# Command endpoint is used to facilitate simpler requests
+@route('/apitax/system/scripts/delete', method='POST')
+def execute_system_scripts_delete():
+    deleteFile(request.json['file-name'])
     return json.dumps({'status':200})
 
 class bottleServer():

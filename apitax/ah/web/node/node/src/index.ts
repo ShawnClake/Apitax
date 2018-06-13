@@ -28,6 +28,10 @@ fontawesome.library.add(solid)
 fontawesome.library.add(regular)
 fontawesome.library.add(brands)
 
+// Vue Confirmation
+import VuejsDialog from "vuejs-dialog"
+Vue.use(VuejsDialog)
+
 // JSON Tree View
 import TreeView from "vue-json-tree-view"
 Vue.use(TreeView)

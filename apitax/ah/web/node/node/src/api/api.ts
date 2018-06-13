@@ -128,6 +128,39 @@ export default class Api {
             });
     
     }
+    
+    
+    renameScript(context: any, callback: any, data: any) {
+        var self = this;
+        axios.post(SCRIPTS_URL + '/rename', data)
+            .then(function (response) {
+                console.log(response);
+
+                console.log((response as any).request.responseText)
+
+                callback(context, response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    
+    }
+    
+    deleteScript(context: any, callback: any, data: any) {
+        var self = this;
+        axios.post(SCRIPTS_URL + '/delete', data)
+            .then(function (response) {
+                console.log(response);
+
+                console.log((response as any).request.responseText)
+
+                callback(context, response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    
+    }
 
 
     systemStatus() {

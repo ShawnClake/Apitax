@@ -43,3 +43,11 @@ header {
 section {
   //padding: 150px 0;
 }
+
+.CodeMirror {
+  height: auto;
+}
+.CodeMirror-scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+}

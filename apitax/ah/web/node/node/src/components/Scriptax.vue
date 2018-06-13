@@ -297,7 +297,7 @@
 										}
 
         				},
-        				{'file': scriptName});
+        				{'file-name': scriptName});
         													    
 
 
@@ -315,7 +315,7 @@
 		        				context.selectedScript.code = response.data.contents
 		        				context.$refs.scriptCodeModal.show()
         				},
-        				{'file': scriptName});
+        				{'file-name': scriptName});
         		},
         		
         		onCmReady(cm) {
