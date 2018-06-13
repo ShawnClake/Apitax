@@ -35,6 +35,24 @@ class Ah210Listener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Ah210Parser#terminated.
+    def enterTerminated(self, ctx:Ah210Parser.TerminatedContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#terminated.
+    def exitTerminated(self, ctx:Ah210Parser.TerminatedContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#non_terminated.
+    def enterNon_terminated(self, ctx:Ah210Parser.Non_terminatedContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#non_terminated.
+    def exitNon_terminated(self, ctx:Ah210Parser.Non_terminatedContext):
+        pass
+
+
     # Enter a parse tree produced by Ah210Parser#expr.
     def enterExpr(self, ctx:Ah210Parser.ExprContext):
         pass
@@ -44,12 +62,66 @@ class Ah210Listener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by Ah210Parser#set_var.
-    def enterSet_var(self, ctx:Ah210Parser.Set_varContext):
+    # Enter a parse tree produced by Ah210Parser#assignment.
+    def enterAssignment(self, ctx:Ah210Parser.AssignmentContext):
         pass
 
-    # Exit a parse tree produced by Ah210Parser#set_var.
-    def exitSet_var(self, ctx:Ah210Parser.Set_varContext):
+    # Exit a parse tree produced by Ah210Parser#assignment.
+    def exitAssignment(self, ctx:Ah210Parser.AssignmentContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#flow.
+    def enterFlow(self, ctx:Ah210Parser.FlowContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#flow.
+    def exitFlow(self, ctx:Ah210Parser.FlowContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#if_statement.
+    def enterIf_statement(self, ctx:Ah210Parser.If_statementContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#if_statement.
+    def exitIf_statement(self, ctx:Ah210Parser.If_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#while_statement.
+    def enterWhile_statement(self, ctx:Ah210Parser.While_statementContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#while_statement.
+    def exitWhile_statement(self, ctx:Ah210Parser.While_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#for_statement.
+    def enterFor_statement(self, ctx:Ah210Parser.For_statementContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#for_statement.
+    def exitFor_statement(self, ctx:Ah210Parser.For_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#condition.
+    def enterCondition(self, ctx:Ah210Parser.ConditionContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#condition.
+    def exitCondition(self, ctx:Ah210Parser.ConditionContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#block.
+    def enterBlock(self, ctx:Ah210Parser.BlockContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#block.
+    def exitBlock(self, ctx:Ah210Parser.BlockContext):
         pass
 
 
@@ -194,6 +266,15 @@ class Ah210Listener(ParseTreeListener):
 
     # Exit a parse tree produced by Ah210Parser#string.
     def exitString(self, ctx:Ah210Parser.StringContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#boolean.
+    def enterBoolean(self, ctx:Ah210Parser.BooleanContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#boolean.
+    def exitBoolean(self, ctx:Ah210Parser.BooleanContext):
         pass
 
 

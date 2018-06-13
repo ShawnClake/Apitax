@@ -24,13 +24,53 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#terminated.
+    def visitTerminated(self, ctx:Ah210Parser.TerminatedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#non_terminated.
+    def visitNon_terminated(self, ctx:Ah210Parser.Non_terminatedContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#expr.
     def visitExpr(self, ctx:Ah210Parser.ExprContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by Ah210Parser#set_var.
-    def visitSet_var(self, ctx:Ah210Parser.Set_varContext):
+    # Visit a parse tree produced by Ah210Parser#assignment.
+    def visitAssignment(self, ctx:Ah210Parser.AssignmentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#flow.
+    def visitFlow(self, ctx:Ah210Parser.FlowContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#if_statement.
+    def visitIf_statement(self, ctx:Ah210Parser.If_statementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#while_statement.
+    def visitWhile_statement(self, ctx:Ah210Parser.While_statementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#for_statement.
+    def visitFor_statement(self, ctx:Ah210Parser.For_statementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#condition.
+    def visitCondition(self, ctx:Ah210Parser.ConditionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#block.
+    def visitBlock(self, ctx:Ah210Parser.BlockContext):
         return self.visitChildren(ctx)
 
 
@@ -111,6 +151,11 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#string.
     def visitString(self, ctx:Ah210Parser.StringContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#boolean.
+    def visitBoolean(self, ctx:Ah210Parser.BooleanContext):
         return self.visitChildren(ctx)
 
 

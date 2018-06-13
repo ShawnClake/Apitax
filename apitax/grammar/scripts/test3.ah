@@ -1,99 +1,177 @@
-7 + 3 * (10 / (12 / (3 + 1) - 1))
+7 + 3 * (10 / (12 / (3 + 1) - 1));
 
-7 + 3 * (10 / (12 / (3 + 1) - 1)) / (2 + 3) - 5 - 3 + (8)
+7 + 3 * (10 / (12 / (3 + 1) - 1)) / (2 + 3) - 5 - 3 + (8);
 
-(10 / (12 / (3 + 1) - 1))
+(10 / (12 / (3 + 1) - 1));
 
-(2 + 3) 
+(2 + 3) ;
 
-3*(10 / (12 / (3 + 1) - 1))
+3*(10 / (12 / (3 + 1) - 1));
 
-3 / 5 * 2
+3 / 5 * 2;
 
-5 - 2.2
+5 - 2.2;
 
-3/5*(10 / (12 / (3 + 1) - 1))
+3/5*(10 / (12 / (3 + 1) - 1));
 
-7 + (((3 + 2)))
+7 + (((3 + 2)));
 
-5 * 6 * 3 * 2
+5 * 6 * 3 * 2;
 
-36 / 6 / 2 / 3
+36 / 6 / 2 / 3;
 
-5 + 2 + 3 + 4
+5 + 2 + 3 + 4;
 
-5 - 2 - 3 - 5
-
-
-
-name "bobbyjoe"
-
-name "keystones"
-
-set keystone = "http://172.25.190.14:5000/v3"
-
-set shawn = 65
-
-set derp = "thederpiest"
+5 - 2 - 3 - 5;
 
 
 
-name derp
+name "bobbyjoe";
 
-{{ keystone }}
+name "keystones";
 
-{{simble.jim}}
+set keystone = "http://172.25.190.14:5000/v3";
 
-{{simble.lionking.shawn}}
+set shawn = 65;
 
-{{r:simble.lionking.1.role_assignments.0.user.id}}
-
-
-{{bobby.projects.0.is_domain}}
+set derp = "thederpiest";
 
 
-set mynum = 3
 
-1 + 1 + {{mynum}}
+name derp;
 
-name derp
+{{ keystone }};
 
+{{simble.jim}};
 
-set jimmy = {{mynum}} + 3
+{{simble.lionking.shawn}};
 
-set somestring = "heck no: " + {{derp}} + " :( " + derp
-
-set come.on = "noway"
-
-set come.here = dict('{"myname": "is not cool", "youknow" : "?"}')
-
-log({{derp}} + " " + somestring + " ===> " + cast(come, str))
-
-set ksjhdg = '{"myname": "is not cool", "youknow" : "?"}'
-
-set something = cast(ksjhdg, dict)
-
-set heck.no = cast(mynum, dict)
-
-set cough = '["test0", "test1", "test2"]'
-
-set heck.yes = cast(cough, dict)
-
-{{heck.yes.1}}
-
-set me = "blah blah blah {{heck.yes.1}}"
-
-export me
+{{r:simble.lionking.1.role_assignments.0.user.id}};
 
 
-import ct("script apitax/grammar/scripts/test2.ah")
+{{bobby.projects.0.is_domain}};
 
 
-set amanda = {{test2apitaxtest.test4apitaxtest.nooby}} + " or maybe jk"
+set mynum = 3;
 
-log(amanda)
+1 + 1 + {{mynum}};
 
-log("this executed properly, i think")
+name derp;
 
+
+set jimmy = {{mynum}} + 3;
+
+set somestring = "heck no: " + {{derp}} + " :( " + derp;
+
+set come.on = "noway";
+
+set come.here = dict('{"myname": "is not cool", "youknow" : "?"}');
+
+log({{derp}} + " " + somestring + " ===> " + cast(come, str));
+
+set ksjhdg = '{"myname": "is not cool", "youknow" : "?"}';
+
+set something = cast(ksjhdg, dict);
+
+set heck.no = cast(mynum, dict);
+
+set cough = '["test0", "test1", "test2"]';
+
+set heck.yes = cast(cough, dict);
+
+{{heck.yes.1}};
+
+set me = "blah blah blah {{heck.yes.1}}";
+
+export me;
+
+
+//import ct("script apitax/grammar/scripts/test2.ah");
+
+
+//set amanda = {{test2apitaxtest.test4apitaxtest.nooby}} + " or maybe jk";
+
+//log(amanda);
+
+log("this executed properly, i think");
+
+
+
+-1;
+
+
+-10;
+
+5 + - 3;
+
+5 + (-3);
+
+5 + - ( - 3);
+
+5 != 2;
+
+!true;
+
+!false;
+
+!!!!(5 != 2);
+
+120 == 120;
+
+120 == 120.000000000;
+
+120 == 120.000000001;
+
+120 < 120.000000001;
+
+120 < 120.000000000;
+
+120 <= 120.00000001;
+
+true and false;
+
+true and true;
+
+false and false;
+
+false and true;
+
+true or true;
+
+false or false;
+
+false or true;
+
+true or false;
+
+5 + 5 == 13 - 3;
+
+"hello" == "hello";
+
+"hello" == "helloo";
+
+"hello" > "helloo";
+
+"hello" < "helloo";
+
+smack = "what";
+
+log(smack);
+
+
+if(5+5 == 13 - 4) 
+{
+
+	log('we are in this block');
+	
+	if(true){
+	
+			log('this is a nested block');
+	}
+}
+
+mynum = mynum + 2;
+
+log(5 + 3 + 2 + mynum);
 
 
