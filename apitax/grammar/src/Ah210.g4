@@ -40,12 +40,22 @@ expr :
       | expr (EQ | NEQ) expr
       | expr AND expr
       | expr OR expr
+      | execute
       | casting
-      | variable_types;
+      | obj_list
+      | obj_dict
+      | boolean 
+      | NUMBER 
+      | string ;
 
 assignment : 
-      SET labels EQUAL (expr | execute) 
-      | labels EQUAL (expr | execute) ;
+      SET? labels ((
+          EQUAL 
+          | PE
+          | ME
+          | MUE
+          | DE
+      ) expr | D_PLUS | D_MINUS);
 
 flow : 
       if_statement
@@ -71,40 +81,35 @@ exports : EXPORT (labels | execute);
 
 imports : IMPORT execute ;
 
-execute : COMMANDTAX expr (COMMA expr)* RPAREN ;
+execute : COMMANDTAX LPAREN expr (COMMA expr)* RPAREN ;
 
 inject : MUSTACHEOPEN REQUEST? labels MUSTACHECLOSE ;
 
-variable_types : boolean | NUMBER | string | complex_variables ;
-
-log : LOG expr RPAREN ;
+log : LOG LPAREN expr RPAREN ;
 
 labels : LABEL | DOT_LABEL ;
 
-casting : cast_dict | cast_list | cast_num | cast_str ;
-
-cast_str : CAST expr COMMA 'str' RPAREN ;
-
-cast_num : CAST expr COMMA 'num' RPAREN ;
-
-cast_dict : CAST expr COMMA 'dict' RPAREN ;
-
-cast_list : CAST expr COMMA 'list' RPAREN ;
-
-complex_variables : (LIST | DICT) string RPAREN ;
+casting : 
+      (
+        TYPE_INT
+        | TYPE_DEC
+        | TYPE_BOOL
+        | TYPE_STR
+        | TYPE_LIST
+        | TYPE_DICT
+      ) LPAREN expr RPAREN ;
 
 string : STRING ;
 
 boolean : TRUE | FALSE ;
 
+obj_list : SOPEN expr? (COMMA expr)* SCLOSE ;
+
+obj_dict : BLOCKOPEN (expr COLON expr)? (COMMA expr COLON expr)* BLOCKCLOSE ; 
+
 options_statement : OPTIONS expr ;
 
 return_statement : RETURNS expr? ;
-
-
-
-
-
 
 
 
@@ -116,6 +121,13 @@ GE : '>=' ;
 LE : '<=' ;
 EQ : '==' ;
 NEQ : '!=' ;
+
+D_PLUS : '++' ;
+D_MINUS : '--' ;
+PE : '+=' ;
+ME : '-=' ;
+MUE : '*=' ;
+DE : '/=' ;
 
 PLUS : '+' ;
 MINUS : '-' ;
@@ -153,8 +165,12 @@ BLOCKCLOSE : '}';
 LPAREN : '(';
 RPAREN : ')';
 
+SOPEN : '[';
+SCLOSE : ']';
+
 
 /** KEYWORDS **/
+EACH : E A C H;
 AND : A N D ;
 OR : O R ;
 IN : I N ;
@@ -172,12 +188,15 @@ ELSE : E L S E ;
 FOR : F O R ;
 WHILE : W H I L E ;
 
-COMMANDTAX : C T LPAREN ;
-LOG : L O G LPAREN ;
-CAST : C A S T LPAREN ;
+TYPE_INT : I N T ;
+TYPE_DICT : D I C T ;
+TYPE_LIST : L I S T ;
+TYPE_DEC : D E C ;
+TYPE_STR : S T R ;
+TYPE_BOOL : B O O L ;
 
-DICT : D I C T LPAREN ;
-LIST : L I S T LPAREN ;
+COMMANDTAX : C T ;
+LOG : L O G ;
 
 /** KEYCHANGERS **/
 
@@ -191,14 +210,11 @@ DOT_LABEL : (LABEL | DIGIT | DOT)+ ;
 
 HEX : ('0x'|'0X')(HEXDIGIT)HEXDIGIT*;
 
-
-NEWLINE : '\r'? '\n' -> channel(HIDDEN);
-WS : (' ' | '\t')+ -> channel(HIDDEN) ;
+NEWLINE : '\r'? '\n' -> skip;
+WS : (' ' | '\t')+ -> skip ;
 
 BLOCK_COMMENT : DIV MUL .*? MUL DIV -> channel(HIDDEN) ;
 LINE_COMMENT : DIV DIV ~[\r\n]* -> channel(HIDDEN) ;
-
-//STRING: '"' (ESC|.)*? '"' ;
 
 STRING : QUOTE (ESC|~["\r\n])*? QUOTE | SQUOTE (ESC|~['\r\n])*? SQUOTE ;
 

@@ -3,6 +3,7 @@ from apitax.grammar.build.Ah210Visitor import Ah210Visitor as Ah210VisitorOrigin
 from apitax.ah.scriptax.ScriptData import ScriptData as DataStore
 from apitax.logs.Log import Log
 from apitax.utilities.Numbers import isNumber
+from apitax.utilities.Json import isJson
 
 import json
 import re
@@ -11,7 +12,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     SMALL_VALUE = 0.00000000001;
 
-    def __init__(self, config, header, parameters=[], debug=True, sensitive=False):
+    def __init__(self, config, header, parameters=[], debug=True, sensitive=False, file=''):
         self.data = DataStore()
         self.log = Log('logs/log.log')
         self.debug = debug
@@ -21,9 +22,18 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.parser = None
         self.options = {}
         self.data.storeVar("params.passed", parameters)
+        self.state = {'file': file, 'line' : 0, 'char' : 0}
         
         # Replace the below functionality if possible
         self.regexVar = '{{[ ]{0,}[A-z0-9_.\-]{1,}[ ]{0,}}}'
+
+    def setState(self, file='', line=-1, char=-1):
+        if(file != ''):
+            self.state['file'] = file
+        if(line != -1):
+            self.state['line'] = line
+        if(char != -1):
+            self.state['char'] = char
 
     def importCommandRequest(self, commandHandler, export=False):
         from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
@@ -48,23 +58,27 @@ class Ah2Visitor(Ah210VisitorOriginal):
             else:
                 return self.data.getVar(label)
         except:
-            self.log.error('Injection Failure. Cannot access variable: ' + json.dumps(label) + ' - Does it exist?')
-            self.log.log('')
+            
+            #self.error('Injection Failure. Cannot access variable: ' + json.dumps(label) + ' - Does it exist?')
+            #self.log.log('')
             return None
 
     def useOptions(self):
         if(self.options['params']):
 
             if(len(self.options['params']) != len(self.data.getVar('params.passed'))):
-                errorMessage = 'Insufficient parameters. Expected: ' + str(self.options['params']) + ' but received: ' + str(self.data.getVar('params.passed'))
-                self.log.error(errorMessage)
-                self.data.setFlow('error', {'message': errorMessage})
+                self.error('Insufficient parameters. Expected: ' + str(self.options['params']) + ' but received: ' + str(self.data.getVar('params.passed')))
+                #self.log.error(errorMessage)
+                #self.data.setFlow('error', {'message': errorMessage})
             else:
         	
                 i = 0
                 for param in self.options['params']:
                     self.data.storeVar('params.' + param, self.data.getVar('params.passed.'+str(i)))
                     i += 1
+        
+    def error(self, message):
+        self.data.error(message)
                 
     def isError(self):
         return self.data.getFlow('error')
@@ -79,22 +93,31 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitProg(self, ctx):
         self.parser = ctx.parser
         temp = self.visitChildren(ctx)
-        # print('proj: '+str(temp))
+        
+        if(self.isError()):
+            error = self.isError()
+            self.log.error(error['message'] + ' in ' + self.state['file'] + ' @' + str(self.state['line']) + ':' + str(self.state['char']))
+            self.log.log('')
+            self.log.log('')
+        
         return self
 
     # Visit a parse tree produced by Ah210Parser#statements.
     def visitStatements(self, ctx):
-        if(self.data.getFlow('return') or self.data.getFlow('error')):
+        if(self.isReturn() or self.isError()):
             return
             
-       	self.log.log("")
+       	#self.log.log("")
         temp = self.visitChildren(ctx)
         # print('result: '+str(temp))
         return temp
 
     # Visit a parse tree produced by Ah210Parser#statement.
     def visitStatement(self, ctx):
-        if(self.data.getFlow('return') or self.data.getFlow('error')):
+        if(self.isReturn()):
+            return
+            
+        if(self.isError()):
             return
     	
         line = ctx.getText().strip()
@@ -106,6 +129,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
         if (line != ""):
             self.log.log('')
+            
+        self.setState(line=ctx.start.line) # TODO: Try to add character here as well
 
         return temp
 
@@ -130,8 +155,31 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#expr.
     def visitExpr(self, ctx):  # Get number of terms and loop this code for #terms - 1
-        if (ctx.variable_types()):
-            return self.visit(ctx.variable_types())
+        if (ctx.execute()):
+            from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
+            commandHandler = self.visit(ctx.execute())['commandHandler']
+            returned = None
+            if (isinstance(commandHandler.getRequest(), ScriptCommand)):
+                returned = commandHandler.getRequest().parser.data.getReturn()
+            if(returned is not None):
+                return returned
+            else:
+                return commandHandler.getRequest().getResponseBody()
+    	
+        if(ctx.obj_list()):
+            return self.visit(ctx.obj_list())
+            
+        if(ctx.obj_dict()):
+            return self.visit(ctx.obj_dict())
+    	
+        if (ctx.NUMBER()):
+            return float(ctx.NUMBER().getText())
+
+        if (ctx.string()):
+            return self.visit(ctx.string())
+
+        if (ctx.boolean()):
+            return self.visit(ctx.boolean())
 
         if(ctx.casting()):
             return self.visit(ctx.casting())
@@ -179,7 +227,15 @@ class Ah2Visitor(Ah210VisitorOriginal):
             return self.visit(ctx.expr(0)) ** self.visit(ctx.expr(1))
 
         if (ctx.PLUS()):
-            return self.visit(ctx.expr(0)) + self.visit(ctx.expr(1))
+            left = self.visit(ctx.expr(0))
+            right = self.visit(ctx.expr(1))
+            if((isinstance(left, str) and not isinstance(right, str)) or (isinstance(right, str) and not isinstance(left, str))):
+                left = str(left)
+                right = str(right)
+                if (self.debug):
+                    self.log.log('> Implicit cast to string: \'' + left + '\' + \'' + right + '\'')
+                    self.log.log('')
+            return left + right 
 
         if (ctx.MINUS()):
             return self.visit(ctx.expr(0)) - self.visit(ctx.expr(1))
@@ -193,22 +249,30 @@ class Ah2Visitor(Ah210VisitorOriginal):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by Ah210Parser#set_var.
-    def visitAssignment(self, ctx:Ah210Parser.AssignmentContext):
-        from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
+    def visitAssignment(self, ctx:Ah210Parser.AssignmentContext):        
         label = self.visit(ctx.labels())
-
-        if (ctx.execute()):
-            commandHandler = self.visit(ctx.execute())['commandHandler']
-            returned = None
-            if (isinstance(commandHandler.getRequest(), ScriptCommand)):
-                returned = commandHandler.getRequest().parser.data.getReturn()
-            if(returned is not None):
-                self.data.storeVar(label, returned)
-            else:
-                self.data.storeVar(label, commandHandler.getRequest().getResponseBody())
-
+        value = None
+        
         if(ctx.expr()):
-            self.data.storeVar(label, self.visit(ctx.expr()))
+            value = self.visit(ctx.expr())
+
+        if(not ctx.EQUAL()):
+            var = self.data.getVar(label)
+            if(ctx.D_PLUS()):
+                value = var + 1
+            elif(ctx.D_MINUS()):
+                value = var - 1
+            else:
+                if(ctx.PE()):
+                    value += var
+                elif(ctx.ME()):
+                    value = var - value
+                elif(ctx.MUE()):
+                    value *= var
+                elif(ctx.DE()):
+                    value = var / value
+
+        self.data.storeVar(label, value)
 
         if (self.debug):
             self.log.log('> Assigning Variable: ' + label + ' = ' + str(self.data.getVar(label)))
@@ -247,25 +311,40 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitFor_statement(self, ctx:Ah210Parser.For_statementContext):
         clause = self.visit(ctx.expr())
         label = self.visit(ctx.labels())
+        
+        if(isinstance(clause, str) and isJson(clause)):
+            clause = json.loads(clause)
+            
         if(isinstance(clause, list)):
-            self.log.log('> Looping through list with var ' + label)
-            self.log.log('')
+            if (self.debug):
+                self.log.log('> Looping through list with var ' + label)
+                self.log.log('')
             for item in clause:
-                self.log.log('> Assigning ' + label + ' = ' + str(item))
+                if (self.debug):
+                    self.log.log('>> Assigning ' + label + ' = ' + str(item))
+                    self.log.log('')
+                    self.log.log('')
                 self.data.storeVar(label, item)
                 self.visit(ctx.block())
+            self.data.deleteVar(label)
         
         elif(isinstance(clause, float)):
-            self.log.log('> Looping through range with var ' + label)
-            self.log.log('')
+            if (self.debug):
+                self.log.log('> Looping through range with var ' + label)
+                self.log.log('')
             for i in range(0, int(clause)):
-                self.log.log('> Assigning ' + label + ' = ' + str(i))
+                if (self.debug):
+                    self.log.log('>> Assigning ' + label + ' = ' + str(i))
+                    self.log.log('')
+                    self.log.log('')
                 self.data.storeVar(label, i)
                 self.visit(ctx.block())
+            self.data.deleteVar(label)
                 
         else:
-            self.log.error('Invalid Loop Type')
-            self.log.log('')
+            if (self.debug):
+                self.error('Invalid Loop Type: ' + str(type(clause)))
+                self.log.log('')
 
 
 
@@ -349,7 +428,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
         
         if (isinstance(commandHandler.getRequest(), ScriptCommand)): 
             if(commandHandler.getRequest().parser.isError()):
-                 self.data.setFlow('error', commandHandler.getRequest().parser.isError())
+                 self.error('Subscript contains error: ' + commandHandler.getRequest().parser.isError())
+                 #self.data.setFlow('error', commandHandler.getRequest().parser.isError())
             
         return dict({"command": command, "commandHandler": commandHandler})
 
@@ -365,21 +445,6 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.log.log('')
 
         return returner
-
-    # Visit a parse tree produced by Ah210Parser#variable.
-    def visitVariable_types(self, ctx: Ah210Parser.Variable_typesContext):
-
-        if (ctx.NUMBER()):
-            return float(ctx.NUMBER().getText())
-
-        if (ctx.string()):
-            return self.visit(ctx.string())
-
-        if (ctx.boolean()):
-            return self.visit(ctx.boolean())
-            
-        if(ctx.complex_variables()):
-            return self.visit(ctx.complex_variables())
 
     # Visit a parse tree produced by Ah210Parser#boolean.
     def visitBoolean(self, ctx:Ah210Parser.BooleanContext):
@@ -401,76 +466,58 @@ class Ah2Visitor(Ah210VisitorOriginal):
         return ctx.DOT_LABEL().getText()
 
     # Visit a parse tree produced by Ah210Parser#casting.
-    def visitCasting(self, ctx:Ah210Parser.CastingContext):
-        if(ctx.cast_dict()):
-            return self.visit(ctx.cast_dict())
-
-        if(ctx.cast_list()):
-            return self.visit(ctx.cast_list())
-
-        if(ctx.cast_num()):
-            return self.visit(ctx.cast_num())
-
-        if(ctx.cast_str()):
-            return self.visit(ctx.cast_str())
-
-    # Visit a parse tree produced by Ah210Parser#cast_str.
-    def visitCast_str(self, ctx:Ah210Parser.Cast_strContext):
+    def visitCasting(self, ctx:Ah210Parser.CastingContext):    	
         value = self.visit(ctx.expr())
-        returner = str(value)
-        if (self.debug):
-            self.log.log('> Casting \'' + str(value) + '\' to string: ' + json.dumps(returner))
-            self.log.log('')
+        if(ctx.TYPE_INT()):
+            returner = int(value)
+            if (self.debug):
+                self.log.log('> Explicitly Casting \'' + str(value) + '\' to int: ' + json.dumps(returner))
+                self.log.log('')
+            return returner
+        if(ctx.TYPE_DEC()):
+            returner = float(value)
+            if (self.debug):
+                self.log.log('> Explicitly Casting \'' + str(value) + '\' to number: ' + json.dumps(returner))
+                self.log.log('')
+            return returner
+        if(ctx.TYPE_BOOL()):
+            returner = bool(value)
+            if (self.debug):
+                self.log.log('> Explicitly Casting \'' + str(value) + '\' to boolean: ' + json.dumps(returner))
+                self.log.log('')
+            return returner
+        if(ctx.TYPE_STR()):
+            returner = str(value)
+            if (self.debug):
+                self.log.log('> Explicitly Casting \'' + str(value) + '\' to string: ' + json.dumps(returner))
+                self.log.log('')
+            return returner
+        if(ctx.TYPE_LIST()):
+            returner = list(str(value).split(","))
+            if (self.debug):
+                self.log.log('> Explicitly Casting \'' + str(value) + '\' to list: ' + json.dumps(returner))
+                self.log.log('')
+            return returner
+        if(ctx.TYPE_DICT()):
+            returner = None
+            if(isinstance(value, dict)):
+                returner = value
+            elif(isinstance(value, list)):
+                count = 0
+                newdict = {}
+                for i in value:
+                    newdict.update({str(count):i})
+                    count += 1
+                returner = dict(newdict)
+            elif(isinstance(value, str) and isJson(value)):
+                returner = dict(json.loads(str(value)))
+            else:
+                returner = dict({"default": value})
+            if (self.debug):
+                self.log.log('> Explicitly Casting \'' + str(value) + '\' to dictionary: ' + json.dumps(returner))
+                self.log.log('')
+                    
         return returner
-
-    # Visit a parse tree produced by Ah210Parser#cast_num.
-    def visitCast_num(self, ctx:Ah210Parser.Cast_numContext):
-        value = self.visit(ctx.expr())
-        returner = float(value)
-        if (self.debug):
-            self.log.log('> Casting \'' + str(value) + '\' to number: ' + json.dumps(returner))
-            self.log.log('')
-        return returner
-
-    # Visit a parse tree produced by Ah210Parser#cast_dict.
-    def visitCast_dict(self, ctx:Ah210Parser.Cast_dictContext):
-        value = self.visit(ctx.expr())
-        returner = None
-        
-        if(isinstance(value, dict)):
-            returner = value
-        elif(isinstance(value, list)):
-            count = 0
-            newdict = {}
-            for i in value:
-                newdict.update({str(count):i})
-                count += 1
-            returner = dict(newdict)
-        else:
-            returner = dict({"default": value})
-                
-        if (self.debug):
-            self.log.log('> Casting \'' + str(value) + '\' to dictionary: ' + json.dumps(returner))
-            self.log.log('')
-                
-        return returner
-
-    # Visit a parse tree produced by Ah210Parser#cast_list.
-    def visitCast_list(self, ctx:Ah210Parser.Cast_listContext):
-        value = self.visit(ctx.expr())
-        returner = list(str(value).split(","))
-        if (self.debug):
-            self.log.log('> Casting \'' + str(value) + '\' to list: ' + json.dumps(returner))
-            self.log.log('')
-        return returner
-
-    # Visit a parse tree produced by Ah210Parser#complex_variables.
-    def visitComplex_variables(self, ctx:Ah210Parser.Complex_variablesContext):
-        value = self.visit(ctx.string())
-        if(ctx.LIST()):
-            return list(str(value).split(","))
-        if (ctx.DICT()):
-            return dict(json.loads(str(value)))
             
     # Visit a parse tree produced by Ah210Parser#string.
     def visitString(self, ctx:Ah210Parser.StringContext):
@@ -490,6 +537,29 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 self.log.log('')
         return line
 
+    # Visit a parse tree produced by Ah210Parser#obj_list.
+    def visitObj_list(self, ctx:Ah210Parser.Obj_listContext):
+        parameters = []
+        i = 0
+        if(ctx.expr(0)):
+            parameters.append(self.visit(ctx.expr(0)))
+        while(ctx.COMMA(i)):
+            parameters.append(self.visit(ctx.expr(i+1)))
+            i += 1
+        return parameters
+
+
+    # Visit a parse tree produced by Ah210Parser#obj_dict.
+    def visitObj_dict(self, ctx:Ah210Parser.Obj_dictContext):
+        dictionary = {}
+        i = 0
+        if(ctx.COLON(0)):
+            dictionary[self.visit(ctx.expr(0))] = self.visit(ctx.expr(1))
+        while(ctx.COMMA(i)):
+            base = (i + 1) * 2
+            dictionary[self.visit(ctx.expr(base))] = self.visit(ctx.expr(base+1))
+            i += 1
+        return dictionary
 
     # Visit a parse tree produced by Ah210Parser#options_statement.
     def visitOptions_statement(self, ctx:Ah210Parser.Options_statementContext):

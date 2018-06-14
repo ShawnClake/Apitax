@@ -104,11 +104,6 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by Ah210Parser#variable_types.
-    def visitVariable_types(self, ctx:Ah210Parser.Variable_typesContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by Ah210Parser#log.
     def visitLog(self, ctx:Ah210Parser.LogContext):
         return self.visitChildren(ctx)
@@ -124,31 +119,6 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by Ah210Parser#cast_str.
-    def visitCast_str(self, ctx:Ah210Parser.Cast_strContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by Ah210Parser#cast_num.
-    def visitCast_num(self, ctx:Ah210Parser.Cast_numContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by Ah210Parser#cast_dict.
-    def visitCast_dict(self, ctx:Ah210Parser.Cast_dictContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by Ah210Parser#cast_list.
-    def visitCast_list(self, ctx:Ah210Parser.Cast_listContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by Ah210Parser#complex_variables.
-    def visitComplex_variables(self, ctx:Ah210Parser.Complex_variablesContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by Ah210Parser#string.
     def visitString(self, ctx:Ah210Parser.StringContext):
         return self.visitChildren(ctx)
@@ -156,6 +126,16 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#boolean.
     def visitBoolean(self, ctx:Ah210Parser.BooleanContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#obj_list.
+    def visitObj_list(self, ctx:Ah210Parser.Obj_listContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#obj_dict.
+    def visitObj_dict(self, ctx:Ah210Parser.Obj_dictContext):
         return self.visitChildren(ctx)
 
 

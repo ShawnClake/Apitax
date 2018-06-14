@@ -42,14 +42,14 @@ name derp;
 
 {{ keystone }};
 
-{{simble.jim}};
+//{{simble.jim}};
 
-{{simble.lionking.shawn}};
+//{{simble.lionking.shawn}};
 
-{{r:simble.lionking.1.role_assignments.0.user.id}};
+//{{r:simble.lionking.1.role_assignments.0.user.id}};
 
 
-{{bobby.projects.0.is_domain}};
+//{{bobby.projects.0.is_domain}};
 
 
 set mynum = 3;
@@ -67,17 +67,17 @@ set come.on = "noway";
 
 set come.here = dict('{"myname": "is not cool", "youknow" : "?"}');
 
-log({{derp}} + " " + somestring + " ===> " + cast(come, str));
+log({{derp}} + " " + somestring + " ===> " + come);
 
 set ksjhdg = '{"myname": "is not cool", "youknow" : "?"}';
 
-set something = cast(ksjhdg, dict);
+set something = dict(ksjhdg);
 
-set heck.no = cast(mynum, dict);
+set heck.no = dict(mynum);
 
 set cough = '["test0", "test1", "test2"]';
 
-set heck.yes = cast(cough, dict);
+set heck.yes = dict(cough);
 
 {{heck.yes.1}};
 
@@ -174,7 +174,7 @@ if(5+5 == 13 - 3)
 	log('we are in this block');
 	while(mynum < -1)
 {
-log('my num is now: ' + cast(mynum, str));
+log('my num is now: ' + mynum);
 mynum = mynum + 1;
 }
 	if(false){
@@ -205,11 +205,56 @@ log('The list item is: ' + index);
 }
 
 
-anothernum = 5
+anothernum = 5;
 
 for index in anothernum
 {
-log('The list item is: ' + cast(index, str));
+log('The list item is: ' + str(index));
 }
+
+
+anothernum++;
+anothernum++;
+anothernum--;
+
+anothernum -= 1;
+anothernum *= 6;
+anothernum /= 5;
+anothernum += 4;
+
+log(str(anothernum));
+
+
+log('This is demonstrating an implicit cast to string: ' + int(anothernum));
+
+log(anothernum);
+
+
+testlist = ["one", "two", ["a","b",'c'], "three"];
+
+testlist.2.3 = "d";
+
+log(testlist);
+
+log(testlist.2.1);
+
+
+testdict = {"first": "value1", "second": int(50), 
+"third": ["one","two",
+"three"]};
+
+testdict.test = "Testing value";
+
+log(testdict.third.0);
+
+log(testdict.test);
+
+testlist.4 = "Hello";
+testlist.1 = "This is Fake News";
+
+log(testlist);
+
+
+
 
 
