@@ -21,7 +21,9 @@ terminated :
         | assignment
         | scoping
         | log
+        | url
         | options_statement
+        | return_statement
       ) TERMINATOR ;
 
 non_terminated : 
@@ -60,8 +62,7 @@ assignment :
 flow : 
       if_statement
       | while_statement
-      | for_statement
-      | return_statement;
+      | for_statement ;
       
 if_statement : IF condition block (ELSE IF condition block)* (ELSE block)? ;
 
@@ -81,7 +82,19 @@ exports : EXPORT (labels | execute);
 
 imports : IMPORT execute ;
 
-execute : COMMANDTAX LPAREN expr (COMMA expr)* RPAREN ;
+execute : 
+      ( 
+        GET 
+        | POST 
+        | PUT 
+        | PATCH 
+        | DELETE 
+        | COMMANDTAX 
+        | SCRIPT 
+        | CUSTOM
+      ) LPAREN expr (COMMA expr)* RPAREN ;
+
+url : URL expr ;
 
 inject : MUSTACHEOPEN REQUEST? labels MUSTACHECLOSE ;
 
@@ -103,9 +116,9 @@ string : STRING ;
 
 boolean : TRUE | FALSE ;
 
-obj_list : SOPEN expr? (COMMA expr)* SCLOSE ;
+obj_list : SOPEN expr? (COMMA expr?)* SCLOSE ;
 
-obj_dict : BLOCKOPEN (expr COLON expr)? (COMMA expr COLON expr)* BLOCKCLOSE ; 
+obj_dict : BLOCKOPEN (expr COLON expr)? (COMMA (expr COLON expr)?)* BLOCKCLOSE ; 
 
 options_statement : OPTIONS expr ;
 
@@ -196,6 +209,16 @@ TYPE_STR : S T R ;
 TYPE_BOOL : B O O L ;
 
 COMMANDTAX : C T ;
+SCRIPT : S C R I P T ;
+CUSTOM : C U S T O M ;
+
+GET : G E T ;
+POST : P O S T ;
+PUT : P U T ;
+PATCH : P A T C H ;
+DELETE : D E L E T E ;
+
+URL : U R L ;
 LOG : L O G ;
 
 /** KEYCHANGERS **/

@@ -1,4 +1,26 @@
-url = "https://jsonplaceholder.typicode.com";
-for user in ct("custom --debug --get --url {{url}}/users")
-    log("His user ID is: " + user.id);
+url "https://jsonplaceholder.typicode.com";
+for user in get("/users")
+{
+    /*usersPosts = get("/posts", {
+        "query": {
+            "userId": user.id,
+        }
+    });
+    log("The user with uid: " + user.id + " has these posts: " + usersPosts);*/
+}  
+   
+response = post("/posts", {
+    "post": {
+        "title":'foo',
+        "body":'bar',
+        "userId":1
+    }
+});
+
+log(script("apitax/grammar/scripts/jen.ah", {}, "i am parameter 1", "i am parameter 2"));
+
+//response = ;
+
+log("Please " + ct("tests my script", {}, "i should be a parameter"));
+
 

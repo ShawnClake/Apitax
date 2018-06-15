@@ -7,9 +7,11 @@ class ApitaxTestsCommands(DriverCommands):
     
   def handle(self, config, header, parameters, command, debug = False, sensitive = False):
     super().handle(config, header, parameters, command, debug, sensitive)
-    #super(ApitaxTestsCommands, self).handle(config, header, command, debug, sensitive)
-    if(self.command[0] == 'project'):
-      self.request = Projects(self.header, self.debug, self.sensitive)
-    elif(self.command[0] == 'domain'):
-      self.request = Domains(self.header, self.debug, self.sensitive)
+   # if(self.command[0] == 'project'):
+   #   self.request = Projects(self.config, self.header, self.parameters, self.debug, self.sensitive)
+   # elif(self.command[0] == 'domain'):
+   #   self.request = Domains(self.config, self.header, self.parameters, self.debug, self.sensitive)
+    
+    if(self.command[0] == 'tests'):
+      self.request = Tests(self.config, self.header, self.parameters, self.debug, self.sensitive)
     return self.request

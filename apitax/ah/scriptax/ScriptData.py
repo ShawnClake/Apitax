@@ -8,7 +8,7 @@ from apitax.utilities.Numbers import isNumber
 class ScriptData:
     def __init__(self):
         self.dataStore = dict(
-            {"flow": {'return': False, 'exit': False, 'error': False}, "urls": {}, "vars": {"params": {}}, "requests": {}, "exports": {"urls": {}, "vars": {}, "requests": {}, "return": None}}
+            {"flow": {'return': False, 'exit': False, 'error': False}, "urls": {"current": ""}, "vars": {"params": {}}, "requests": {}, "exports": {"urls": {}, "vars": {}, "requests": {}, "return": None}}
         )
         self.name = ""
         self.index = 1

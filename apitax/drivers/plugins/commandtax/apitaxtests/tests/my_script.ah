@@ -1,0 +1,8 @@
+
+options dict('{"params": ["first"]}');
+
+log("I got here");
+
+log(params.first);
+
+return "work";

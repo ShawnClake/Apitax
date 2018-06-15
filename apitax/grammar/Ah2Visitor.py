@@ -36,10 +36,10 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.state['char'] = char
 
     def importCommandRequest(self, commandHandler, export=False):
-        from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
+        from apitax.ah.commandtax.commands.Custom import Custom as CustomCommand
         
         if (commandHandler.getRequest().getResponseBody().strip() != ''):
-            if (isinstance(commandHandler.getRequest(), ScriptCommand)):
+            if (not isinstance(commandHandler.getRequest(), CustomCommand)):
                 self.data.importScriptsExports(commandHandler.getRequest().parser.data, export=export)
             else:
                 self.data.storeRequest(commandHandler.getRequest().getResponseBody(), export=export)
@@ -412,10 +412,42 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#execute.
     def visitExecute(self, ctx):
         from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
-        command = self.visit(ctx.expr(0))
-
+        firstArg = self.visit(ctx.expr(0))
+        command = ""
+        
+        if(not ctx.SCRIPT() and not ctx.COMMANDTAX()):
+            command += "custom"
+            if(ctx.GET()):
+                command += " --get"
+            if(ctx.POST()):
+                command += " --post"
+            if(ctx.PUT()):
+                command += " --put"
+            if(ctx.PATCH()):
+                command += " --patch"
+            if(ctx.DELETE()):
+                command += " --delete"
+            command += " --url " + self.data.getUrl("current") + firstArg
+            
+        elif(ctx.SCRIPT()):
+            command += "script " + firstArg
+            
+        elif(ctx.COMMANDTAX()):
+            command = firstArg
+            
+        if(ctx.expr(1)):
+            dataArg = self.visit(ctx.expr(1))
+            if('post' in dataArg):
+                command += " --data-post '" + json.dumps(dataArg['post']) + "'"
+            if('query' in dataArg):
+                command += " --data-query '" + json.dumps(dataArg['query']) + "'"
+            if('path' in dataArg):
+                command += " --data-path '" + json.dumps(dataArg['path']) + "'"
+            if('header' in dataArg):
+                command += " --data-header '" + json.dumps(dataArg['header']) + "'"             
+                            
         parameters = []
-        i = 0
+        i = 1
         while(ctx.COMMA(i)):
             parameters.append(self.visit(ctx.expr(i+1)))
             i += 1
@@ -432,6 +464,15 @@ class Ah2Visitor(Ah210VisitorOriginal):
                  #self.data.setFlow('error', commandHandler.getRequest().parser.isError())
             
         return dict({"command": command, "commandHandler": commandHandler})
+
+    # Visit a parse tree produced by Ah210Parser#url.
+    def visitUrl(self, ctx:Ah210Parser.UrlContext):
+        url = self.visit(ctx.expr())
+        self.data.storeUrl("current", url)
+        
+        if (self.debug):
+            self.log.log('> Setting URL: ' + url)
+            self.log.log('')
 
     # Visit a parse tree produced by Ah210Parser#inject.
     def visitInject(self, ctx: Ah210Parser.InjectContext):
@@ -543,7 +584,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         i = 0
         if(ctx.expr(0)):
             parameters.append(self.visit(ctx.expr(0)))
-        while(ctx.COMMA(i)):
+        while(ctx.COMMA(i) and ctx.expr(i + 1)):
             parameters.append(self.visit(ctx.expr(i+1)))
             i += 1
         return parameters
@@ -555,7 +596,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         i = 0
         if(ctx.COLON(0)):
             dictionary[self.visit(ctx.expr(0))] = self.visit(ctx.expr(1))
-        while(ctx.COMMA(i)):
+        while(ctx.COMMA(i) and ctx.expr((i + 1) * 2)):
             base = (i + 1) * 2
             dictionary[self.visit(ctx.expr(base))] = self.visit(ctx.expr(base+1))
             i += 1

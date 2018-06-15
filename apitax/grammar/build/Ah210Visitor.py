@@ -99,6 +99,11 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#url.
+    def visitUrl(self, ctx:Ah210Parser.UrlContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#inject.
     def visitInject(self, ctx:Ah210Parser.InjectContext):
         return self.visitChildren(ctx)

@@ -1,36 +1,36 @@
 
-options dict('{"params": ["name", "game"]}')
-2+2
-name "quinn"
+options dict('{"params": ["name", "game"]}');
+2+2;
+name "quinn";
 
-set qwer = "im in jens script"
-
-
-export qwer
-
-export ct("script apitax/grammar/scripts/shawn.ah")
-
-set iam.hope.this.works = ct("custom --get --url https://jsonplaceholder.typicode.com/users")
-
-export iam
-
-set test = "hello"
-
-//return '{"cool": "beans"}'
-
-log(params.passed.0)
-
-log(params.passed.1)
-
-log(params.name)
-
-log(params.game)
-
-log(2+2)
-
-return params.passed.1
+set qwer = "im in jens script";
 
 
+export qwer;
+
+//export ct("script apitax/grammar/scripts/shawn.ah");
+
+set iam.hope.this.works = ct("custom --get --url https://jsonplaceholder.typicode.com/users");
+
+export iam;
+
+set test = "hello";
+
+//return '{"cool": "beans"}';
+
+log(params.passed.0);
+
+log(params.passed.1);
+
+log(params.name);
+
+log(params.game);
+
+log(2+2);
+
+return params.passed.1;
+
+//return "test";
 
 
 
