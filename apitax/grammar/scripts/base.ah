@@ -1,12 +1,23 @@
 url "https://jsonplaceholder.typicode.com";
-for user in get("/users")
+for user in get("/users"){}
 {
-    /*usersPosts = get("/posts", {
+    /*result = get("/posts", {
         "query": {
             "userId": user.id,
         }
     });
-    log("The user with uid: " + user.id + " has these posts: " + usersPosts);*/
+    log("The user has these posts: " + result);*/
+
+    log("the user has ID: " + user.id);
+
+    async get("/posts", {
+            "query": {
+                "userId": user.id,
+            }
+        }) {
+        log("The user has these posts: " + result);
+    };
+
 }  
    
 response = post("/posts", {
@@ -22,5 +33,59 @@ log(script("apitax/grammar/scripts/jen.ah", {}, "i am parameter 1", "i am parame
 //response = ;
 
 log("Please " + ct("tests my script", {}, "i should be a parameter"));
+
+
+testlist = ["one", "two", 'three', ["a", 'b', 'c', 'd'], {"test": "failed", "yes": "no"}];
+
+log(#testlist.0);
+
+
+/*async ct("some command execution")
+{
+log("some integrated callback");
+}
+
+async ct("some command execution");
+
+status = async ct("some command execution");
+
+await status;
+
+status = [firstAsync, secondAsync];
+await status;
+
+async bobo in get("/users")
+{
+    log("Async callback: " + bobo);
+}*/
+
+async get("/users");
+
+
+
+somelabel = async get("/users")
+{
+    log("I am an optional callback");
+};
+//anotherRequest0 = async get("/users");
+//anotherRequest1 = async get("/users");
+//anotherRequest2 = async get("/users");
+
+await somelabel;
+
+log("i am that label" + somelabel);
+
+
+get("/users") {
+
+log(result);
+
+};
+
+async get("/users") {
+
+log(result);
+
+};
 
 

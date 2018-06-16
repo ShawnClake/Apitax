@@ -1,13 +1,7 @@
 # System import
-import json
-import re
-import os
-import sys
-
 
 # Application import
 from apitax.logs.Log import Log
-from apitax.ah.scriptax.ScriptData import ScriptData
 
 from apitax.grammar.build.Ah210Lexer import Ah210Lexer
 from apitax.grammar.build.Ah210Parser import Ah210Parser

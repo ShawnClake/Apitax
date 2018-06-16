@@ -1,4 +1,4 @@
-# Generated from /home/tsisd/shawn/grammar/src/Ah210.g4 by ANTLR 4.7.1
+# Generated from D:/Programming/Projects/Apitax/apitax/grammar/src\Ah210.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Ah210Parser import Ah210Parser
@@ -116,6 +116,24 @@ class Ah210Listener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Ah210Parser#async_execute.
+    def enterAsync_execute(self, ctx:Ah210Parser.Async_executeContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#async_execute.
+    def exitAsync_execute(self, ctx:Ah210Parser.Async_executeContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#await.
+    def enterAwait(self, ctx:Ah210Parser.AwaitContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#await.
+    def exitAwait(self, ctx:Ah210Parser.AwaitContext):
+        pass
+
+
     # Enter a parse tree produced by Ah210Parser#block.
     def enterBlock(self, ctx:Ah210Parser.BlockContext):
         pass
@@ -206,6 +224,15 @@ class Ah210Listener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Ah210Parser#label_comp.
+    def enterLabel_comp(self, ctx:Ah210Parser.Label_compContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#label_comp.
+    def exitLabel_comp(self, ctx:Ah210Parser.Label_compContext):
+        pass
+
+
     # Enter a parse tree produced by Ah210Parser#casting.
     def enterCasting(self, ctx:Ah210Parser.CastingContext):
         pass
@@ -266,6 +293,15 @@ class Ah210Listener(ParseTreeListener):
 
     # Exit a parse tree produced by Ah210Parser#return_statement.
     def exitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#count.
+    def enterCount(self, ctx:Ah210Parser.CountContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#count.
+    def exitCount(self, ctx:Ah210Parser.CountContext):
         pass
 
 

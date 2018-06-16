@@ -16,7 +16,8 @@ statement :
 
 terminated : 
       (
-        execute
+        | execute
+        | async_execute
         | expr
         | assignment
         | scoping
@@ -24,10 +25,12 @@ terminated :
         | url
         | options_statement
         | return_statement
+        | await
       ) TERMINATOR ;
 
 non_terminated : 
-      flow ;
+      flow
+ ;
 
 expr :
       labels
@@ -43,9 +46,11 @@ expr :
       | expr AND expr
       | expr OR expr
       | execute
+      | async_execute
       | casting
       | obj_list
       | obj_dict
+      | count
       | boolean 
       | NUMBER 
       | string ;
@@ -72,6 +77,10 @@ for_statement : FOR labels IN expr block;
 
 condition: LPAREN expr RPAREN ;
 
+async_execute: (labels EQUAL)? ASYNC execute ;
+
+await: AWAIT labels ;
+
 block : BLOCKOPEN statements BLOCKCLOSE | statement ;
 
 scoping : imports | exports | name ;
@@ -92,7 +101,7 @@ execute :
         | COMMANDTAX 
         | SCRIPT 
         | CUSTOM
-      ) LPAREN expr (COMMA expr)* RPAREN ;
+      ) LPAREN expr (COMMA expr)* RPAREN block? ;
 
 url : URL expr ;
 
@@ -100,7 +109,9 @@ inject : MUSTACHEOPEN REQUEST? labels MUSTACHECLOSE ;
 
 log : LOG LPAREN expr RPAREN ;
 
-labels : LABEL | DOT_LABEL ;
+labels : label_comp (DOT label_comp)* ;
+
+label_comp : LABEL | inject ;
 
 casting : 
       (
@@ -123,6 +134,8 @@ obj_dict : BLOCKOPEN (expr COLON expr)? (COMMA (expr COLON expr)?)* BLOCKCLOSE ;
 options_statement : OPTIONS expr ;
 
 return_statement : RETURNS expr? ;
+
+count : HASH expr ;
 
 
 
@@ -156,6 +169,8 @@ PERCENT : '%' ;
 COMMA : ',' ;
 
 TERMINATOR : ';' ;
+
+HASH : '#' ;
 
 NUMBER : INT | FLOAT ; 
 
@@ -201,6 +216,9 @@ ELSE : E L S E ;
 FOR : F O R ;
 WHILE : W H I L E ;
 
+ASYNC : A S Y N C ;
+AWAIT : A W A I T ;
+
 TYPE_INT : I N T ;
 TYPE_DICT : D I C T ;
 TYPE_LIST : L I S T ;
@@ -227,9 +245,9 @@ REQUEST : R COLON ;
 
 /** TYPES **/
 
-LABEL : (LETTER|ULINE)(LETTER|DIGIT|ULINE)+ ;
+//LABEL : (LETTER|DIGIT|ULINE)+ ;
 
-DOT_LABEL : (LABEL | DIGIT | DOT)+ ;
+LABEL : (LETTER | ULINE | DIGIT | DOT)+ (LETTER | ULINE | DIGIT);
 
 HEX : ('0x'|'0X')(HEXDIGIT)HEXDIGIT*;
 

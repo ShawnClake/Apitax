@@ -35,3 +35,12 @@ class Commandtax:
 
     def getRequest(self):
         return self.request
+
+    def getReturnedData(self):
+        returned = None
+        if (isinstance(self.getRequest(), Script)):
+            returned = self.getRequest().parser.data.getReturn()
+        if (returned is not None):
+            return returned
+        else:
+            return self.getRequest().getResponseBody()

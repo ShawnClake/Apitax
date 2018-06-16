@@ -27,6 +27,8 @@ class Log:
         # logging.basicConfig(filename=filepath,level=logging.INFO)
         # log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
 
+        self.prefix = ''
+
         if (not loggers.get('main')):
 
             directorypath = Path(logFile)
@@ -49,14 +51,32 @@ class Log:
 
             loggers.update({'main': app_log, 'settings':{'doLog': doLog, 'colorize':logColorize,'path':directorypath.resolve()}})
 
+    def inject(self, text):
+
+        if(self.prefix == '' or text == ''):
+            return text
+
+        text = str(text)
+
+        if (text[:3] == '>>>' or text[:3] == '###'):
+            return text[:3] + ' ' + self.prefix + ' ' + text[3:]
+        elif (text[:2] == '>>'):
+            return text[:2] + ' ' + self.prefix + ' ' + text[2:]
+        elif (text[:1] == '>' or text.strip()[:1] == '*'):
+            return text[:1] + ' ' + self.prefix + ' ' + text[1:]
+
+        return self.prefix + ' ' + text
+
     def log(self, text):
         # logging.info(' '+text)
+        text = self.inject(text)
         if(loggers.get('settings').get('doLog')):
             loggers.get('main').info(text)
             print(self.injectStdColor(text))
 
     def error(self, text):
         # logging.info(' '+text)
+        text = self.inject(text)
         if(loggers.get('settings').get('doLog')):
             loggers.get('main').info('### Error: ' + text)
             print(self.injectStdColor('### Error: ' + text))

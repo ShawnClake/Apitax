@@ -12,6 +12,7 @@
 # System imports
 from time import time
 import json
+import subprocess
 
 # Default imports
 import click
@@ -80,6 +81,8 @@ class Apitax:
             usage = 'web'
         elif('--grammar-test' in args):
             usage = 'grammar-test'
+        elif('--build' in args):
+            usage = 'build'
 
         if ('--debug' in args):
             debug = True
@@ -143,6 +146,8 @@ class Apitax:
                 log.log("")
             
             if(debug and command.split(' ')[0] == 'script'):
+                for t in result.getRequest().parser.threads:
+                    t.join()
                 log.log(">> Dumping Current DataStore State:")
                 log.log("    * I recommend this website for looking at the data: http://json.parser.online.fr/")
                 log.log("")
@@ -159,11 +164,19 @@ class Apitax:
 
         elif(usage == 'grammar-test'):
             GrammarTest(script)
+
+        elif(usage == 'build'):
+            subprocess.check_call('npm --help')
+
+        else:
+            log.log("### Error: Unknown mode")
             
         t1 = time()
-        
+        #print(">> Apitax finished processing in {0:.2f}s".format(t1 - t0))
         if(debug):
             log.log(">> Apitax finished processing in {0:.2f}s".format(t1-t0))
             log.log("")
             log.log("")
+
+
 

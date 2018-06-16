@@ -1,4 +1,4 @@
-# Generated from /home/tsisd/shawn/grammar/src/Ah210.g4 by ANTLR 4.7.1
+# Generated from D:/Programming/Projects/Apitax/apitax/grammar/src\Ah210.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Ah210Parser import Ah210Parser
@@ -69,6 +69,16 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#async_execute.
+    def visitAsync_execute(self, ctx:Ah210Parser.Async_executeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#await.
+    def visitAwait(self, ctx:Ah210Parser.AwaitContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#block.
     def visitBlock(self, ctx:Ah210Parser.BlockContext):
         return self.visitChildren(ctx)
@@ -119,6 +129,11 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#label_comp.
+    def visitLabel_comp(self, ctx:Ah210Parser.Label_compContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#casting.
     def visitCasting(self, ctx:Ah210Parser.CastingContext):
         return self.visitChildren(ctx)
@@ -151,6 +166,11 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#return_statement.
     def visitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#count.
+    def visitCount(self, ctx:Ah210Parser.CountContext):
         return self.visitChildren(ctx)
 
 
