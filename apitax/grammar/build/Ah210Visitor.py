@@ -1,4 +1,4 @@
-# Generated from D:/Programming/Projects/Apitax/apitax/grammar/src\Ah210.g4 by ANTLR 4.7
+# Generated from /home/tsisd/shawn/grammar/src/Ah210.g4 by ANTLR 4.7.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Ah210Parser import Ah210Parser
@@ -34,6 +34,11 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#executers.
+    def visitExecuters(self, ctx:Ah210Parser.ExecutersContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#expr.
     def visitExpr(self, ctx:Ah210Parser.ExprContext):
         return self.visitChildren(ctx)
@@ -64,6 +69,11 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#each_statement.
+    def visitEach_statement(self, ctx:Ah210Parser.Each_statementContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#condition.
     def visitCondition(self, ctx:Ah210Parser.ConditionContext):
         return self.visitChildren(ctx)
@@ -84,6 +94,11 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#callback_block.
+    def visitCallback_block(self, ctx:Ah210Parser.Callback_blockContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#scoping.
     def visitScoping(self, ctx:Ah210Parser.ScopingContext):
         return self.visitChildren(ctx)
@@ -101,6 +116,11 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#imports.
     def visitImports(self, ctx:Ah210Parser.ImportsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#commandtax.
+    def visitCommandtax(self, ctx:Ah210Parser.CommandtaxContext):
         return self.visitChildren(ctx)
 
 
@@ -166,6 +186,11 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#return_statement.
     def visitReturn_statement(self, ctx:Ah210Parser.Return_statementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#delete_statement.
+    def visitDelete_statement(self, ctx:Ah210Parser.Delete_statementContext):
         return self.visitChildren(ctx)
 
 

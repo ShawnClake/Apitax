@@ -51,32 +51,35 @@ class Log:
 
             loggers.update({'main': app_log, 'settings':{'doLog': doLog, 'colorize':logColorize,'path':directorypath.resolve()}})
 
-    def inject(self, text):
-
-        if(self.prefix == '' or text == ''):
+    def inject(self, text, prefix=''):
+        
+        if(prefix == ''):
+            prefix = self.prefix
+        
+        if(prefix == '' or text == ''):
             return text
 
         text = str(text)
 
         if (text[:3] == '>>>' or text[:3] == '###'):
-            return text[:3] + ' ' + self.prefix + ' ' + text[3:]
+            return text[:3] + ' ' + prefix + ' ' + text[3:]
         elif (text[:2] == '>>'):
-            return text[:2] + ' ' + self.prefix + ' ' + text[2:]
+            return text[:2] + ' ' + prefix + ' ' + text[2:]
         elif (text[:1] == '>' or text.strip()[:1] == '*'):
-            return text[:1] + ' ' + self.prefix + ' ' + text[1:]
+            return text[:1] + ' ' + prefix + ' ' + text[1:]
 
-        return self.prefix + ' ' + text
+        return prefix + ' ' + text
 
-    def log(self, text):
+    def log(self, text, prefix=''):
         # logging.info(' '+text)
-        text = self.inject(text)
+        text = self.inject(text, prefix)
         if(loggers.get('settings').get('doLog')):
             loggers.get('main').info(text)
             print(self.injectStdColor(text))
 
-    def error(self, text):
+    def error(self, text, prefix=''):
         # logging.info(' '+text)
-        text = self.inject(text)
+        text = self.inject(text, prefix)
         if(loggers.get('settings').get('doLog')):
             loggers.get('main').info('### Error: ' + text)
             print(self.injectStdColor('### Error: ' + text))

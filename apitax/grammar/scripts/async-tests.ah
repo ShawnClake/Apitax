@@ -1,0 +1,53 @@
+url "https://jsonplaceholder.typicode.com";
+
+bob = [];
+threads = [];
+
+each get("/users", {})
+{%
+	url "https://jsonplaceholder.typicode.com";
+	async get("/posts", {
+          	"query": {
+                "userId": result.id,
+            },
+        }) {%
+        	log("The user has these posts: " + result);    
+        %};
+%};
+
+/*for user in get("/users", {})
+    threads = async get("/posts", {
+            "query": {
+                "userId": user.id,
+            },
+        }) {%
+        log("The user has these posts: " + result);
+        bob[] = result
+    %};
+
+await threads;
+
+del threads;*/
+
+log("yo man im at the end");
+
+
+/*for user in get("/users", {})
+    threads = async get("/posts", {
+            "query": {
+                "userId": user.id,
+            },
+        }) {%
+        log("The user has these posts: " + result);
+        bob[] = result
+    %};
+
+//bob[] = "hey";
+
+for t in threads
+	await t;
+
+log(bob);
+
+log("Im quite confused");*/
+

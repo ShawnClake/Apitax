@@ -24,3 +24,8 @@ class GenericExecution(threading.Thread):
 
         if(self.label):
             self.context.data.storeVar(self.label, self.result['result'])
+            
+
+
+    def serialize(self):
+        return str(self.threadId)

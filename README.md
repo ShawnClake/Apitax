@@ -6,6 +6,12 @@ Pronounced: *ahhp-ehh-tax*
 
 Finally, as Apitax features an exponential amount of various interactions, not all of them are documented here. Experiment with the syntax, Learn from the syntax, and Enjoy Apitax!
 
+## What is it
+
+Apitax is an API automation framework utilizing Commandtax and Scriptax. Commandtax is an API language which helps to quickly prototype powerful rest API requests. Scriptax is an automation language which utilizes Commandtax.
+
+A more winded (and more detailed!) description will be written out at the very bottom of this documentation.
+
 ## Builds
 
 ### Jenkins
@@ -350,5 +356,29 @@ export me
 //log(amanda)
 
 ```
+
+
+## Why use Apitax
+The backend exists as an entity that does nothing unless it is told to do something.
+
+The backend is only told to do something via API calls - there will be no other interface into the backend. 
+
+Okay, so let's say you want to build a frontend that will list every users most recent 10 posts. 
+
+One way you can do this is to make an API request to get a list of users. Then, in Javascript, you can loop through that list of users, and make an API request for each one in order to get the most recent posts associated with that user. In Javascript, you can then compile this list of users together and display it.
+
+Sounds simple - except how do you then make this async. You begin to introduce all sorts of nested callbacks, desync's in vue that are complex to sort out, complicated bug testing, and you start to break DRY as you copy bits and pieces of this code to different pages to list different types of data or in different ways.
+
+You can solve some of your DRY problems by creating giant API classes that have helper methods for each of these types of calls, but it still becomes quite a mess.
+
+What you want to focus on is frontend development - not the API request garbage. Thus, we are enforcing SRP as well. The bulk of the frontend code should be about displaying data, getting input, and getting responses from that input. It should not be thousands of lines of you making API calls and trying to organize the data and that type of stuff. There has to be a simpler way, right?
+
+What if the frontend only had 5 different API requests to make. 1 for authentication, 1 for getting a catalog of endpoints, 1 for getting the status of the system, a few more, and finally 1 to facilitate the transfer of data both ways. Here is where Apitax/Commandtax come into play. You now have a single endpoint to send a request to, and that request's payload is commandtax. 
+
+Great! Now, instead of a bunch of helper methods all over the place, now you might just have some helper string constants that store frequently used commands. Already much cleaner and more workable. But, this still doesn't solve DRY, SRP, or the callback and desync hell you would face from having to make several requests in a row to accomplish some task.
+
+Enter - Scriptax. Now, any of us can create little self-contained sub module files which do these sequential requests for you. One file might have the responsibility of getting a list of users that follows some set of parameters, and another might call that users file and then using the response returned form it, get a list of posts for each of those users and return that. 
+
+Okay, now, your frontend only has 1 short line of commandtax which is executing a script. If the scripts are written well, there is no more callback hell, SRP is preserved, DRY is enforced, and the data returned to you will already be in a very workable format. Kaboomskies, you just saved yourself 2 dozen lines of hard to debug JavaScript and instead, it's a one liner that returns the data already in a workable format
 
 

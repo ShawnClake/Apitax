@@ -52,6 +52,8 @@ class Custom(Request):
 
         if ('--data-post' in command):
             postData = command[command.index('--data-post') + 1]
+        else:
+            postData = {}
 
         if ('--data-query' in command):
             paramData = command[command.index('--data-query') + 1]

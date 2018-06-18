@@ -16,21 +16,23 @@ statement :
 
 terminated : 
       (
-        | execute
-        | async_execute
-        | expr
+        executers
         | assignment
         | scoping
         | log
         | url
+        | each_statement
         | options_statement
         | return_statement
+        | delete_statement
         | await
       ) TERMINATOR ;
 
 non_terminated : 
-      flow
- ;
+      flow ;
+
+executers : execute
+         | async_execute ;
 
 expr :
       labels
@@ -45,8 +47,8 @@ expr :
       | expr (EQ | NEQ) expr
       | expr AND expr
       | expr OR expr
-      | execute
       | async_execute
+      | execute
       | casting
       | obj_list
       | obj_dict
@@ -57,7 +59,7 @@ expr :
 
 assignment : 
       SET? labels ((
-          EQUAL 
+          (SOPEN SCLOSE)? EQUAL 
           | PE
           | ME
           | MUE
@@ -73,15 +75,19 @@ if_statement : IF condition block (ELSE IF condition block)* (ELSE block)? ;
 
 while_statement : WHILE condition block ;
 
-for_statement : FOR labels IN expr block;
+for_statement : FOR labels IN expr block ;
+
+each_statement : EACH expr callback_block ;
 
 condition: LPAREN expr RPAREN ;
 
-async_execute: (labels EQUAL)? ASYNC execute ;
+async_execute: ASYNC commandtax callback_block? ; // (labels EQUAL)? 
 
 await: AWAIT labels ;
 
 block : BLOCKOPEN statements BLOCKCLOSE | statement ;
+
+callback_block: EXECUTEOPEN statements EXECUTECLOSE ;
 
 scoping : imports | exports | name ;
 
@@ -91,7 +97,7 @@ exports : EXPORT (labels | execute);
 
 imports : IMPORT execute ;
 
-execute : 
+commandtax : 
       ( 
         GET 
         | POST 
@@ -101,7 +107,9 @@ execute :
         | COMMANDTAX 
         | SCRIPT 
         | CUSTOM
-      ) LPAREN expr (COMMA expr)* RPAREN block? ;
+      ) LPAREN expr (COMMA expr)* RPAREN ;
+
+execute : commandtax callback_block? ;
 
 url : URL expr ;
 
@@ -135,6 +143,8 @@ options_statement : OPTIONS expr ;
 
 return_statement : RETURNS expr? ;
 
+delete_statement : DEL labels ;
+
 count : HASH expr ;
 
 
@@ -154,6 +164,9 @@ PE : '+=' ;
 ME : '-=' ;
 MUE : '*=' ;
 DE : '/=' ;
+
+SAND : '&&' ; 
+SOR : '||' ;
 
 PLUS : '+' ;
 MINUS : '-' ;
@@ -178,7 +191,6 @@ INT : '-'?DIGIT+ ;
 
 FLOAT : '-'? DIGIT* DOT DIGIT+ ;
 
-
 /** BLOCKS **/
 
 EXECUTEOPEN : '{%' ;
@@ -196,11 +208,12 @@ RPAREN : ')';
 SOPEN : '[';
 SCLOSE : ']';
 
+/** COMBINATOR KEYWORDS **/
+AND : A N D | SAND ;
+OR : O R | SOR ;
 
 /** KEYWORDS **/
 EACH : E A C H;
-AND : A N D ;
-OR : O R ;
 IN : I N ;
 OPTIONS : O P T I O N S ;
 RETURNS : R E T U R N ;
@@ -215,6 +228,7 @@ THEN : T H E N ;
 ELSE : E L S E ;
 FOR : F O R ;
 WHILE : W H I L E ;
+DEL : D E L ;
 
 ASYNC : A S Y N C ;
 AWAIT : A W A I T ;

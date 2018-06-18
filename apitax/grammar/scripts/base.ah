@@ -89,3 +89,24 @@ log(result);
 };
 
 
+for iter in 10 {
+
+    async get("/posts", {
+            "query": {
+                "userId": iter,
+            }
+        }) {
+        log("The user has these posts: " + result);
+    };
+
+}
+
+log("here is where the magic happens");
+
+get("/posts", {
+        "query": {
+            "userId": 5,
+        }
+    }) {
+    log("The user has these posts: " + result);
+};
