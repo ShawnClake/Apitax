@@ -149,7 +149,7 @@ cp $grammardir/src/$1 $apitaxdir/src
 * dict()
     * Cast to dictionary
     * Works on lists, strings, ints, decs
-* #
+* \#
     * Return the length of the variable
     * Works on strings, lists, dictionaries (Only returns the top level count)
 * del \<someVar\>
