@@ -10,7 +10,7 @@ Finally, as Apitax features an exponential amount of various interactions, not a
 
 Apitax is an API automation framework utilizing Commandtax and Scriptax. Commandtax is an API language which helps to quickly prototype powerful rest API requests. Scriptax is an automation language which utilizes Commandtax.
 
-A more winded (and more detailed!) description will be written out at the very bottom of this documentation.
+A more winded (and more detailed!) description called **Why use Apitax** is at the very bottom of this documentation.
 
 ## Builds
 
@@ -19,7 +19,7 @@ A more winded (and more detailed!) description will be written out at the very b
 * This address may change in the future
 * Builds are not available on the Jenkins platform, and they likely never will be
 * Builds are triggered periodically or via a Git Push
-* Build artificats will likely be pushed to a downloads server in the near future
+* Build artifacts will likely be pushed to a downloads server in the near future
     * Only non-dependency versions will be offered. On average, these are about 7.5% of the size of the versions which includes dependencies
     * Major and minor releases will also feature a dependency build, however bug and security releases will not feature a dependency version
     * It is best practice to always download the no-deps version and ensure you download the dependencies yourself
@@ -35,9 +35,9 @@ A more winded (and more detailed!) description will be written out at the very b
 * Run the command: `pandoc -o readme.docx -f markdown -t docx README.md`
 
 ### Compile Antlr Grammar from another directory
-This is sometimes nessecary due to a bug in the antlr compiler with regards to paths
+This is sometimes necessary due to a bug in the antlr compiler with regards to paths
 * Download the antlr compiler .jar file and save it somewhere.
-* Inside of the directory where the .jar was saved, create the following folder heirarchy
+* Inside of the directory where the .jar was saved, create the following folder hierarchy
     * build
     * src
     * scripts
@@ -75,8 +75,10 @@ cp $grammardir/src/$1 $apitaxdir/src
         * --patch : Uses a patch method
         * --delete : Uses a delete method
         * --url : (string) The endpoint
+        * --debug : Sets debug mode
+        * --sensitive : Sets sensitive mode
         * --data-post : (json string) Any post data
-        * --data-param : (json string) Any query parameters  ie. Endpoint.com/something?this=queryparam
+        * --data-query : (json string) Any query parameters  ie. Endpoint.com/something?this=queryparam
         * --data-path : (json string) Any url path variables ie. Endpoint.com/users/{path_var}/show
 
 
@@ -87,11 +89,88 @@ cp $grammardir/src/$1 $apitaxdir/src
 
 ### Scriptax - Control Flow, Scoping, and Automation
 
-#### Existing keys
-* ct("\<someCommand\>") 
+#### Existing keywords
+* ct("\<someCommand\>") {% %}
     * Commandtax execution
     * A command is executed during the parsing of the line and its response is returned
-* set \<someVar\> = \<someValue\>
+    * Supports async, callbacks
+* get("\<someCommand\>", {dataObj}, param1...n) {% %}
+    * Executes a get request
+    * Data Object takes optional keys which correspond to Commandtax custom data: `post, query, path, header`
+    * Returns the result
+    * Supports async, callbacks
+* put("\<someCommand\>", {dataObj}, param1...n) {% %}
+    * Executes a put request
+    * Data Object takes optional keys which correspond to Commandtax custom data: `post, query, path, header`
+    * Returns the result
+    * Supports async, callbacks
+* patch("\<someCommand\>", {dataObj}, param1...n) {% %}
+    * Executes a patch request
+    * Data Object takes optional keys which correspond to Commandtax custom data: `post, query, path, header`
+    * Returns the result
+    * Supports async, callbacks
+* post("\<someCommand\>", {dataObj}, param1...n) {% %}
+    * Executes a post request
+    * Data Object takes optional keys which correspond to Commandtax custom data: `post, query, path, header`
+    * Returns the result
+    * Supports async, callbacks
+* delete("\<someCommand\>", {dataObj}, param1...n) {% %}
+    * Executes a delete request
+    * Data Object takes optional keys which correspond to Commandtax custom data: `post, query, path, header`
+    * Returns the result
+    * Supports async, callbacks
+* script("\<someScriptFile\>", {emptyObject}, param1...n) {% %}
+    * Executes a script
+    * Returns the result
+    * Supports async, callbacks
+* async
+    * Add this keyword in front of any other keyword which supports async to run the operation in a new thread
+    * async get("http://placeholderjson.com/users", {}) {% %}
+    * someVar = async get("http://placeholderjson.com/users", {}) {% %}
+    * Callbacks execute prior to storing into variable
+    * Variable will be initialized with a thread instance and once the thread completes it will be replaced with the result as returned via the callback
+* await \<someOptionalVar\>;
+    * When a variable is specified, wait until the async execution specified by that variable completes.
+    * When no variable is specified, wait until all of the open threads in the current script complete before moving on
+* {% %};
+    * Callback block
+    * The contents will be executed in an isolated scope, usually only having access to a `results` variable
+* str()
+    * Cast to string
+* int()
+    * Cast to rounded integer
+* dec()
+    * Cast to float
+* bool()
+    * Cast to true/false
+* list()
+    * Cast to list
+    * Only works on strings
+* dict()
+    * Cast to dictionary
+    * Works on lists, strings, ints, decs
+* #
+    * Return the length of the variable
+    * Works on strings, lists, dictionaries (Only returns the top level count)
+* del \<someVar\>
+    * Remove someVar from the current scope
+* return \<optionalVar\>
+    * Exits the script immediately and returns some expression
+* options
+    * Used to specify options for the script
+    * Commonly used to define parameters for the script: 
+        * `options {"params": ["first"]};`
+* if (condition) {}
+    * IF statement
+* while (condition) {}
+    * While loop
+* for \<someVar\> in \<existingVar\> {}
+    * Loop through each item in a list in order
+* for \<someVar\> in \<someNumber\> {}
+    * Loop from 1 to someNumber and set someVar to the current iteration
+* each \<someList\> {% %};
+    * Loop through a list setting `results` to the current item and executing instructions in an isolated callback
+* \<someVar\> = \<someValue\>
     * Sets a variable
     * Supports expressions, strings, numbers, booleans, dictionaries, lists, and commandtax responses
 * "this is a string {{ someVar }}"
@@ -106,33 +185,29 @@ cp $grammardir/src/$1 $apitaxdir/src
 * name \<someName\>
     * Sets the reference name of the script.
     * Supports strings and expressions
+* url \<someUrl\>
+    * Sets the current working URL to be used in further commandtax
 * log("log some output to the console & log file")
     * Supports expressions
-* cast(\<someVar\>, type)
-    * Casts a variable to a type
-    * Valid types are: str, num, dict, list 
 * // some comment
     * Inline comment
 * /* some comment spanning multiple lines */
     * Block comment
 
+#### Best Practices
+* Start each script with an options line immediately followed by a name line. 
+* End each script with `await;` to ensure all async requests are completed before it returns to the parent script.
+    * Ending with `await;` followed by `return \<someVar\>;` is also acceptable
+* Delete unused variables from the root scope when they are no longer needed `del \<someVar\>` 
+* Only export/return necessary variables from subscripts
+* Keep the root scope as clean as possible
+* Scripts should be small, containerized pieces of code that strictly follow SRP.
+     * Think of Scripts as lego blocks, eventually you can put a bunch of them together to build something really cool
+* Scriptax is a fairly flexible, forgiving, and powerful language
+    * Play around to see what you can and cannot do. There are too many edge cases to list explicitly.
+
 #### Coming Soon
-* {% if \<someCondition\> %}   \<someExecution\>
-* {% if \<someCondition\> %}: \<someSetOfExecutionSpanningMultipleLines\> {% endif %}
-* return \<someDataOrOptionallyNoData\>
-    * Stops the processing of the current script and gives control back to the parent script
-    * The parent script, if importing this subscript, will have access to any data returned by this subscript. The returned data will be directly under the subscripts namespace in the dataStore
-        * For example: {"vars": {"someSubScript":{"return": "{"this is": "the returned data"}"}}}
-* \<someVariable\> to \<type\>
-    * Cast a variable to a type
-    * Types: boolean, string, int, float, double, json, object
-    * Type checking is not preformed and is expected of the user to know what they are trying to do
-* {% for \<someNewVariable\> to range(\<someStart\>,\<someEnd\>) %} \<someExecution\>
-* {% for \<someNewVariable\> to \<someEnd\> %} \<someExecution\>
-* {% for \<someNewVariable\> in \<someExistingVariableObject\> %} \<someExecution\>
-* {% for oneOfTheCasesListedAbove %}: \<someSetOfExecutionSpanningMultipleLines\> {% endfor %}
-* require <someData>
-    * Provide a means for a parent script to gather all of the data it will need to run from the executing user
+* A time method
 
 #### Tidbits
 * You can use arrays via dot notation
@@ -159,7 +234,7 @@ cp $grammardir/src/$1 $apitaxdir/src
 	
 ### Configuration
 * Please utilize the config file found in the main apitax directory
-* Eventually these parameteres will be programmatically assignable
+* Eventually these parameters will be programmatically assignable
 * Eventually a custom config file path will be able to be passed in
 
 Example Configuration File:
@@ -174,6 +249,8 @@ ip = <someIPForTheWebServer>
 log = true
 log-file = logs/log.log
 log-colorize = true
+log-human-readable = false
+log-prefixes = false
 default-mode = cli
 default-username = <someAuthUsername>
 default-password = <someAuthPassword>
@@ -194,6 +271,7 @@ default-password = <someAuthPassword>
         * Core commandtax plugins file: `apitax/drivers/plugins/commandtax/CoreFileCommands.py`
         * Core commandtax plugins directory: `apitax/drivers/plugins/commandtax/<theNameofTheDriver>/`
     * Inside of this new plugins directory, you can create shortcut files to route specialized commands. You can see examples of this in the apitax source code with regards to the ApitaxTests driver and plugin files
+    * Shortcut commands are really just scripts which are aliased to a command
 	
 ### Examples of Apitax in Action:
 
@@ -213,172 +291,266 @@ custom --get --url <someEndpoint>/with/some/{ohyear}/url/params/{981} --data-par
 #### Scriptax Examples
 
 ```
-// tristan.ah
+// async-tests.ah
 
-set jen = 6.9 / 69
+url "https://jsonplaceholder.typicode.com";
 
-set paris = {{jen}} + 5
+bob = [];
+threads = [];
 
-set tristan = "runescape"
+/*each get("/users", {})
+{%
+	url "https://jsonplaceholder.typicode.com";
+	threads[] = async get("/posts", {
+          	"query": {
+                "userId": result.id,
+            },
+        }) {%
+        	log("The user has these posts: " + result);    
+        %};
+%};*/
 
-log(tristan + "hi")
+for user in get("/users", {})
+    threads[] = async get("/posts", {
+            "query": {
+                "userId": user.id,
+            },
+        }) {%
+        log("The user has these posts: " + result);
+        //bob[] = result;
+    %};
 
-ct("domain list all")
+await threads;
 
-export ct("script apitax/grammar/scripts/jen.ah")
+del threads;
 
-log(quinn.jordan.shawn)
+script("apitax/grammar/scripts/base.ah");
 
-import ct("custom --get --url https://jsonplaceholder.typicode.com/posts")
+log("yo man im at the end");
 
-set noway = {{r:1.0.title}}
+
+/*for user in get("/users", {})
+    threads = async get("/posts", {
+            "query": {
+                "userId": user.id,
+            },
+        }) {%
+        log("The user has these posts: " + result);
+        bob[] = result
+    %};
+
+//bob[] = "hey";
+
+for t in threads
+	await t;
+
+log(bob);
+
+log("Im quite confused");*/
+
+```
+
+```
+// base.ah
+
+url "https://jsonplaceholder.typicode.com";
+for user in get("/users")
+{
+    /*result = get("/posts", {
+        "query": {
+            "userId": user.id,
+        }
+    });
+    log("The user has these posts: " + result);*/
+
+    log("the user has ID: " + user.id);
+
+    async get("/posts", {
+            "query": {
+                "userId": user.id,
+            }
+        }) {%
+        log("The user has these posts: " + result);
+    %};
+
+}  
+   
+response = post("/posts", {
+    "post": {
+        "title":'foo',
+        "body":'bar',
+        "userId":1
+    }
+});
+
+log(script("apitax/grammar/scripts/jen.ah", {}, "i am parameter 1", "i am parameter 2"));
+
+//response = ;
+
+log("Please " + ct("tests my script", {}, "i should be a parameter"));
+
+
+testlist = ["one", "two", 'three', ["a", 'b', 'c', 'd'], {"test": "failed", "yes": "no"}];
+
+log(#testlist.0);
+
+
+/*async ct("some command execution")
+{
+log("some integrated callback");
+}
+
+async ct("some command execution");
+
+status = async ct("some command execution");
+
+await status;
+
+status = [firstAsync, secondAsync];
+await status;
+
+async bobo in get("/users")
+{
+    log("Async callback: " + bobo);
+}*/
+
+async get("/users");
+
+
+
+somelabel = async get("/users")
+{%
+    log("I am an optional callback");
+%};
+//anotherRequest0 = async get("/users");
+//anotherRequest1 = async get("/users");
+//anotherRequest2 = async get("/users");
+
+await somelabel;
+
+log("i am that label" + somelabel);
+
+
+get("/users") {%
+
+log(result);
+
+%};
+
+async get("/users") {%
+
+log(result);
+
+%};
+
+
+for iter in 10 {
+
+    async get("/posts", {
+            "query": {
+                "userId": iter,
+            }
+        }) {%
+        log("The user has these posts: " + result);
+    %};
+
+}
+
+log("here is where the magic happens");
+
+get("/posts", {
+        "query": {
+            "userId": 5,
+        }
+    }) {%
+    log("The user has these posts: " + result);
+%};
+
+
+await;
 
 ```
 
 ```
 // jen.ah
 
-name "quinn"
+options dict('{"params": ["name", "game"]}');
+answer=2+2;
+name "quinn";
 
-set qwer = "im in jens script"
+set qwer = "im in jens script";
 
-export qwer
 
-export ct("script apitax/grammar/scripts/shawn.ah")
+export qwer;
 
-set iam.hope.this.works = ct("custom --get --url https://jsonplaceholder.typicode.com/users")
+//export ct("script apitax/grammar/scripts/shawn.ah");
 
-export iam
+set iam.hope.this.works = ct("custom --get --url https://jsonplaceholder.typicode.com/users");
+
+export iam;
+
+set test = "hello";
+
+//return '{"cool": "beans"}';
+
+log(params.passed.0);
+
+log(params.passed.1);
+
+log(params.name);
+
+log(params.game);
+
+log(2+2);
+
+return params.passed.1;
+
+//return "test";
+
+
+await;
 
 ```
 
 ```
-// shawn.ah
+// my_script.ah
 
-name "jordan"
 
-set shawn = 55
+options dict('{"params": ["first"]}');
 
-export shawn
+log("I got here");
 
-set whynotme = '["first", "second", "third"]'
+log(params.first);
 
-set whyme = cast(whynotme, dict)
+return "work";
 
-```
 
-```
-/*   
-A major test script used in our personal testing procedure
-test3.ah
-*/
-
-7 + 3 * (10 / (12 / (3 + 1) - 1))
-
-7 + 3 * (10 / (12 / (3 + 1) - 1)) / (2 + 3) - 5 - 3 + (8)
-
-(10 / (12 / (3 + 1) - 1))
-
-(2 + 3) 
-
-3*(10 / (12 / (3 + 1) - 1))
-
-3 / 5 * 2
-
-5 - 2.2
-
-3/5*(10 / (12 / (3 + 1) - 1))
-
-7 + (((3 + 2)))
-
-5 * 6 * 3 * 2
-
-36 / 6 / 2 / 3
-
-5 + 2 + 3 + 4
-
-5 - 2 - 3 - 5
-
-name "bobbyjoe"
-
-name "keystones"
-
-set shawn = 65
-
-set derp = "thederpiest"
-
-name derp
-
-{{simble.jim}}
-
-{{simble.lionking.shawn}}
-
-{{r:simble.lionking.1.role_assignments.0.user.id}}
-
-{{bobby.projects.0.is_domain}}
-
-set mynum = 3
-
-1 + 1 + {{mynum}}
-
-name derp
-
-set jimmy = {{mynum}} + 3
-
-set somestring = "heck no: " + {{derp}} + " :( " + derp
-
-set come.on = "noway"
-
-set come.here = dict('{"myname": "is not cool", "youknow" : "?"}')
-
-log({{derp}} + " " + somestring + " ===> " + cast(come, str))
-
-set ksjhdg = '{"myname": "is not cool", "youknow" : "?"}'
-
-set something = cast(ksjhdg, dict)
-
-set heck.no = cast(mynum, dict)
-
-set cough = '["test0", "test1", "test2"]'
-
-set heck.yes = cast(cough, dict)
-
-{{heck.yes.1}}
-
-set me = "blah blah blah {{heck.yes.1}}"
-
-export me
-
-//import ct("script apitax/grammar/scripts/test2.ah")
-
-//set amanda = {{test2apitaxtest.test4apitaxtest.nooby}} + " or maybe jk"
-
-//log(amanda)
+await;
 
 ```
 
 
 ## Why use Apitax
-The backend exists as an entity that does nothing unless it is told to do something.
+Let's presume that a backend exists only as an entity that does nothing until it is told to do something.
 
-The backend is only told to do something via API calls - there will be no other interface into the backend. 
+If this is the case let's also assume there will be no interface into the backend other than a RESTful API. 
 
-Okay, so let's say you want to build a frontend that will list every users most recent 10 posts. 
+Okay, so let's say we want to build a frontend that will list every user's 10 most recent posts. 
 
-One way you can do this is to make an API request to get a list of users. Then, in Javascript, you can loop through that list of users, and make an API request for each one in order to get the most recent posts associated with that user. In Javascript, you can then compile this list of users together and display it.
+One way we can do this is to make an API request to retrieve a list of our users. Then, in JavaScript, we can loop through that list of users, and for each one we can make an API request to get their most recent posts. In Javascript, we can then compile this list of users together and display it. 
 
-Sounds simple - except how do you then make this async. You begin to introduce all sorts of nested callbacks, desync's in vue that are complex to sort out, complicated bug testing, and you start to break DRY as you copy bits and pieces of this code to different pages to list different types of data or in different ways.
+Sounds simple - except how do we then speed up this process by utilizing asynchronous code. We begin to introduce all sorts of nested callbacks, desync's in our JavaScript that are complex to sort out, difficult bug testing, and we start to break DRY as we copy bits and pieces of this code to different files/pages to list different types of data in different ways.
 
-You can solve some of your DRY problems by creating giant API classes that have helper methods for each of these types of calls, but it still becomes quite a mess.
+We can solve some of our DRY problems by creating giant API classes that have helper methods for each of these types of calls, but it will still become quite a mess.
 
-What you want to focus on is frontend development - not the API request garbage. Thus, we are enforcing SRP as well. The bulk of the frontend code should be about displaying data, getting input, and getting responses from that input. It should not be thousands of lines of you making API calls and trying to organize the data and that type of stuff. There has to be a simpler way, right?
+What we want is to focus on frontend development - not the API request garbage. By doing this, we are enforcing SRP of the frontend architecture as a whole. The bulk of the frontend code should be dedicated to displaying data, getting input, and showing users responses from their input. It should not be thousands of lines of us making API calls and trying to organize the data. There has to be a simpler way, right?
 
-What if the frontend only had 5 different API requests to make. 1 for authentication, 1 for getting a catalog of endpoints, 1 for getting the status of the system, a few more, and finally 1 to facilitate the transfer of data both ways. Here is where Apitax/Commandtax come into play. You now have a single endpoint to send a request to, and that request's payload is commandtax. 
+What if the frontend only had 4 different API requests to make. 1 for authentication, 1 for getting a catalog of endpoints, 1 for getting the status of the system, and finally 1 to facilitate the transfer of bidirectional data. Here is where Apitax/Commandtax comes into play. We now have a single endpoint to send a request to, and that request's payload is commandtax. 
 
-Great! Now, instead of a bunch of helper methods all over the place, now you might just have some helper string constants that store frequently used commands. Already much cleaner and more workable. But, this still doesn't solve DRY, SRP, or the callback and desync hell you would face from having to make several requests in a row to accomplish some task.
+Great! Now, instead of a bunch of helper methods all over the place, now we might just have some helper string constants that store frequently used commands. Already much cleaner and more workable. But, this still doesn't solve our DRY problem, SRP, or the callback and desync hell we will face from having to make several requests in a row to accomplish a task.
 
-Enter - Scriptax. Now, any of us can create little self-contained sub module files which do these sequential requests for you. One file might have the responsibility of getting a list of users that follows some set of parameters, and another might call that users file and then using the response returned form it, get a list of posts for each of those users and return that. 
+Enter: Scriptax. Now, any of us can create little self-contained sub module files which do these sequential requests for you. These files are called Scripts. One script might have the responsibility of getting a list of users that follows some set of parameters, and another might call that users script and then using the response returned, it could get a list of posts for each of those users and return them. 
 
-Okay, now, your frontend only has 1 short line of commandtax which is executing a script. If the scripts are written well, there is no more callback hell, SRP is preserved, DRY is enforced, and the data returned to you will already be in a very workable format. Kaboomskies, you just saved yourself 2 dozen lines of hard to debug JavaScript and instead, it's a one liner that returns the data already in a workable format
+Okay, now our frontend only has 1 short line of commandtax which is executing a script. If the scripts are written well, there is no more callback hell, SRP is preserved, DRY is enforced, and the data returned to us will already be in a very workable format. Kaboomskies, you just saved yourself 2 dozen lines of hard to debug JavaScript, and instead, it's a one liner that returns the data already in a workable format
 
 
