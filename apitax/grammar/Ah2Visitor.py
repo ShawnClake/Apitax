@@ -140,8 +140,9 @@ class Ah2Visitor(Ah210VisitorOriginal):
             error = self.isError()
             self.log.error(error['message'] + ' in ' + self.state['file'] + ' @' + str(self.state['line']) + ':' + str(
                 self.state['char']))
-            self.log.log('')
-            self.log.log('')
+            if(self.debug):
+                self.log.log('')
+                self.log.log('')
 
         return self
 
@@ -164,13 +165,13 @@ class Ah2Visitor(Ah210VisitorOriginal):
             return
 
         line = ctx.getText().strip()
-        if (line != ""):
+        if (line != "" and self.debug):
             self.log.log('> Now processing: ' + line)
             self.log.log('')
 
         temp = self.visitChildren(ctx)
 
-        if (line != ""):
+        if (line != "" and self.debug):
             self.log.log('')
 
         self.setState(line=ctx.start.line)  # TODO: Try to add character here as well
@@ -448,7 +449,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         #    label = self.visit(ctx.labels())
         resolvedCommand = self.visit(ctx.commandtax())
         resolvedCommand['callback'] = ctx.callback_block()
-        thread = GenericExecution(self, "Async execution and callback", resolvedCommand, log=self.log)
+        thread = GenericExecution(self, "Async execution and callback", resolvedCommand, log=self.log, debug=self.debug, sensitive=self.sensitive)
         self.threads.append(thread)
         #if(label):
         #    self.data.storeVar(label, thread)
@@ -457,6 +458,10 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#await.
     def visitAwait(self, ctx: Ah210Parser.AwaitContext):
+        if(not ctx.labels()):
+            for thread in self.threads:
+                thread.join()
+            return
         threads = self.getVariable(ctx.labels())
         if(isinstance(threads, list)):
             for thread in threads:
@@ -602,7 +607,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitLog(self, ctx: Ah210Parser.LogContext):
         if (ctx.expr()):
             self.log.log('> Logging: ' + json.dumps(self.visit(ctx.expr())))
-        self.log.log('')
+            self.log.log('')
 
     # Visit a parse tree produced by Ah210Parser#labels.
     def visitLabels(self, ctx: Ah210Parser.LabelsContext):

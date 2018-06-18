@@ -11,7 +11,7 @@ venv/
 *.jar
 *.bat
 grammar/src/
-*.log
+*.log*
 
 log.txt
 

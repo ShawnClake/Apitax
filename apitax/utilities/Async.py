@@ -3,7 +3,7 @@ import uuid
 
 
 class GenericExecution(threading.Thread):
-    def __init__(self, context, name, resolvedCommand, log=None, label=None):
+    def __init__(self, context, name, resolvedCommand, log=None, label=None, debug=False, sensitive=False):
         super().__init__()
         self.threadId = uuid.uuid4()
         self.name = name
@@ -13,9 +13,11 @@ class GenericExecution(threading.Thread):
         self.log = log
         self.context = context
         self.label = label
+        self.debug = debug
+        self.sensitive = sensitive
 
     def run(self):
-        if (self.log):
+        if (self.log and self.debug):
             self.log.log(">> Executing Async")
             self.log.log('')
 

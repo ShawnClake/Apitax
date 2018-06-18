@@ -24,6 +24,7 @@ class Request:
         self.request = None
         self.customResponse = customResponse
         self.log = Log()
+        self.humanReadable = self.log.getLoggerSettings().get('human-readable')
 
     def setDebug(self, debug):
         self.debug = debug
@@ -77,34 +78,38 @@ class Request:
         else:
             return self.request.status_code
 
-    def printCLIResponse(self):
-        self.log.log(json.dumps(self.getResponseBodyAsStructure(), indent=2, separators=(',', ': ')))
+    def getCLIResponse(self):
+        return json.dumps(self.getResponseBodyAsStructure(), indent=2, separators=(',', ': '))
 
-    def printDebugResponse(self):
-        self.log.log('Status: ' + str(self.getResponseStatusCode()))
-        self.log.log('Headers:')
+    def getDebugResponse(self):
+        line = ''
+        line += 'Status: ' + str(self.getResponseStatusCode()) + '\n'
+        line += 'Headers:' + '\n'
         if (self.sensitive):
-            self.log.log('Headers are not shown as it contains sensitive data. ie. token')
+            line += 'Headers are not shown as it contains sensitive data. ie. token' + '\n'
         else:
-            self.log.log(self.getResponseHeaders())
-        self.log.log('Body:')
-        self.log.log(self.getResponseBody())
+            line += str(self.getResponseHeaders()) + '\n'
+        line += 'Body:' + '\n'
+        line += str(self.getResponseBody()) + '\n'
+        return line
 
-    def printDebugRequest(self):
-        self.log.log('Endpoint:        ' + self.url)
-        self.log.log('Formed Endpoint: ' + self.getRequestUrl())
-        self.log.log('Headers:')
+    def getDebugRequest(self):
+        line = ''
+        line += 'Endpoint:        ' + self.url + '\n'
+        line += 'Formed Endpoint: ' + self.getRequestUrl() + '\n'
+        line += 'Headers:' + '\n'
         if (self.sensitive):
-            self.log.log('Headers are not shown as it contains sensitive data. ie. password')
+            line += 'Headers are not shown as it contains sensitive data. ie. password' + '\n'
         else:
-            self.log.log(self.headers)
-        self.log.log('Post Data:')
+            line += str(self.headers)
+        line += 'Post Data:' + '\n'
         if (self.sensitive):
-            self.log.log('Post Data is not shown as it contains sensitive data. ie. password')
+            line += 'Post Data is not shown as it contains sensitive data. ie. password' + '\n'
         elif (not self.postData):
-            self.log.log('{}')
+            line += '{}' + '\n'
         else:
-            self.log.log(self.postData)
+           line += str(self.postData) + '\n'
+        return line
 
     def injectPathData(self):
         if (not self.pathData):
@@ -118,69 +123,35 @@ class Request:
                 self.log.log('Path data did not contain key for `' + matchStr + '`')
 
     def logRequest(self):
-        if (self.debug):
-            self.log.log('')
-            self.log.log('<==========')
-            self.printDebugRequest()
+        if (self.debug and not self.humanReadable):
+            #self.log.log('')
+            self.log.log('\n<==========' + '\n' + self.getDebugRequest() + '\n' + self.getDebugResponse() + '==========>' + '\n\n')
+            #self.printDebugRequest()
 
-            self.log.log('')
-            self.printDebugResponse()
-            self.log.log('==========>')
-            self.log.log('')
-            self.log.log('')
-        else:
-            self.log.log('')
-            self.log.log('<==========')
-            self.printCLIResponse()
-            self.log.log('==========>')
-            self.log.log('')
-            self.log.log('')
+            #self.log.log('')
+            #self.printDebugResponse()
+            #self.log.log('==========>')
+            #self.log.log('')
+            #self.log.log('')
+        elif(self.debug):
+            self.log.log('\n<==========\n' + self.getCLIResponse() + '\n' + '==========>\n\n')
+            #self.log.log('<==========')
+            
+            #self.log.log('==========>')
+            #self.log.log('')
+            #self.log.log('')
 
     def post(self):
         self.injectPathData()
         self.request = requests.post(self.url, data=json.dumps(self.postData), headers=self.headers,
                                      params=self.paramData)
         self.logRequest()
-        # if(self.debug):
-        #  self.log.log('')
-        #  self.log.log('<==========')
-        #  self.printDebugRequest()
-
-        #  self.log.log('')
-        #  self.printDebugResponse()
-        #  self.log.log('==========>')
-        #  self.log.log('')
-        #  self.log.log('')
-        # else:
-        #  self.log.log('')
-        #  self.log.log('<==========')
-        #  self.printCLIResponse()
-        #  self.log.log('==========>')
-        #  self.log.log('')
-        #  self.log.log('')
 
     def get(self):
         self.injectPathData()
         self.request = requests.get(self.url, data=json.dumps(self.postData), headers=self.headers,
                                     params=self.paramData)
         self.logRequest()
-        # if(self.debug):
-        #  self.log.log('')
-        #  self.log.log('<==========')
-        #  self.printDebugRequest()
-
-        #  self.log.log('')
-        #  self.printDebugResponse()
-        #  self.log.log('==========>')
-        #  self.log.log('')
-        #  self.log.log('')
-        # else:
-        #  self.log.log('')
-        #  self.log.log('<==========')
-        #  self.printCLIResponse()
-        #  self.log.log('==========>')
-        #  self.log.log('')
-        #  self.log.log('')
 
     def put(self):
         self.injectPathData()

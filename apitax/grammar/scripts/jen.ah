@@ -1,6 +1,6 @@
 
 options dict('{"params": ["name", "game"]}');
-2+2;
+answer=2+2;
 name "quinn";
 
 set qwer = "im in jens script";
@@ -33,4 +33,4 @@ return params.passed.1;
 //return "test";
 
 
-
+await;

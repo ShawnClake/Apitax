@@ -4,6 +4,7 @@ from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 from apitax.ah.HeaderBuilder import HeaderBuilder
 from apitax.config.Config import Config
 
+from time import time
 
 # The 'heart' of the application
 # Connector facilitates the initialization of the connection to an API
@@ -15,6 +16,7 @@ from apitax.config.Config import Config
 class Connector:
 
     def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True, parameters=[]):
+        self.executionTime = None
         self.debug = debug
         self.sensitive = sensitive
         self.command = command
@@ -54,7 +56,9 @@ class Connector:
     def execute(self, command=''):
         if (command != ''):
             self.command = command
+        t0 = time()
         self.commandHandler = Commandtax(self.header, self.command, self.config, debug=self.debug,
                                       sensitive=self.sensitive, parameters=self.parameters)
+        self.executionTime = time() - t0
         return self.commandHandler
         

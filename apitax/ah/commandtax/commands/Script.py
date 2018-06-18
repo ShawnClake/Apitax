@@ -4,6 +4,8 @@ from apitax.logs.Log import Log
 from apitax.ah.commandtax.Request import Request
 from apitax.ah.scriptax.Scriptax import Scriptax
 
+from time import time
+from apitax.utilities.Numbers import round2str
 
 # TODO:
 #  Change the way request is saved to include status code & command run
@@ -21,13 +23,24 @@ class Script(Request):
         self.parameters = parameters
         self.scriptax = Scriptax(self.config, self.header, self.parameters, self.debug, self.sensitive)
         self.parser = None
+        self.executionTime = None
+        self.log = Log()
         
     def handle(self, command):
+        t0 = time()
         self.parser = self.scriptax.execute(command[0])
+        self.executionTime = time() - t0
+        if(self.debug):
+            self.log.log('>> Script Finished Processing in ' + round2str(self.executionTime) + 's')
+            self.log.log('')
         #print("thing: " + self.parser)
         self.request = {}
-        self.request['text'] = self.parser.data.dataStore
+        self.request['text'] = {}
+        self.request['text']['result'] = self.parser.data.dataStore
+        self.request['text']['commandtax'] = command[0]
+        self.request['text']['execution-time'] = round2str(self.executionTime)
         if(self.parser.isError()):
+            self.request['text']['error'] = self.parser.data.getError()
             self.request['status_code'] = 500
         else:
             self.request['status_code'] = 200

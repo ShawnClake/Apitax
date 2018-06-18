@@ -60,6 +60,9 @@ class ScriptData:
             self.setFlow('error', message)
         else:
             self.setFlow('error', {'message': message})
+    
+    def getError(self):
+        return self.getFlow('error')
 
     # Used for current script interactions
     def storeRequest(self, data, export=False):

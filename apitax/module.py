@@ -10,7 +10,6 @@
 # However the web interface will need to be customized per API usage
 
 # System imports
-from time import time
 import json
 import subprocess
 
@@ -22,6 +21,7 @@ from apitax.ah.Connector import Connector
 from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
 from .logs.Log import Log
+from apitax.utilities.Numbers import round2str
 
 
 def serialize(obj):
@@ -70,8 +70,14 @@ class Apitax:
             
         if (config.has('log-colorize')):
             logColorize = config.get('log-colorize')
+            
+        if (config.has('log-human-readable')):
+            logHumanReadable = config.get('log-human-readable')
+            
+        if (config.has('log-prefixes')):
+            logPrefixes = config.get('log-prefixes')
 
-        log = Log(logPath, doLog=doLog, logColorize=logColorize)
+        log = Log(logPath, doLog=doLog, logColorize=logColorize, logPrefixes=logPrefixes, logHumanReadable=logHumanReadable)
         
         log.log('')
         log.log('')
@@ -129,8 +135,6 @@ class Apitax:
             
         log.log('')
         log.log('')
-        
-        t0 = time()
 
         if (usage == 'cli'):
             # Authentication is incorporated into Connector
@@ -161,6 +165,11 @@ class Apitax:
                 log.log("")
             # print(result.getRequest().data.getData('5.3.role_assignments.0.links.assignment'))
 
+            if(debug):
+                log.log(">> Apitax finished processing in " + round2str(connector.executionTime) + "s")
+                log.log("")
+                log.log("")
+
         elif (usage == 'web'):
             from .ah.web.WebServer import bottleServer
             bSrv = bottleServer()
@@ -175,12 +184,8 @@ class Apitax:
         else:
             log.log("### Error: Unknown mode")
             
-        t1 = time()
         #print(">> Apitax finished processing in {0:.2f}s".format(t1 - t0))
-        if(debug):
-            log.log(">> Apitax finished processing in {0:.2f}s".format(t1-t0))
-            log.log("")
-            log.log("")
+
 
 
 

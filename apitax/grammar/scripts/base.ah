@@ -1,5 +1,5 @@
 url "https://jsonplaceholder.typicode.com";
-for user in get("/users"){}
+for user in get("/users")
 {
     /*result = get("/posts", {
         "query": {
@@ -14,9 +14,9 @@ for user in get("/users"){}
             "query": {
                 "userId": user.id,
             }
-        }) {
+        }) {%
         log("The user has these posts: " + result);
-    };
+    %};
 
 }  
    
@@ -64,9 +64,9 @@ async get("/users");
 
 
 somelabel = async get("/users")
-{
+{%
     log("I am an optional callback");
-};
+%};
 //anotherRequest0 = async get("/users");
 //anotherRequest1 = async get("/users");
 //anotherRequest2 = async get("/users");
@@ -76,17 +76,17 @@ await somelabel;
 log("i am that label" + somelabel);
 
 
-get("/users") {
+get("/users") {%
 
 log(result);
 
-};
+%};
 
-async get("/users") {
+async get("/users") {%
 
 log(result);
 
-};
+%};
 
 
 for iter in 10 {
@@ -95,9 +95,9 @@ for iter in 10 {
             "query": {
                 "userId": iter,
             }
-        }) {
+        }) {%
         log("The user has these posts: " + result);
-    };
+    %};
 
 }
 
@@ -107,6 +107,10 @@ get("/posts", {
         "query": {
             "userId": 5,
         }
-    }) {
+    }) {%
     log("The user has these posts: " + result);
-};
+%};
+
+
+await;
+

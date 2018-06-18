@@ -83,7 +83,7 @@ condition: LPAREN expr RPAREN ;
 
 async_execute: ASYNC commandtax callback_block? ; // (labels EQUAL)? 
 
-await: AWAIT labels ;
+await: AWAIT labels? ;
 
 block : BLOCKOPEN statements BLOCKCLOSE | statement ;
 

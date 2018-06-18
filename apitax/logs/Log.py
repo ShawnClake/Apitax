@@ -23,7 +23,7 @@ class Log:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-    def __init__(self, logFile = "logs/log.log", doLog=True, logColorize=True):
+    def __init__(self, logFile = "logs/log.log", doLog=True, logColorize=True, logPrefixes=True, logHumanReadable=False):
         # logging.basicConfig(filename=filepath,level=logging.INFO)
         # log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
 
@@ -49,7 +49,7 @@ class Log:
 
             app_log.addHandler(my_handler)
 
-            loggers.update({'main': app_log, 'settings':{'doLog': doLog, 'colorize':logColorize,'path':directorypath.resolve()}})
+            loggers.update({'main': app_log, 'settings':{'doLog': doLog, 'colorize':logColorize, 'prefixes':logPrefixes, 'human-readable': logHumanReadable, 'path':directorypath.resolve()}})
 
     def inject(self, text, prefix=''):
         
@@ -70,17 +70,22 @@ class Log:
 
         return prefix + ' ' + text
 
+    def isLoggable(self, prefix=''):
+        if((prefix != '' or self.prefix != '') and not loggers.get('settings').get('prefixes')):
+            return False
+        return loggers.get('settings').get('doLog')
+
     def log(self, text, prefix=''):
         # logging.info(' '+text)
         text = self.inject(text, prefix)
-        if(loggers.get('settings').get('doLog')):
+        if(self.isLoggable(prefix)):
             loggers.get('main').info(text)
             print(self.injectStdColor(text))
 
     def error(self, text, prefix=''):
         # logging.info(' '+text)
         text = self.inject(text, prefix)
-        if(loggers.get('settings').get('doLog')):
+        if(self.isLoggable(prefix)):
             loggers.get('main').info('### Error: ' + text)
             print(self.injectStdColor('### Error: ' + text))
         
