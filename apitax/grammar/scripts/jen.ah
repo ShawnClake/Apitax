@@ -1,5 +1,5 @@
 
-options dict('{"params": ["name", "game"]}');
+options {"params": ["name", "game"]};
 answer=2+2;
 name "quinn";
 

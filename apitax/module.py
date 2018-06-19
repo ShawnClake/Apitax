@@ -11,7 +11,10 @@
 
 # System imports
 import json
-import subprocess
+import sys
+import os
+import inspect
+from pathlib import Path
 
 # Default imports
 import click
@@ -22,6 +25,7 @@ from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
 from .logs.Log import Log
 from apitax.utilities.Numbers import round2str
+from apitax.utilities.Npm import Npm
 
 
 def serialize(obj):
@@ -42,16 +46,22 @@ class Apitax:
         usage = 'cli'
         debug = False
         sensitive = False
+        reloader = False
+        watcher = False
         username = ''
         password = ''
         command = ''
         script = ''
         
         doLog = True
-        logPath = 'logs/log.log'
+        logPath = 'logs/apitax.log'
         logColorize = True
+        logPrexies = True
+        logHumanReadable = False
         
         config = ConfigConsumer()
+        config.path = str(Path(os.path.dirname(os.path.abspath(inspect.stack()[0][1]))).resolve())
+        #print(config.path)
 
         if (config.has('default-username')):
             username = config.get('default-username')
@@ -83,7 +93,7 @@ class Apitax:
         log.log('')
         log.log(">>>  Apitax - Combining the power of Commandtax and Scriptax")
         log.log('')
-        log.log('')
+        log.log('') 
 
         if ('--cli' in args):
             usage = 'cli'
@@ -99,6 +109,16 @@ class Apitax:
 
         if ('--sensitive' in args):
             sensitive = True
+            
+        if ('--reloader' in args):
+            reloader = True
+            
+        if ('--watcher' in args):
+            watcher = True
+            
+        if ('--dev' in args):
+            watcher = True
+            reloader = True
 
         if ('-u' in args):
             username = args[args.index('-u') + 1]
@@ -126,6 +146,8 @@ class Apitax:
         log.log('    * Debug: ' + str(debug))
                
         log.log('    * Sensitive: ' + str(sensitive))
+
+        log.log('    * Operating out of: ' + str(config.path))
 
         log.log('    * Logging: ' + str(loggingSettings.get('doLog')))
         
@@ -172,8 +194,26 @@ class Apitax:
 
         elif (usage == 'web'):
             from .ah.web.WebServer import bottleServer
+            log.log(">> Building Website Assets:")
+            log.log("")
+            path = config.path + '/ah/web/node/node'
+            npm = Npm(path)
+            npm.install()
+            npm.build()
+            if(watcher):
+                npm.buildWatch(True)
+
+            #subprocess.check_call('npm --prefix ' + path + ' run build', shell=True)
+            log.log("")
+            log.log(">> Done Building Website Assets")
+            log.log(">> Booting Up WebServer:")
+            log.log("")
             bSrv = bottleServer()
-            bSrv.start(config.get("ip"), config.get("port"), config=config, debug=debug, sensitive=sensitive)
+            bSrv.start(config.get("ip"), config.get("port"), config=config, debug=debug, sensitive=sensitive, reloader=reloader)
+            #log.log("")
+            #log.log(">> Done Booting Server")
+            #log.log(">> Ready To Take Requests")
+            #log.log("")
 
         elif(usage == 'grammar-test'):
             GrammarTest(script)

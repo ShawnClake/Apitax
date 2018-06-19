@@ -111,7 +111,7 @@ def execute_system_driver_status():
 @route('/apitax/system/scripts/catalog', method='GET')
 def execute_system_scripts_catalog():
     http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
-    return json.dumps(http.getScriptsCatalog())
+    return json.dumps(http.getScriptsCatalog(bottleServer.config))
     
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/catalog', method='GET')
@@ -153,10 +153,11 @@ class bottleServer():
     debug = False
     sensitive = False
     
-    def start(self, ip, port, config=None, debug=False, sensitive=False):
+    def start(self, ip, port, config=None, debug=False, sensitive=False, reloader=False):
         # self.app = Bottle()
         bottleServer.config = config
         bottleServer.debug = debug
         bottleServer.sensitive = sensitive
-        run(host=ip, port=port, reloader=True, debug=debug)
+        bottleServer.directory = config.path + '/ah/web/node/'
+        run(host=ip, port=port, reloader=reloader, debug=debug)
 

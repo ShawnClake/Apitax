@@ -8,6 +8,7 @@ class Config:
         self.cp = configparser.RawConfigParser()
         cFilePath = 'config.txt'
         self.cp.read(cFilePath)
+        self.path = ''
 
     def get(self, param):
         prop: str = self.cp.get('Config', param)

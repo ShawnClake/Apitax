@@ -23,7 +23,7 @@ class Log:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-    def __init__(self, logFile = "logs/log.log", doLog=True, logColorize=True, logPrefixes=True, logHumanReadable=False):
+    def __init__(self, logFile = "logs/apitax.log", doLog=True, logColorize=True, logPrefixes=True, logHumanReadable=False):
         # logging.basicConfig(filename=filepath,level=logging.INFO)
         # log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
 

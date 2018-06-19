@@ -50,8 +50,8 @@ class HttpPlug:
     def getCatalog(self):
         return {"endpoints": {"tests": {"label": "Placeholder Test", "value": "https://jsonplaceholder.typicode.com"}}, "selected": "https://jsonplaceholder.typicode.com"}
         	
-    def getScriptsCatalog(self):
-        files = getAllFiles("apitax/grammar/scripts/**/*.ah")
+    def getScriptsCatalog(self, config):
+        files = getAllFiles("scripts/**/*.ah")
         returner = {"scripts": []}
         for file in files:
             returner['scripts'].append({"label": file.split('/')[-1].split('.')[0].title(),"relative-path":file,"path": str(Path(file).resolve())})
