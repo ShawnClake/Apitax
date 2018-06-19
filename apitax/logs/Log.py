@@ -12,18 +12,7 @@ loggers = {}
 # Handles printing to CLI as well as printing to log file
 class Log:
 
-    WHITE = '\033[97m'
-    CYAN = '\033[96m'
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-    def __init__(self, logFile = "logs/apitax.log", doLog=True, logColorize=True, logPrefixes=True, logHumanReadable=False):
+    def __init__(self, logDriver=None, logFile='logs/apitax.log', doLog=True, logColorize=True, logPrefixes=True, logHumanReadable=False):
         # logging.basicConfig(filename=filepath,level=logging.INFO)
         # log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
 
@@ -49,7 +38,11 @@ class Log:
 
             app_log.addHandler(my_handler)
 
-            loggers.update({'main': app_log, 'settings':{'doLog': doLog, 'colorize':logColorize, 'prefixes':logPrefixes, 'human-readable': logHumanReadable, 'path':directorypath.resolve()}})
+            loggers.update({'main': app_log, 'driver': logDriver, 'settings':{'doLog': doLog, 'colorize':logColorize, 'prefixes':logPrefixes, 'human-readable': logHumanReadable, 'path':directorypath.resolve()}})
+
+            logDriver.setLogger(self.getLogger())
+            logDriver.setSettings(self.getLoggerSettings())
+                        
 
     def inject(self, text, prefix=''):
         
@@ -79,15 +72,13 @@ class Log:
         # logging.info(' '+text)
         text = self.inject(text, prefix)
         if(self.isLoggable(prefix)):
-            loggers.get('main').info(text)
-            print(self.injectStdColor(text))
+            self.getLoggerDriver().log(text)
 
     def error(self, text, prefix=''):
         # logging.info(' '+text)
         text = self.inject(text, prefix)
         if(self.isLoggable(prefix)):
-            loggers.get('main').info('### Error: ' + text)
-            print(self.injectStdColor('### Error: ' + text))
+            self.getLoggerDriver().log(text)
         
     def getLogger(self):
         return loggers.get('main')
@@ -95,29 +86,8 @@ class Log:
     def getLoggerSettings(self):
         return loggers.get('settings')
         
-    def injectStdColor(self, text):
-        text = str(text)
+    def getLoggerDriver(self):
+        return loggers.get('driver')
         
-        if(not self.getLoggerSettings().get('colorize')):
-            return text
-        
-        if(text[:3] == '>>>'):
-            return self.HEADER + text + self.ENDC
-        elif(text[:2] == '>>'):
-            return self.OKBLUE + text + self.ENDC
-        elif(text[:1] == '>'):
-            if(text[:17] == '> Now processing:'):
-                return self.OKGREEN + text + self.ENDC
-            else:
-                return self.WARNING + text + self.ENDC
-        elif(text[:3] == '###'):
-            return self.FAIL + text + self.ENDC
-        elif(text.strip()[:1] == '*'):
-            return self.CYAN + text + self.ENDC
-            
-        return self.WHITE + text + self.ENDC
-        
-    def stripColor(self, text):
-        ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
-        return ansi_escape.sub('', text)
+
         

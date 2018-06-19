@@ -24,6 +24,7 @@ from apitax.ah.Connector import Connector
 from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
 from .logs.Log import Log
+from .logs.BufferedLog import BufferedLog
 from apitax.utilities.Numbers import round2str
 from apitax.utilities.Npm import Npm
 
@@ -52,6 +53,7 @@ class Apitax:
         password = ''
         command = ''
         script = ''
+        build = True
         
         doLog = True
         logPath = 'logs/apitax.log'
@@ -87,7 +89,7 @@ class Apitax:
         if (config.has('log-prefixes')):
             logPrefixes = config.get('log-prefixes')
 
-        log = Log(logPath, doLog=doLog, logColorize=logColorize, logPrefixes=logPrefixes, logHumanReadable=logHumanReadable)
+        log = Log(BufferedLog(), logFile=logPath, doLog=doLog, logColorize=logColorize, logPrefixes=logPrefixes, logHumanReadable=logHumanReadable)
         
         log.log('')
         log.log('')
@@ -119,6 +121,9 @@ class Apitax:
         if ('--dev' in args):
             watcher = True
             reloader = True
+            
+        if ('--no-build' in args):
+            build = False
 
         if ('-u' in args):
             username = args[args.index('-u') + 1]
@@ -194,18 +199,19 @@ class Apitax:
 
         elif (usage == 'web'):
             from .ah.web.WebServer import bottleServer
-            log.log(">> Building Website Assets:")
-            log.log("")
-            path = config.path + '/ah/web/node/node'
-            npm = Npm(path)
-            npm.install()
-            npm.build()
-            if(watcher):
-                npm.buildWatch(True)
+            if(build):
+                log.log(">> Building Website Assets:")
+                log.log("")
+                path = config.path + '/ah/web/node/node'
+                npm = Npm(path)
+                npm.install()
+                npm.build()
+                if(watcher):
+                    npm.buildWatch(True)
 
-            #subprocess.check_call('npm --prefix ' + path + ' run build', shell=True)
-            log.log("")
-            log.log(">> Done Building Website Assets")
+                #subprocess.check_call('npm --prefix ' + path + ' run build', shell=True)
+                log.log("")
+                log.log(">> Done Building Website Assets")
             log.log(">> Booting Up WebServer:")
             log.log("")
             bSrv = bottleServer()
@@ -223,6 +229,8 @@ class Apitax:
 
         else:
             log.log("### Error: Unknown mode")
+            
+        log.getLoggerDriver().outputLog()
             
         #print(">> Apitax finished processing in {0:.2f}s".format(t1 - t0))
 

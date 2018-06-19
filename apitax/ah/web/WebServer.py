@@ -87,8 +87,13 @@ def execute_api_command():
 
     commandHandler = connector.execute()
 
-    return json.dumps({"status": commandHandler.getRequest().getResponseStatusCode(),
-                       "body": json.loads(commandHandler.getRequest().getResponseBody())})
+    returner = {"status": commandHandler.getRequest().getResponseStatusCode(),
+                       "body": json.loads(commandHandler.getRequest().getResponseBody())}
+                       	
+    if(request.json['debug']):
+         returner.update({"log": connector.logBuffer})
+
+    return json.dumps(returner)
 
 
 # Command endpoint is used to facilitate simpler requests

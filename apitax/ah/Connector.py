@@ -3,6 +3,7 @@ from apitax.ah.commandtax.Authentication import *
 from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 from apitax.ah.HeaderBuilder import HeaderBuilder
 from apitax.config.Config import Config
+from apitax.logs.Log import Log
 
 from time import time
 
@@ -25,6 +26,7 @@ class Connector:
         self.token = token
         self.commandHandler = None
         self.parameters = parameters
+        self.logBuffer = []
 
         self.command = self.command.replace('\\"', '"');
         self.command = self.command.replace('\\\'', '\'');
@@ -60,5 +62,10 @@ class Connector:
         self.commandHandler = Commandtax(self.header, self.command, self.config, debug=self.debug,
                                       sensitive=self.sensitive, parameters=self.parameters)
         self.executionTime = time() - t0
+        
+        log = Log()
+        self.logBuffer = log.getLoggerDriver().buffer
+        log.getLoggerDriver().outputLog()
+        
         return self.commandHandler
         
