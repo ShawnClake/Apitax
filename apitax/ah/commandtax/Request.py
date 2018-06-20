@@ -101,7 +101,7 @@ class Request:
         if (self.sensitive):
             line += 'Headers are not shown as it contains sensitive data. ie. password' + '\n'
         else:
-            line += str(self.headers)
+            line += str(self.headers) + '\n'
         line += 'Post Data:' + '\n'
         if (self.sensitive):
             line += 'Post Data is not shown as it contains sensitive data. ie. password' + '\n'
@@ -124,22 +124,10 @@ class Request:
 
     def logRequest(self):
         if (self.debug and not self.humanReadable):
-            #self.log.log('')
             self.log.log('\n<==========' + '\n' + self.getDebugRequest() + '\n' + self.getDebugResponse() + '==========>' + '\n\n')
-            #self.printDebugRequest()
 
-            #self.log.log('')
-            #self.printDebugResponse()
-            #self.log.log('==========>')
-            #self.log.log('')
-            #self.log.log('')
         elif(self.debug):
             self.log.log('\n<==========\n' + self.getCLIResponse() + '\n' + '==========>\n\n')
-            #self.log.log('<==========')
-            
-            #self.log.log('==========>')
-            #self.log.log('')
-            #self.log.log('')
 
     def post(self):
         self.injectPathData()

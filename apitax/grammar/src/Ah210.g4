@@ -24,6 +24,7 @@ terminated :
         | each_statement
         | options_statement
         | return_statement
+        | error_statement
         | delete_statement
         | await
       ) TERMINATOR ;
@@ -50,12 +51,8 @@ expr :
       | async_execute
       | execute
       | casting
-      | obj_list
-      | obj_dict
       | count
-      | boolean 
-      | NUMBER 
-      | string ;
+      | atom ;
 
 assignment : 
       SET? labels ((
@@ -81,21 +78,9 @@ each_statement : EACH expr callback_block ;
 
 condition: LPAREN expr RPAREN ;
 
-async_execute: ASYNC commandtax callback_block? ; // (labels EQUAL)? 
-
-await: AWAIT labels? ;
-
 block : BLOCKOPEN statements BLOCKCLOSE | statement ;
 
 callback_block: EXECUTEOPEN statements EXECUTECLOSE ;
-
-scoping : imports | exports | name ;
-
-name : NAME expr;
-
-exports : EXPORT (labels | execute);
-
-imports : IMPORT execute ;
 
 commandtax : 
       ( 
@@ -107,19 +92,33 @@ commandtax :
         | COMMANDTAX 
         | SCRIPT 
         | CUSTOM
-      ) LPAREN expr (COMMA expr)* RPAREN ;
+      ) LPAREN expr (COMMA obj_dict)? (COMMA labels EQUAL expr)* RPAREN ;
 
 execute : commandtax callback_block? ;
 
-url : URL expr ;
+async_execute: ASYNC commandtax callback_block? ; // (labels EQUAL)? 
+
+await: AWAIT labels? ;
 
 labels : label_comp (DOT label_comp)* ;
 
 label_comp : LABEL | inject ;
 
-inject : MUSTACHEOPEN expr MUSTACHECLOSE ;
+options_statement : OPTIONS expr ;
 
-log : LOG LPAREN expr RPAREN ;
+delete_statement : DEL labels ;
+
+error_statement : ERROR expr? ;
+
+return_statement : RETURNS expr? ;
+
+scoping : imports | exports | name ;
+
+name : NAME expr;
+
+exports : EXPORT (labels | execute);
+
+imports : IMPORT execute ;
 
 casting : 
       (
@@ -130,69 +129,84 @@ casting :
         | TYPE_LIST
         | TYPE_DICT
       ) LPAREN expr RPAREN ;
+      
+url : URL expr ;
 
-string : STRING ;
-
-boolean : TRUE | FALSE ;
-
-obj_list : SOPEN expr? (COMMA expr?)* SCLOSE ;
-
-obj_dict : BLOCKOPEN (expr COLON expr)? (COMMA (expr COLON expr)?)* BLOCKCLOSE ; 
-
-options_statement : OPTIONS expr ;
-
-return_statement : RETURNS expr? ;
-
-delete_statement : DEL labels ;
+log : LOG LPAREN expr RPAREN ;
 
 count : HASH expr ;
 
+inject : MUSTACHEOPEN expr MUSTACHECLOSE ;
+
+atom: 
+      obj_dict
+      | obj_list
+      | string
+      | number
+      | boolean ;
+
+obj_dict : BLOCKOPEN (expr COLON expr)? (COMMA (expr COLON expr)?)* BLOCKCLOSE ; 
+
+obj_list : SOPEN expr? (COMMA expr?)* SCLOSE ;
+
+string : STRING ;
+
+number : INT | FLOAT ;
+
+boolean : TRUE | FALSE ;
+
+
+/**********
+LEXER RULES
+**********/
+
+
+/** CONDITIONAL EXPRESSIONS **/
+GT :   '>'  ;
+LT :   '<'  ;
+GE :   '>=' ;
+LE :   '<=' ;
+EQ :   '==' ;
+NEQ :  '!=' ;
+SAND : '&&' ; 
+SOR :  '||' ;
+
+
+/** ASSIGNMENTS **/
+D_PLUS :  '++' ;
+D_MINUS : '--' ;
+PE :      '+=' ;
+ME :      '-=' ;
+MUE :     '*=' ;
+DE :      '/=' ;
+EQUAL :   '='  ;
 
 
 /** OPERATORS **/
-
-GT : '>' ;
-LT : '<' ;
-GE : '>=' ;
-LE : '<=' ;
-EQ : '==' ;
-NEQ : '!=' ;
-
-D_PLUS : '++' ;
-D_MINUS : '--' ;
-PE : '+=' ;
-ME : '-=' ;
-MUE : '*=' ;
-DE : '/=' ;
-
-SAND : '&&' ; 
-SOR : '||' ;
-
-PLUS : '+' ;
-MINUS : '-' ;
-MUL : '*' ;
-DIV : '/' ;
-POW : '^' ;
-EQUAL : '=' ;
-NOT: '!' ;
-ULINE : '_' ;
-DOT : '.' ;
-COLON : ':' ;
+PLUS :    '+' ;
+MINUS :   '-' ;
+MUL :     '*' ;
+DIV :     '/' ;
+POW :     '^' ;
+NOT :     '!' ;
+ULINE :   '_' ;
+DOT :     '.' ;
+COLON :   ':' ;
 PERCENT : '%' ;
-COMMA : ',' ;
+COMMA :   ',' ;
 
-TERMINATOR : ';' ;
 
-HASH : '#' ;
-
-NUMBER : INT | FLOAT ; 
-
+/** TYPES **/
+//NUMBER : INT | FLOAT ; 
 INT : '-'?DIGIT+ ;
-
 FLOAT : '-'? DIGIT* DOT DIGIT+ ;
+FALSE : F A L S E ;
+TRUE : T R U E ;
+STRING : QUOTE (ESC|~["\r\n])*? QUOTE | SQUOTE (ESC|~['\r\n])*? SQUOTE ;
+HEX : ('0x'|'0X')(HEXDIGIT)HEXDIGIT*;
 
-/** BLOCKS **/
 
+/** BLOCKS AND ENCLOSURES **/
 EXECUTEOPEN : '{%' ;
 EXECUTECLOSE : '%}' ;
 
@@ -208,86 +222,93 @@ RPAREN : ')';
 SOPEN : '[';
 SCLOSE : ']';
 
-/** COMBINATOR KEYWORDS **/
+
+/** KEY SYMBOLS **/
+VARIABLE_ID : '$' ;
+TERMINATOR : ';' ;
+HASH : '#' ;
+
+
+/** KEYWORD COMBINATORS **/
 AND : A N D | SAND ;
 OR : O R | SOR ;
 
+
 /** KEYWORDS **/
-EACH : E A C H;
 IN : I N ;
-OPTIONS : O P T I O N S ;
-RETURNS : R E T U R N ;
-FALSE : F A L S E ;
-TRUE : T R U E ;
-NAME : N A M E ;
-IMPORT : I M P O R T ;
-EXPORT : E X P O R T ;
 SET : S E T ;
+ASYNC : A S Y N C ;
+AWAIT : A W A I T ;
+
+
+/** FLOW **/
+RETURNS : R E T U R N ;
+EACH : E A C H;
 IF : I F ;
 THEN : T H E N ;
 ELSE : E L S E ;
 FOR : F O R ;
 WHILE : W H I L E ;
-DEL : D E L ;
+ERROR : E R R O R ;
 
-ASYNC : A S Y N C ;
-AWAIT : A W A I T ;
 
+/** HELPER FUNCTIONS **/  // These use ()'s
 TYPE_INT : I N T ;
 TYPE_DICT : D I C T ;
 TYPE_LIST : L I S T ;
 TYPE_DEC : D E C ;
 TYPE_STR : S T R ;
 TYPE_BOOL : B O O L ;
+LOG : L O G ;
 
+/** METHODS **/           // These don't use ()'s
+OPTIONS : O P T I O N S ;
+NAME : N A M E ;
+IMPORT : I M P O R T ;
+EXPORT : E X P O R T ;
+DEL : D E L ;
+URL : U R L ;
+
+
+/** COMMANDTAX METHODS **/
 COMMANDTAX : C T ;
 SCRIPT : S C R I P T ;
 CUSTOM : C U S T O M ;
-
 GET : G E T ;
 POST : P O S T ;
 PUT : P U T ;
 PATCH : P A T C H ;
 DELETE : D E L E T E ;
 
-URL : U R L ;
-LOG : L O G ;
 
 /** KEYCHANGERS **/
-
 REQUEST : R COLON ;
 
-/** TYPES **/
 
-//LABEL : (LETTER|DIGIT|ULINE)+ ;
+/** VARIABLES **/
+LABEL : VARIABLE_ID? (LETTER | ULINE | DIGIT | INT | FLOAT)+ ;
 
-LABEL : (LETTER | ULINE | DIGIT | NUMBER)+ ;
 
-HEX : ('0x'|'0X')(HEXDIGIT)HEXDIGIT*;
-
-NEWLINE : '\r'? '\n' -> skip;
-WS : (' ' | '\t')+ -> skip ;
-
+/** COMMENTS **/
 BLOCK_COMMENT : DIV MUL .*? MUL DIV -> channel(HIDDEN) ;
 LINE_COMMENT : DIV DIV ~[\r\n]* -> channel(HIDDEN) ;
 
-STRING : QUOTE (ESC|~["\r\n])*? QUOTE | SQUOTE (ESC|~['\r\n])*? SQUOTE ;
 
+/** NEWLINES AND WHITESPACE **/
+NEWLINE : '\r'? '\n' -> skip;
+WS : (' ' | '\t')+ -> skip ;
 
 
 /********
 FRAGMENTS
 ********/
+
+
 fragment ESC : '\\"' | '\\\'' | '\\\\' ; // 2-char sequences \" and \\
 
-fragment WORDS : (LETTER|DIGIT|ULINE|MINUS|DOT|QUOTE|SQUOTE|LPAREN|RPAREN|':'|'\\'|'/'|'?'|'.'|'!'|','|'#'|'$'|'&'|'@'|' '|'='|'>'|'<'|'('|')'|'['|']'|'{'|'}')+ ;
+//fragment WORDS : (LETTER|DIGIT|ULINE|MINUS|DOT|QUOTE|SQUOTE|LPAREN|RPAREN|':'|'\\'|'/'|'?'|'.'|'!'|','|'#'|'$'|'&'|'@'|' '|'='|'>'|'<'|'('|')'|'['|']'|'{'|'}')+ ;
 
 fragment LETTER : A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z ;
-
-fragment LOWERCASE : [a-z] ;
-fragment UPPERCASE : [A-Z] ;
-
-fragment DIGIT : [0-9] ;
 
 fragment A:'A'|'a';    fragment B:'B'|'b';    fragment C:'C'|'c';    fragment D:'D'|'d';    
 fragment E:'E'|'e';    fragment F:'F'|'f';    fragment G:'G'|'g';    fragment H:'H'|'h';    
@@ -296,6 +317,11 @@ fragment M:'M'|'m';    fragment N:'N'|'n';    fragment O:'O'|'o';    fragment P:
 fragment Q:'Q'|'q';    fragment R:'R'|'r';    fragment S:'S'|'s';    fragment T:'T'|'t';    
 fragment U:'U'|'u';    fragment V:'V'|'v';    fragment W:'W'|'w';    fragment X:'X'|'x';
 fragment Y:'Y'|'y';    fragment Z:'Z'|'z';
+
+fragment LOWERCASE : [a-z] ;
+fragment UPPERCASE : [A-Z] ;
+
+fragment DIGIT : [0-9] ;
 
 fragment QUOTE : '"' ;
 fragment SQUOTE : '\'' ;

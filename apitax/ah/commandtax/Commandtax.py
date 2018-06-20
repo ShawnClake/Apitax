@@ -10,7 +10,7 @@ from apitax.drivers.DriverCommandsFactory import DriverCommandsFactory
 # Command is used to distribute the workload amoung a heirarchy of possible handlers
 # Command is the 'brain' of the application
 class Commandtax:
-    def __init__(self, header, command, config, debug=False, sensitive=False, parameters=[]):
+    def __init__(self, header, command, config, debug=False, sensitive=False, parameters={}):
 
         if (type(command) is not list):
             command = shlex.split(command.strip())
