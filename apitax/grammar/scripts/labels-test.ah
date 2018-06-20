@@ -1,0 +1,19 @@
+name "labels-test";
+
+hey = int(0);
+
+ridi = {};
+
+ridi.{{hey}} = {"first": "good"};
+
+log(ridi);
+
+log(ridi.{{hey}}.first);
+
+ridi.1 = ["Yes"];
+
+log(ridi.1.0);
+
+
+
+

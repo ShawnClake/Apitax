@@ -55,11 +55,11 @@ class ScriptData:
         key = "flow." + name
         return self.getDotNotation(key)
 
-    def error(self, message):
+    def error(self, message, logprefix=''):
         if(isinstance(message, dict)):
             self.setFlow('error', message)
         else:
-            self.setFlow('error', {'message': message})
+            self.setFlow('error', {'message': message, 'logprefix': logprefix})
     
     def getError(self):
         return self.getFlow('error')

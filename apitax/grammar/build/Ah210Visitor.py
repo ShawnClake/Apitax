@@ -134,16 +134,6 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by Ah210Parser#inject.
-    def visitInject(self, ctx:Ah210Parser.InjectContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by Ah210Parser#log.
-    def visitLog(self, ctx:Ah210Parser.LogContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by Ah210Parser#labels.
     def visitLabels(self, ctx:Ah210Parser.LabelsContext):
         return self.visitChildren(ctx)
@@ -151,6 +141,16 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#label_comp.
     def visitLabel_comp(self, ctx:Ah210Parser.Label_compContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#inject.
+    def visitInject(self, ctx:Ah210Parser.InjectContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#log.
+    def visitLog(self, ctx:Ah210Parser.LogContext):
         return self.visitChildren(ctx)
 
 

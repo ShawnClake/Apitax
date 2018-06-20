@@ -35,7 +35,7 @@ executers : execute
          | async_execute ;
 
 expr :
-      labels
+      REQUEST? labels
       | inject
       | LPAREN expr RPAREN
       | <assoc=right> expr POW expr
@@ -113,13 +113,13 @@ execute : commandtax callback_block? ;
 
 url : URL expr ;
 
-inject : MUSTACHEOPEN REQUEST? labels MUSTACHECLOSE ;
-
-log : LOG LPAREN expr RPAREN ;
-
 labels : label_comp (DOT label_comp)* ;
 
 label_comp : LABEL | inject ;
+
+inject : MUSTACHEOPEN expr MUSTACHECLOSE ;
+
+log : LOG LPAREN expr RPAREN ;
 
 casting : 
       (
@@ -261,7 +261,7 @@ REQUEST : R COLON ;
 
 //LABEL : (LETTER|DIGIT|ULINE)+ ;
 
-LABEL : (LETTER | ULINE | DIGIT | DOT)+ (LETTER | ULINE | DIGIT);
+LABEL : (LETTER | ULINE | DIGIT | NUMBER)+ ;
 
 HEX : ('0x'|'0X')(HEXDIGIT)HEXDIGIT*;
 

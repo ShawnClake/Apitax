@@ -61,7 +61,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
         if (hasattr(commandHandler.getRequest(), 'parser')):
             if (commandHandler.getRequest().parser.isError()):
-                self.error('Subscript contains error: ' + commandHandler.getRequest().parser.isError(), logPrefix)
+                self.error('Subscript contains error: ' + commandHandler.getRequest().parser.isError()['message'], logPrefix)
                 # self.data.setFlow('error', commandHandler.getRequest().parser.isError())
 
         returnResult = commandHandler.getReturnedData()
@@ -119,8 +119,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
         callbackResult = visitor.visit(callback)
         return visitor.data.getVar('result')
 
-    def error(self, message):
-        self.data.error(message)
+    def error(self, message, logprefix=''):
+        self.data.error(message, logprefix=logprefix)
 
     def isError(self):
         return self.data.getFlow('error')
@@ -139,7 +139,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         if (self.isError()):
             error = self.isError()
             self.log.error(error['message'] + ' in ' + self.state['file'] + ' @' + str(self.state['line']) + ':' + str(
-                self.state['char']))
+                self.state['char']), prefix=error['logprefix'])
             if(self.debug):
                 self.log.log('')
                 self.log.log('')
@@ -236,7 +236,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
             return self.visit(ctx.count())
 
         if (ctx.labels()):
-            return self.data.getVar(self.visit(ctx.labels()))
+            return self.getVariable(ctx.labels(), isRequest=ctx.REQUEST())
+            #return self.data.getVar(self.visit(ctx.labels()))
 
         if (ctx.inject()):
             return self.visit(ctx.inject())
@@ -586,12 +587,10 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#inject.
     def visitInject(self, ctx: Ah210Parser.InjectContext):
 
-        label = self.visit(ctx.labels())
-
-        returner = self.getVariable(ctx.labels(), isRequest=ctx.REQUEST())
+        returner = self.visit(ctx.expr())
 
         if (self.debug):
-            self.log.log('> Injecting Variable \'' + label + '\': ' + str(returner))
+            self.log.log('> Injecting into: ' + ctx.getText() + ' with the value ' + str(returner))
             self.log.log('')
 
         return returner
@@ -615,7 +614,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         label = [self.visit(ctx.label_comp(0))]
         i = 0
         while (ctx.DOT(i)):
-            label.append(self.visit(ctx.label_comp(i + 1)))
+            label.append(str(self.visit(ctx.label_comp(i + 1))))
             i += 1
 
         return '.'.join(label)
@@ -692,7 +691,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         matches = re.findall(self.regexVar, line)
         for match in matches:
             label = match[2:-2].strip()
-            replacer = self.getVariable(label, convert=False)
+            replacer = str(self.getVariable(label, convert=False))
             line = line.replace(match, replacer)
             if (self.debug):
                 self.log.log('> Injecting Variable into String \'' + label + '\': ' + line)

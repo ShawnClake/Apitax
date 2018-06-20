@@ -17,6 +17,7 @@ class LogDriver:
     def __init__ (self):
         self.logger = None
         self.settings = None
+        self.buffer = []
         
     def setSettings(self, settings):
         self.settings = settings

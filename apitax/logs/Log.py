@@ -78,7 +78,7 @@ class Log:
         # logging.info(' '+text)
         text = self.inject(text, prefix)
         if(self.isLoggable(prefix)):
-            self.getLoggerDriver().log(text)
+            self.getLoggerDriver().log('### Error: ' + text)
         
     def getLogger(self):
         return loggers.get('main')

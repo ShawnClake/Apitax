@@ -25,6 +25,7 @@ from .config.Config import Config as ConfigConsumer
 from .grammar.grammartest import GrammarTest
 from .logs.Log import Log
 from .logs.BufferedLog import BufferedLog
+from .logs.StandardLog import StandardLog
 from apitax.utilities.Numbers import round2str
 from apitax.utilities.Npm import Npm
 
@@ -89,7 +90,7 @@ class Apitax:
         if (config.has('log-prefixes')):
             logPrefixes = config.get('log-prefixes')
 
-        log = Log(BufferedLog(), logFile=logPath, doLog=doLog, logColorize=logColorize, logPrefixes=logPrefixes, logHumanReadable=logHumanReadable)
+        log = Log(StandardLog(), logFile=logPath, doLog=doLog, logColorize=logColorize, logPrefixes=logPrefixes, logHumanReadable=logHumanReadable)
         
         log.log('')
         log.log('')

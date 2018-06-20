@@ -179,13 +179,13 @@
 				    renderParams() {
 						    var scriptContents = this.script.code.replace(/\s/g, "").replace(/\n/g, "").replace(/\r/g, "");
         				
-        				var reg = /optionsdict\('{[A-z0-9":\[\]{},]{0,}}'\)/g;
+        				var reg = /options{[A-z0-9":\[\]{},]{0,}};/g;
 								var result;
 								var detected = false;
 								
 								while((result = reg.exec(scriptContents)) !== null) {
 										detected = true;
-								    var params = JSON.parse(result[0].slice(13, -2))['params'];
+								    var params = JSON.parse(result[0].slice(7, -1))['params'];
 								    if(params)
 								    {
 								    		var newParams = {};

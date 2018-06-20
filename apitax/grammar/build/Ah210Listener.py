@@ -233,24 +233,6 @@ class Ah210Listener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by Ah210Parser#inject.
-    def enterInject(self, ctx:Ah210Parser.InjectContext):
-        pass
-
-    # Exit a parse tree produced by Ah210Parser#inject.
-    def exitInject(self, ctx:Ah210Parser.InjectContext):
-        pass
-
-
-    # Enter a parse tree produced by Ah210Parser#log.
-    def enterLog(self, ctx:Ah210Parser.LogContext):
-        pass
-
-    # Exit a parse tree produced by Ah210Parser#log.
-    def exitLog(self, ctx:Ah210Parser.LogContext):
-        pass
-
-
     # Enter a parse tree produced by Ah210Parser#labels.
     def enterLabels(self, ctx:Ah210Parser.LabelsContext):
         pass
@@ -266,6 +248,24 @@ class Ah210Listener(ParseTreeListener):
 
     # Exit a parse tree produced by Ah210Parser#label_comp.
     def exitLabel_comp(self, ctx:Ah210Parser.Label_compContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#inject.
+    def enterInject(self, ctx:Ah210Parser.InjectContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#inject.
+    def exitInject(self, ctx:Ah210Parser.InjectContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#log.
+    def enterLog(self, ctx:Ah210Parser.LogContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#log.
+    def exitLog(self, ctx:Ah210Parser.LogContext):
         pass
 
 
