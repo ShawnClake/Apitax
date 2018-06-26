@@ -16,17 +16,18 @@ statement :
 
 terminated : 
       (
-        executers
-        | assignment
-        | scoping
-        | log
-        | url
-        | each_statement
+        each_statement
+        | params_statement
         | options_statement
         | return_statement
         | error_statement
         | delete_statement
         | await
+        | executers
+        | assignment
+        | scoping
+        | log
+        | url
       ) TERMINATOR ;
 
 non_terminated : 
@@ -82,6 +83,12 @@ block : BLOCKOPEN statements BLOCKCLOSE | statement ;
 
 callback_block: EXECUTEOPEN statements EXECUTECLOSE ;
 
+sig_parameter : labels | optional_parameter ;
+
+call_parameter : expr | optional_parameter ;
+
+optional_parameter : labels EQUAL expr ;
+
 commandtax : 
       ( 
         GET 
@@ -92,7 +99,7 @@ commandtax :
         | COMMANDTAX 
         | SCRIPT 
         | CUSTOM
-      ) LPAREN expr (COMMA obj_dict)? (COMMA labels EQUAL expr)* RPAREN ;
+      ) LPAREN expr (COMMA obj_dict)? (COMMA optional_parameter)* RPAREN ;
 
 execute : commandtax callback_block? ;
 
@@ -103,6 +110,8 @@ await: AWAIT labels? ;
 labels : label_comp (DOT label_comp)* ;
 
 label_comp : LABEL | inject ;
+
+params_statement : SIG sig_parameter (COMMA sig_parameter)* ;
 
 options_statement : OPTIONS expr ;
 
@@ -261,7 +270,9 @@ TYPE_STR : S T R ;
 TYPE_BOOL : B O O L ;
 LOG : L O G ;
 
+
 /** METHODS **/           // These don't use ()'s
+SIG : S I G ;
 OPTIONS : O P T I O N S ;
 NAME : N A M E ;
 IMPORT : I M P O R T ;
@@ -305,8 +316,6 @@ FRAGMENTS
 
 
 fragment ESC : '\\"' | '\\\'' | '\\\\' ; // 2-char sequences \" and \\
-
-//fragment WORDS : (LETTER|DIGIT|ULINE|MINUS|DOT|QUOTE|SQUOTE|LPAREN|RPAREN|':'|'\\'|'/'|'?'|'.'|'!'|','|'#'|'$'|'&'|'@'|' '|'='|'>'|'<'|'('|')'|'['|']'|'{'|'}')+ ;
 
 fragment LETTER : A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z ;
 

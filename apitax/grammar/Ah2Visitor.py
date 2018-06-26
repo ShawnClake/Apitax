@@ -429,10 +429,28 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitCallback_block(self, ctx:Ah210Parser.Callback_blockContext):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by Ah210Parser#sig_parameter.
+    def visitSig_parameter(self, ctx:Ah210Parser.Sig_parameterContext):
+        if(ctx.labels()):
+            return {"label": self.visit(ctx.labels())}
+        else:
+            return self.visit(ctx.optional_parameter())
+
+    # Visit a parse tree produced by Ah210Parser#call_parameter.
+    def visitCall_parameter(self, ctx:Ah210Parser.Call_parameterContext):
+        if(ctx.expr()):
+            return {"value": self.visit(ctx.expr())}
+        else:
+            return self.visit(ctx.optional_parameter())
+
+    # Visit a parse tree produced by Ah210Parser#optional_parameter.
+    def visitOptional_parameter(self, ctx:Ah210Parser.Optional_parameterContext):
+        return {"label": self.visit(ctx.labels()), "value": self.visit(ctx.expr())}
+
     # Visit a parse tree produced by Ah210Parser#commandtax.
     def visitCommandtax(self, ctx:Ah210Parser.CommandtaxContext):
         from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
-        firstArg = self.visit(ctx.expr(0))
+        firstArg = self.visit(ctx.expr())
         command = ""
         strict = False
 
@@ -471,8 +489,9 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
         i = 0
         parameters = {}
-        while (ctx.EQUAL(i)):
-            parameters[self.visit(ctx.labels(i))] = (self.visit(ctx.expr(i + 1)))
+        while (ctx.optional_parameter(i)):
+            opParam = self.visit(ctx.optional_parameter(i))
+            parameters[opParam['label']] = opParam['value']
             i += 1
 
         return {'command': command, 'parameters': parameters, 'strict': strict}
@@ -524,6 +543,22 @@ class Ah2Visitor(Ah210VisitorOriginal):
             return ctx.LABEL().getText()
         else:
             return self.visit(ctx.inject())
+
+    # Visit a parse tree produced by Ah210Parser#params_statement.
+    def visitParams_statement(self, ctx:Ah210Parser.Params_statementContext):
+        i = 0
+        while (ctx.sig_parameter(i)):
+            sigItem = self.visit(ctx.sig_parameter(i))
+        
+            if(self.data.isVarExist('params.passed.' + sigItem['label'])):
+                self.data.storeVar('params.' + sigItem['label'], self.data.getVar('params.passed.' + sigItem['label']))
+            elif('value' in sigItem):
+                self.data.storeVar('params.' + sigItem['label'], sigItem['value'])
+            else:
+                self.error(
+                    'Insufficient parameters. Expected Parameter: \'' + str(sigItem['label']) + '\'')
+                        
+            i += 1
 
     # Visit a parse tree produced by Ah210Parser#options_statement.
     def visitOptions_statement(self, ctx: Ah210Parser.Options_statementContext):

@@ -1,0 +1,11 @@
+name "bobby";
+
+sig one, two="hello", three;
+
+log(params.one);
+
+log(params.two);
+
+log(params.three);
+
+log(params);

@@ -39,6 +39,9 @@ class ScriptData:
         key = "vars." + name
         return self.deleteDotNotation(key)
         
+    def isVarExist(self, name):
+        return self.isExistDotNotation("vars." + name)
+        
     def setReturn(self, value):
         key = "exports.return"
         self.storeDotNotation(value, key)

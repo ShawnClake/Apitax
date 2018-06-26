@@ -89,6 +89,21 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#sig_parameter.
+    def visitSig_parameter(self, ctx:Ah210Parser.Sig_parameterContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#call_parameter.
+    def visitCall_parameter(self, ctx:Ah210Parser.Call_parameterContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#optional_parameter.
+    def visitOptional_parameter(self, ctx:Ah210Parser.Optional_parameterContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#commandtax.
     def visitCommandtax(self, ctx:Ah210Parser.CommandtaxContext):
         return self.visitChildren(ctx)
@@ -116,6 +131,11 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#label_comp.
     def visitLabel_comp(self, ctx:Ah210Parser.Label_compContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#params_statement.
+    def visitParams_statement(self, ctx:Ah210Parser.Params_statementContext):
         return self.visitChildren(ctx)
 
 
