@@ -29,3 +29,5 @@ def getPath(path, asString=True):
     else:
         return Path(pathStr)
     
+def createDir(path):
+    Path(path).mkdir(parents=True, exist_ok=True) 

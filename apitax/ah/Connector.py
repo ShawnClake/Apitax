@@ -44,12 +44,13 @@ class Connector:
         if (token == ''):
             # self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)
             preHeader = self.header.header.copy()
-            self.header.build(self.http.getPasswordAuthHeader(self.username, self.password))
             if (self.http.isTokenable()):
                 self.auth.authenticate()
                 self.token = self.auth.getToken()
                 self.header.header = preHeader
                 self.header.build(self.http.getTokenAuthHeader(self.token))
+            else:
+                self.header.build(self.http.getPasswordAuthHeader(self.username, self.password))
         else:
             self.header.build(self.http.getTokenAuthHeader(self.token))
 

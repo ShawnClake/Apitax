@@ -4,6 +4,7 @@ import click
 # Application import
 from apitax.ah.commandtax.commands.Custom import Custom
 from apitax.ah.HeaderBuilder import HeaderBuilder
+from apitax.logs.Log import Log
 
 
 # Handles creating an authentication request for tokenable drivers
@@ -11,6 +12,7 @@ from apitax.ah.HeaderBuilder import HeaderBuilder
 class AuthRequest(Custom):
     def __init__(self, username, password, http, debug, config):
         self.http = http
+        self.log = Log()
 
         if(not self.http.isAuthenticated()):
             return
@@ -21,15 +23,15 @@ class AuthRequest(Custom):
         if (not http.isCredentialsPosted):
             header.build(http.getPasswordAuthHeader(username, password))
 
-        Custom.__init__(self, config, header, debug, True)
+        Custom.__init__(self, config, header, None, debug, False)
 
         if (http.isCredentialsPosted):
             self.setPostData(self.http.getPasswordAuthData(username, password))
 
         if (self.debug):
-            print('AuthRequest Created')
+            self.log.log('>> AuthRequest Created')
 
-        self.custom = '--post --url ' + http.getAuthEndpoint(config) + ' --data-path \'{"user":"' + username + '"}\''
+        self.custom = '--post --url ' + http.getAuthEndpoint() + ' --data-path \'{"user":"' + username + '"}\''
 
     def authenticate(self):
         if(not self.http.isAuthenticated()):

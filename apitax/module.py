@@ -106,6 +106,8 @@ class Apitax:
             usage = 'grammar-test'
         elif('--build' in args):
             usage = 'build'
+        elif('--feature-test' in args):
+            usage = 'feature-test'
 
         if ('--debug' in args):
             debug = True
@@ -176,6 +178,8 @@ class Apitax:
                                   json=True)
             result = connector.execute()
             
+            print(str(connector.http.getCatalog()))
+            
             if(debug):
                 log.log(">>> Finished Processing")
                 log.log("")
@@ -227,6 +231,13 @@ class Apitax:
 
         elif(usage == 'build'):
             subprocess.check_call('npm --help')
+        
+        elif(usage == 'feature-test'):
+            pass
+            #from apitax.integrations.Github import Github
+            #token = str(config.get('github-access-token'))
+            #git = Github(token)
+            #print(git.getRepo('ApitaxScripts'))
 
         else:
             log.log("### Error: Unknown mode")
