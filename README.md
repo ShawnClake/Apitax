@@ -277,19 +277,25 @@ Example Configuration File:
 ```
 config.txt
 
-[Config]
-auth-endpoint = "<someEndpoint>"
-driver = ApitaxTests
-port = <somePortForTheWebServer>
-ip = <someIPForTheWebServer>
+[Apitax]
+base-endpoint = http://42.42.42.42:4242
+auth-endpoint = /auth
+catalog-endpoint = /catalog
+driver = Default
+port = 5080
+ip = 0.0.0.0
 log = true
-log-file = logs/log.log
+log-file = logs/apitax.log
 log-colorize = true
 log-human-readable = false
 log-prefixes = false
 default-mode = cli
-default-username = <someAuthUsername>
-default-password = <someAuthPassword>
+default-username = api_admin
+default-password = apiadmin123
+
+github-access-token = <YourGithubAccessToken>
+gitlab-access-token = <YourGitlabAccessToken>
+git-repo-clone-url = https://github.com/ShawnClake/ApitaxScripts.git
 ```
 
 ### Supported Authentication
@@ -298,6 +304,7 @@ default-password = <someAuthPassword>
     * Driver files facilitate this requirement
 
 ### Drivers and Plugins
+** This has been redone and requires updated configuration **
 * Drivers and plugins are used to extend the functionality of Apitax to an arbitrary API
 * While dynamically injecting drivers and plugins is on the todo list, for now all plugins must go into the apitax/drivers/plugins directory
 * Each driver requires at least a core plugin file
