@@ -23,7 +23,7 @@ Using pip, you can bring in Apitax to your project. However, there are a couple 
 * First, install Apitax using pip: `pip install apitax`
 * Then, create a small Script that calls Apitax with some predefined parameters.
 ```
-setup_apitax.py
+[setup_apitax.py]
 
 from apitax import Apitax
 
