@@ -37,13 +37,12 @@ def serialize(obj):
 class Apitax:
 
     # Entry point of the program
-    def apitax(self, args: list):
+    def __init__(self, args: list):
         # General procedure is as follows
         # Sets up logical defaults for parameters
         # Checks config for any overrides to those params
         # Checks cli params for any overrides to those params
         # CLI > Config > Default
-        # args = sys.argv[1:]
 
         usage = 'cli'
         debug = False
