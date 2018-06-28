@@ -16,7 +16,7 @@ from time import time
 # and likely nothing else. Connector handles the rest.
 class Connector:
 
-    def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True, parameters=[]):
+    def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True, parameters=[], config=None):
         self.executionTime = None
         self.debug = debug
         self.sensitive = sensitive
@@ -32,7 +32,7 @@ class Connector:
         self.command = self.command.replace('\\\'', '\'');
 
 
-        self.config = Config()
+        self.config = config
         self.http = HttpPlugFactory.make(self.config.get('driver') + 'Driver')
 
         self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)

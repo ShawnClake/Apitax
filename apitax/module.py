@@ -44,21 +44,29 @@ class Apitax:
         # Checks cli params for any overrides to those params
         # CLI > Config > Default
 
+        if(len(args) == 0):
+            args = sys.argv[1:]
+
         usage = 'cli'
+        
         debug = False
         sensitive = False
+        
         reloader = False
         watcher = False
+        
         username = ''
         password = ''
+        
         command = ''
         script = ''
+        
         build = True
         
         doLog = True
         logPath = 'logs/apitax.log'
         logColorize = True
-        logPrexies = True
+        logPrefixes = True
         logHumanReadable = False
         
         config = ConfigConsumer()
@@ -174,10 +182,10 @@ class Apitax:
                 log.log("")
             
             connector = Connector(debug=debug, sensitive=sensitive, command=command, username=username, password=password,
-                                  json=True)
+                                  json=True, config=config)
             result = connector.execute()
             
-            print(str(connector.http.getCatalog()))
+            #print(str(connector.http.getCatalog()))
             
             if(debug):
                 log.log(">>> Finished Processing")

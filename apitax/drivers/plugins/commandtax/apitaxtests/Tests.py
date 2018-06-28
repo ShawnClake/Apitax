@@ -8,7 +8,7 @@ class Tests(Script):
       Script.__init__(self, config, header, parameters, debug, sensitive)      
 
   def handle(self, command):
-      command = str(Path('apitax/drivers/plugins/commandtax/apitaxtests/tests/'+'_'.join(command) + '.ah').resolve())
+      command = str(Path('apitax/drivers/plugins/commandtax/apitaxtests/tests/' + '_'.join(command) + '.ah').resolve())
       super().handle([command])
 
 

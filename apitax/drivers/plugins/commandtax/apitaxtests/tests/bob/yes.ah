@@ -1,0 +1,6 @@
+
+name 'IAmYes';
+
+log(2+2);
+
+

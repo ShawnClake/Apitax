@@ -29,7 +29,10 @@ class Commandtax:
             self.request = Custom(config, header, parameters, debug, sensitive)
         else:
             customCommands = DriverCommandsFactory.make(config.get('driver') + 'Commands')
-            self.request = customCommands.handle(config, header, parameters, command, debug, sensitive)
+            self.request = customCommands.setup(config, header, parameters, debug, sensitive)
+            self.request = self.request.handle(command)
+            return
+            #command.insert(0, 'driver')
             
         self.request.handle(command[1:])
 

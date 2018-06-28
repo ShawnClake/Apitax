@@ -1,6 +1,6 @@
 # Import Drivers below here
 
-from apitax.drivers.plugins import *
+from apitax.drivers.Drivers import Drivers
 
 
 # End Driver Imports
@@ -11,6 +11,10 @@ class HttpPlugFactory:
 
     @staticmethod
     def make(name):
-        # import_submodules(drivers)
-        constructor = globals()[name]
-        return constructor()
+        return Drivers.get(name)
+
+    #@staticmethod
+    #def make(name):
+    #    # import_submodules(drivers)
+    #    constructor = globals()[name]
+    #    return constructor()
