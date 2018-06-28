@@ -35,6 +35,6 @@ WORKDIR /app
 EXPOSE 5080
 
 # Run the main.py file found in your project application
-CMD ["python3", "App/main.py", "--web", "--debug", "--no-build"]
+CMD ["python3", "app/main.py", "--web", "--debug", "--no-build"]
 
 

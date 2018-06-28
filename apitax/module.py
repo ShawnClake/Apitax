@@ -102,10 +102,10 @@ class Apitax:
             usage = 'cli'
         elif ('--web' in args):
             usage = 'web'
+        elif ('--build-only' in args):
+            usage = 'build'
         elif('--grammar-test' in args):
             usage = 'grammar-test'
-        elif('--build' in args):
-            usage = 'build'
         elif('--feature-test' in args):
             usage = 'feature-test'
 
@@ -213,31 +213,30 @@ class Apitax:
                 npm.build()
                 if(watcher):
                     npm.buildWatch(True)
-
-                #subprocess.check_call('npm --prefix ' + path + ' run build', shell=True)
                 log.log("")
                 log.log(">> Done Building Website Assets")
             log.log(">> Booting Up WebServer:")
             log.log("")
             bSrv = bottleServer()
             bSrv.start(config.get("ip"), config.get("port"), config=config, debug=debug, sensitive=sensitive, reloader=reloader)
-            #log.log("")
-            #log.log(">> Done Booting Server")
-            #log.log(">> Ready To Take Requests")
-            #log.log("")
 
         elif(usage == 'grammar-test'):
             GrammarTest(script)
-
-        elif(usage == 'build'):
-            subprocess.check_call('npm --help')
         
         elif(usage == 'feature-test'):
             pass
-            #from apitax.integrations.Github import Github
-            #token = str(config.get('github-access-token'))
-            #git = Github(token)
-            #print(git.getRepo('ApitaxScripts'))
+
+        elif(usage == 'build'):
+            log.log(">> Building:")
+            log.log("> This can take several minutes")
+            log.log("")
+            path = config.path + '/ah/web/node/node'
+            npm = Npm(path)
+            npm.install()
+            npm.build()
+            log.log("")
+            log.log(">> Building Complete")
+
 
         else:
             log.log("### Error: Unknown mode")
