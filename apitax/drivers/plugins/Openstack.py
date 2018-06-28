@@ -3,14 +3,10 @@ from apitax.utilities.Files import getAllFiles
 from pathlib import Path
 
 class OpenstackDriver(HttpPlug):
-
-    def __init__(self):
-        self.token = None
-        super().__init__()
 	
     def getToken(self, response):
-        self.token = response.getResponseHeaders().get('X-Subject-Token')
-        return self.token
+        return response.getResponseHeaders().get('X-Subject-Token')
+
     
     def getTokenAuthHeader(self, token):
         return {'X-Auth-Token': token}
@@ -21,18 +17,18 @@ class OpenstackDriver(HttpPlug):
     def isCredentialsPosted(self):
        	return True  	
   	   
-    def getScriptsCatalog(self, config):
-        files = getAllFiles(config.path + "/grammar/scripts/**/*.ah")
+    def getScriptsCatalog(self):
+        files = getAllFiles(self.config.path + "/grammar/scripts/**/*.ah")
         returner = {"scripts": []}
         for file in files:
             returner['scripts'].append({"label": file.split('/')[-1].split('.')[0].title(),"relative-path":file,"path": str(Path(file).resolve())})
         # print(returner)
         return returner
         
-    def getCatalog(self):
+    def getCatalog(self, auth):
         from apitax.ah.Connector import Connector
         import json
-        connector = Connector(token=self.token, command="custom --get --url " + self.getCatalogEndpoint(),
+        connector = Connector(token=auth, command="custom --get --url " + self.getCatalogEndpoint(),
                               debug=False, sensitive=True, parameters=None)
         
         commandHandler = connector.execute()

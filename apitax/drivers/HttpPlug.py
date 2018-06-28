@@ -9,7 +9,7 @@ from pathlib import Path
 class HttpPlug:
 
     def __init__(self):
-        self.config = ConfigConsumer()
+        self.config = ConfigConsumer.read()
 
     def getAuthEndpoint(self):
         return self.config.get('base-endpoint') + self.config.get('auth-endpoint')
@@ -54,7 +54,7 @@ class HttpPlug:
     def isAuthenticated(self):
         return True
         
-    def getCatalog(self):
+    def getCatalog(self, auth):
         return {"endpoints": {"tests": {"label": "Placeholder Test", "value": "https://jsonplaceholder.typicode.com"}}, "selected": "https://jsonplaceholder.typicode.com"}
         	
     def getScriptsCatalog(self):
@@ -66,4 +66,4 @@ class HttpPlug:
         return returner
         
     def serialize(self):
-        return {"authenticated": self.isAuthenticated(), "auth-tokens": self.isTokenable(), "auth-endpoint": self.getAuthEndpoint(self.config)}
+        return {"authenticated": self.isAuthenticated(), "auth-tokens": self.isTokenable(), "auth-endpoint": self.getAuthEndpoint()}

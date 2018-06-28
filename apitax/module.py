@@ -69,7 +69,7 @@ class Apitax:
         logPrefixes = True
         logHumanReadable = False
         
-        config = ConfigConsumer()
+        config = ConfigConsumer.read()
         config.path = str(Path(os.path.dirname(os.path.abspath(inspect.stack()[0][1]))).resolve())
         #print(config.path)
 
@@ -182,7 +182,7 @@ class Apitax:
                 log.log("")
             
             connector = Connector(debug=debug, sensitive=sensitive, command=command, username=username, password=password,
-                                  json=True, config=config)
+                                  json=True)
             result = connector.execute()
             
             #print(str(connector.http.getCatalog()))

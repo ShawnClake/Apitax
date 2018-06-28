@@ -1,0 +1,7 @@
+name 'OpenStackDriverTests';
+
+url 'http://172.25.190.14:5000';
+
+log(get('/v3/auth/projects'));
+
+
