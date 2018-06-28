@@ -21,6 +21,8 @@ dist/
 
 /apitax/drivers/plugins/scriptax/default-git/
 
+config.*
+
 # Compiled python modules.
 *.pyc
 
