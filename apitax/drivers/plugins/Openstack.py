@@ -7,7 +7,6 @@ class OpenstackDriver(HttpPlug):
     def getToken(self, response):
         return response.getResponseHeaders().get('X-Subject-Token')
 
-    
     def getTokenAuthHeader(self, token):
         return {'X-Auth-Token': token}
     
@@ -28,7 +27,7 @@ class OpenstackDriver(HttpPlug):
     def getCatalog(self, auth):
         from apitax.ah.Connector import Connector
         import json
-        connector = Connector(token=auth, command="custom --get --url " + self.getCatalogEndpoint(),
+        connector = Connector(token=auth['token'], command="custom --get --url " + self.getCatalogEndpoint(),
                               debug=False, sensitive=True, parameters=None)
         
         commandHandler = connector.execute()
@@ -41,12 +40,11 @@ class OpenstackDriver(HttpPlug):
         for service in services['catalog']:
             endpoints = service['endpoints']
             if(len(endpoints) > 0):
-                endpoint = endpoints[0]
-                name = service['name']
-                catalog['endpoints'].update({name: {"label": name, "value": endpoint['url']}})
-        
-        #catalog['endpoints'].update({"tests": {"label": "(Test) JSONPlaceHolder - https://jsonplaceholder.typicode.com", "value": "https://jsonplaceholder.typicode.com"}})
-        #catalog['endpoints'].update({"reqres": {"label": "(Test) Requests - https://reqres.in/", "value": "https://reqres.in/"}})
+                for endpoint in endpoints:
+                    if(endpoint['interface'] == 'public'):
+                        name = service['name']
+                        catalog['endpoints'].update({name: {"label": name, "value": endpoint['url']}})
+                        
 					
         catalog['selected'] = "http://172.25.190.14:5000"
     

@@ -11,8 +11,10 @@ prog : statements EOF ;
 statements : statement* ;
 
 statement : 
-      terminated
-      | non_terminated ;
+      NOT? (
+        terminated
+        | non_terminated 
+      );
 
 terminated : 
       (
@@ -27,6 +29,7 @@ terminated :
         | assignment
         | scoping
         | log
+        | auth
         | url
       ) TERMINATOR ;
 
@@ -51,6 +54,8 @@ expr :
       | expr OR expr
       | async_execute
       | execute
+      | login_statement
+      | endpoint_statement
       | casting
       | count
       | atom ;
@@ -121,6 +126,10 @@ error_statement : ERROR expr? ;
 
 return_statement : RETURNS expr? ;
 
+login_statement : LOGIN LPAREN optional_parameter? (COMMA optional_parameter)* RPAREN ;
+
+endpoint_statement : ENDPOINT LPAREN expr RPAREN ; 
+
 scoping : imports | exports | name ;
 
 name : NAME expr;
@@ -138,7 +147,9 @@ casting :
         | TYPE_LIST
         | TYPE_DICT
       ) LPAREN expr RPAREN ;
-      
+
+auth : AUTH expr ;
+
 url : URL expr ;
 
 log : LOG LPAREN expr RPAREN ;
@@ -243,13 +254,6 @@ AND : A N D | SAND ;
 OR : O R | SOR ;
 
 
-/** KEYWORDS **/
-IN : I N ;
-SET : S E T ;
-ASYNC : A S Y N C ;
-AWAIT : A W A I T ;
-
-
 /** FLOW **/
 RETURNS : R E T U R N ;
 EACH : E A C H;
@@ -261,17 +265,19 @@ WHILE : W H I L E ;
 ERROR : E R R O R ;
 
 
-/** HELPER FUNCTIONS **/  // These use ()'s
+/** HELPER FUNCTIONS **/  // These use ()'s and CAN return values
 TYPE_INT : I N T ;
 TYPE_DICT : D I C T ;
 TYPE_LIST : L I S T ;
 TYPE_DEC : D E C ;
 TYPE_STR : S T R ;
 TYPE_BOOL : B O O L ;
+LOGIN : L O G I N ;
 LOG : L O G ;
+ENDPOINT : E N D P O I N T ;
 
 
-/** METHODS **/           // These don't use ()'s
+/** METHODS **/           // These don't use ()'s and they do NOT return any values
 SIG : S I G ;
 OPTIONS : O P T I O N S ;
 NAME : N A M E ;
@@ -279,6 +285,7 @@ IMPORT : I M P O R T ;
 EXPORT : E X P O R T ;
 DEL : D E L ;
 URL : U R L ;
+AUTH : A U T H ;
 
 
 /** COMMANDTAX METHODS **/
@@ -290,6 +297,13 @@ POST : P O S T ;
 PUT : P U T ;
 PATCH : P A T C H ;
 DELETE : D E L E T E ;
+
+
+/** KEYWORDS **/
+IN : I N ;
+SET : S E T ;
+ASYNC : A S Y N C ;
+AWAIT : A W A I T ;
 
 
 /** KEYCHANGERS **/

@@ -19,8 +19,9 @@ from antlr4 import *
 
 # Script is used to automate the execution of many commands
 class Scriptax():
-    def __init__(self, config, header, parameters, debug, sensitive):
+    def __init__(self, config, header, auth, parameters, debug, sensitive):
         self.header = header
+        self.auth = auth
         self.debug = debug
         self.sensitive = sensitive
         self.parameters = parameters
@@ -41,7 +42,7 @@ class Scriptax():
         tree = parser.prog()
         printer = Ah2Listener()
 
-        visitor = Ah2Visitor(self.config, self.header, parameters=self.parameters, debug=self.debug, sensitive=self.sensitive)
+        visitor = Ah2Visitor(self.config, self.header, self.auth, parameters=self.parameters, debug=self.debug, sensitive=self.sensitive)
         visitor.setState(file=getPath(filepath))
         return visitor.visit(tree)
         

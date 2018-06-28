@@ -16,7 +16,7 @@ from time import time
 # and likely nothing else. Connector handles the rest.
 class Connector:
 
-    def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True, parameters=[]):
+    def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True, parameters={}):
         self.executionTime = None
         self.debug = debug
         self.sensitive = sensitive
@@ -35,16 +35,16 @@ class Connector:
         self.config = Config.read()
         self.http = HttpPlugFactory.make(self.config.get('driver') + 'Driver')
 
-        self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)
-
         self.header = HeaderBuilder()
         if (json):
             self.header.build(self.http.getContentTypeJSON())
 
+        #self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)
+
         if (token == ''):
-            # self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)
             preHeader = self.header.header.copy()
             if (self.http.isTokenable()):
+                self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)
                 self.auth.authenticate()
                 self.token = self.auth.getToken()
                 self.header.header = preHeader
@@ -52,16 +52,21 @@ class Connector:
             else:
                 self.header.build(self.http.getPasswordAuthHeader(self.username, self.password))
         else:
+            #print(self.http.getTokenAuthHeader(self.token))
             self.header.build(self.http.getTokenAuthHeader(self.token))
 
         # print(self.token)
+
+    def getAuthObj(self):
+        return {"username": self.username, "password": self.password, 'token': self.token}
 
     def execute(self, command=''):
         if (command != ''):
             self.command = command
         t0 = time()
         self.commandHandler = Commandtax(self.header, self.command, self.config, debug=self.debug,
-                                      sensitive=self.sensitive, parameters=self.parameters)
+                                      sensitive=self.sensitive, parameters=self.parameters, auth=self.getAuthObj())
+        
         self.executionTime = time() - t0
         
         log = Log()

@@ -14,14 +14,15 @@ from apitax.utilities.Numbers import round2str
 
 # Script is used to automate the execution of many commands
 class Script(Request):
-    def __init__(self, config, header, parameters, debug, sensitive):
+    def __init__(self, config, header, auth, parameters, debug, sensitive):
         Request.__init__(self, '', header.get(), '', debug=debug, sensitive=sensitive, customResponse=True)
         self.config = config
         self.header = header
+        self.auth = auth
         self.debug = debug
         self.sensitive = sensitive
         self.parameters = parameters
-        self.scriptax = Scriptax(self.config, self.header, self.parameters, self.debug, self.sensitive)
+        self.scriptax = Scriptax(self.config, self.header, self.auth, self.parameters, self.debug, self.sensitive)
         self.parser = None
         self.executionTime = None
         self.log = Log()
@@ -36,7 +37,7 @@ class Script(Request):
         #print("thing: " + self.parser)
         self.request = {}
         self.request['text'] = {}
-        self.request['text']['result'] = self.parser.data.dataStore
+        self.request['text']['result'] = self.parser.data.getStore()
         self.request['text']['commandtax'] = command[0]
         self.request['text']['execution-time'] = round2str(self.executionTime)
         if(self.parser.isError()):

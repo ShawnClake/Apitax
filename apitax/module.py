@@ -195,11 +195,11 @@ class Apitax:
             if(debug and command.split(' ')[0] == 'script'):
                 for t in result.getRequest().parser.threads:
                     t.join()
-                log.log(">> Dumping Current DataStore State:")
+                log.log(">> Dumping Current DataStore Status:")
                 log.log("    * I recommend this website for looking at the data: http://json.parser.online.fr/")
                 log.log("")
                 log.log("")
-                log.log(json.dumps(result.getRequest().parser.data.dataStore, default=serialize))
+                log.log(json.dumps(result.getRequest().parser.data.getStatus(), default=serialize))
                 log.log("")
                 log.log("")
             # print(result.getRequest().data.getData('5.3.role_assignments.0.links.assignment'))

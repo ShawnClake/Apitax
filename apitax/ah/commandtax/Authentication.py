@@ -23,7 +23,7 @@ class AuthRequest(Custom):
         if (not http.isCredentialsPosted):
             header.build(http.getPasswordAuthHeader(username, password))
 
-        Custom.__init__(self, config, header, None, debug, False)
+        Custom.__init__(self, config, header, None, None, debug, False)
 
         if (http.isCredentialsPosted):
             self.setPostData(self.http.getPasswordAuthData(username, password))

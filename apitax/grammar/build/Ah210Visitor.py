@@ -1,4 +1,4 @@
-# Generated from /home/tsisd/shawn/grammar/src/Ah210.g4 by ANTLR 4.7.1
+# Generated from src/Ah210.g4 by ANTLR 4.7.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Ah210Parser import Ah210Parser
@@ -159,6 +159,16 @@ class Ah210Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by Ah210Parser#login_statement.
+    def visitLogin_statement(self, ctx:Ah210Parser.Login_statementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#endpoint_statement.
+    def visitEndpoint_statement(self, ctx:Ah210Parser.Endpoint_statementContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by Ah210Parser#scoping.
     def visitScoping(self, ctx:Ah210Parser.ScopingContext):
         return self.visitChildren(ctx)
@@ -181,6 +191,11 @@ class Ah210Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by Ah210Parser#casting.
     def visitCasting(self, ctx:Ah210Parser.CastingContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Ah210Parser#auth.
+    def visitAuth(self, ctx:Ah210Parser.AuthContext):
         return self.visitChildren(ctx)
 
 

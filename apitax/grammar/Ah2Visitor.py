@@ -4,6 +4,7 @@ from apitax.ah.scriptax.ScriptData import ScriptData as DataStore
 from apitax.logs.Log import Log
 from apitax.utilities.Async import GenericExecution
 from apitax.utilities.Json import isJson
+from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 
 import json
 import re
@@ -13,7 +14,7 @@ import threading
 class Ah2Visitor(Ah210VisitorOriginal):
     #SMALL_VALUE = 0.00000000001;
 
-    def __init__(self, config, header, parameters={}, debug=True, sensitive=False, file=''):
+    def __init__(self, config, header, auth, parameters={}, debug=True, sensitive=False, file=''):
         self.data = DataStore()
         self.log = Log()
         self.debug = debug
@@ -22,6 +23,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.config = config
         self.parser = None
         self.options = {}
+        self.data.setAuth(auth)
         self.data.storeVar("params.passed", parameters)
         self.state = {'file': file, 'line': 0, 'char': 0}
         self.threads = []
@@ -47,14 +49,19 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 self.data.storeRequest(commandHandler.getRequest().getResponseBody(), export=export)
 
     def executeCommand(self, resolvedCommand, logPrefix = ''):
-        from apitax.ah.commandtax.Commandtax import Commandtax
-
+        from apitax.ah.Connector import Connector
         if (self.debug):
             self.log.log('> Executing Commandtax: \'' + resolvedCommand['command'] + '\' ' + 'with parameters: ' + str(resolvedCommand['parameters']), logPrefix)
             self.log.log('')
+            
+        auth = self.data.getAuth()
+        
+        connector = Connector(debug=self.debug, sensitive=self.sensitive, command=resolvedCommand['command'], username=auth['username'], password=auth['password'],token=auth['token'],
+                                  parameters=resolvedCommand['parameters'], json=True)
+        commandHandler = connector.execute()
 
-        commandHandler = Commandtax(self.header, resolvedCommand['command'], self.config, debug=self.debug, sensitive=self.sensitive,
-                                    parameters=resolvedCommand['parameters'])
+        #commandHandler = Commandtax(self.header, resolvedCommand['command'], self.config, debug=self.debug, sensitive=self.sensitive,
+        #                            parameters=resolvedCommand['parameters'])
 
         if (hasattr(commandHandler.getRequest(), 'parser')):
             if (commandHandler.getRequest().parser.isError()):
@@ -160,10 +167,22 @@ class Ah2Visitor(Ah210VisitorOriginal):
         if (self.isError()):
             return
 
+        debugTemp = self.debug
+        sensitiveTemp = self.sensitive
+
         line = ctx.getText().strip()
         if (line != "" and self.debug):
-            self.log.log('> Now processing: ' + line)
-            self.log.log('')
+            if(ctx.NOT()):
+                self.log.log('> Now processing: (This lines contents has been hidden via the \'!\' operator. This is usually done to hide sensitive information)')
+                self.log.log('')
+                self.log.log('> Treating the rest of this statement as sensitive and disabling debug')
+                self.log.log('')
+                
+                self.debug = False
+                self.sensitive = True
+            else:
+                self.log.log('> Now processing: ' + line)
+                self.log.log('')
 
         temp = self.visitChildren(ctx)
 
@@ -171,6 +190,13 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.log.log('')
 
         self.setState(line=ctx.start.line)  # TODO: Try to add character here as well
+
+        if(ctx.NOT()):
+            self.log.log('> Setting debug and sensitive back to their original values')
+            self.log.log('')
+            self.log.log('')
+            self.debug = debugTemp
+            self.sensitive = sensitiveTemp
 
         return temp
 
@@ -209,6 +235,12 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
         if (ctx.casting()):
             return self.visit(ctx.casting())
+            
+        if(ctx.login_statement()):
+            return self.visit(ctx.login_statement())
+            
+        if(ctx.endpoint_statement()):
+            return self.visit(ctx.endpoint_statement())
 
         if (ctx.count()):
             return self.visit(ctx.count())
@@ -596,6 +628,40 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 self.log.log('> Returning ')
             self.log.log('')
 
+    # Visit a parse tree produced by Ah210Parser#login_statement.
+    def visitLogin_statement(self, ctx:Ah210Parser.Login_statementContext):
+        from apitax.ah.Connector import Connector
+        i = 0
+        parameters = {}
+        while (ctx.optional_parameter(i)):
+            opParam = self.visit(ctx.optional_parameter(i))
+            parameters[opParam['label']] = opParam['value']
+            i += 1
+            
+        if('username' in parameters and 'password' in parameters):
+            if (self.debug):
+                self.log.log("> Logging into API with username and password.")
+                self.log.log("")
+            connector = Connector(sensitive=True, username=parameters['username'], password=parameters['password'])
+            return connector.getAuthObj()
+        elif('token' in parameters):
+            return {'token': parameters['token'], 'username':'', 'password':''}
+        else:
+            self.error('Must pass a `username` and `password` or a `token` for authentication')
+            return None
+
+
+    # Visit a parse tree produced by Ah210Parser#endpoint_statement.
+    def visitEndpoint_statement(self, ctx:Ah210Parser.Endpoint_statementContext):
+        name = self.visit(ctx.expr())
+        http = HttpPlugFactory.make(self.config.get('driver') + 'Driver')
+        endpoints = http.getCatalog(self.data.getAuth())['endpoints']
+        if(name in endpoints):
+            return endpoints[name]['value']
+        else:
+            self.error("The endpoint requested does not exist")
+            return None
+
     # Visit a parse tree produced by Ah210Parser#scoping.
     def visitScoping(self, ctx):
         # print('scoping')
@@ -692,6 +758,14 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 self.log.log('')
 
         return returner
+
+    # Visit a parse tree produced by Ah210Parser#auth.
+    def visitAuth(self, ctx:Ah210Parser.AuthContext):
+        auth = self.visit(ctx.expr())
+        self.data.setAuth(auth)
+        if (self.debug):
+            self.log.log("> Setting active auth credentials to user: " + auth['username'])
+            self.log.log("")
 
     # Visit a parse tree produced by Ah210Parser#url.
     def visitUrl(self, ctx: Ah210Parser.UrlContext):

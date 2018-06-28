@@ -1,5 +1,22 @@
 
+//sig paramOne, optionalParam="Im the default", paramThree;
+
 name 'DriverTests';
 
-ct('tests bob yes');
+//login(username="Some Username", password="Some Password");
+
+//auth someAuthObj;
+
+//auth login(username="Some Username", password="Some Password");
+
+!auth login(username="api_admin", password="apiadmin123");
+
+url endpoint('keystone');
+
+log(get('/v3/auth/projects'));
+
+/*get('/v3/auth/projects', {
+  'auth': someAuthObj
+});*/
+
 

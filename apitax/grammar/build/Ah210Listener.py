@@ -1,4 +1,4 @@
-# Generated from /home/tsisd/shawn/grammar/src/Ah210.g4 by ANTLR 4.7.1
+# Generated from src/Ah210.g4 by ANTLR 4.7.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Ah210Parser import Ah210Parser
@@ -278,6 +278,24 @@ class Ah210Listener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Ah210Parser#login_statement.
+    def enterLogin_statement(self, ctx:Ah210Parser.Login_statementContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#login_statement.
+    def exitLogin_statement(self, ctx:Ah210Parser.Login_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#endpoint_statement.
+    def enterEndpoint_statement(self, ctx:Ah210Parser.Endpoint_statementContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#endpoint_statement.
+    def exitEndpoint_statement(self, ctx:Ah210Parser.Endpoint_statementContext):
+        pass
+
+
     # Enter a parse tree produced by Ah210Parser#scoping.
     def enterScoping(self, ctx:Ah210Parser.ScopingContext):
         pass
@@ -320,6 +338,15 @@ class Ah210Listener(ParseTreeListener):
 
     # Exit a parse tree produced by Ah210Parser#casting.
     def exitCasting(self, ctx:Ah210Parser.CastingContext):
+        pass
+
+
+    # Enter a parse tree produced by Ah210Parser#auth.
+    def enterAuth(self, ctx:Ah210Parser.AuthContext):
+        pass
+
+    # Exit a parse tree produced by Ah210Parser#auth.
+    def exitAuth(self, ctx:Ah210Parser.AuthContext):
         pass
 
 

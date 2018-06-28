@@ -1,13 +1,13 @@
 # Base class for driver command classes
 
-from apitax.ah.commandtax.commands.Script import Script
 from apitax.utilities.Files import getPath
 
 class DriverCommands():
 
-    def setup(self, config, header, parameters, debug=False, sensitive=False):
+    def setup(self, config, header, auth, parameters, debug=False, sensitive=False):
         self.config = config
         self.header = header
+        self.auth = auth
         self.debug = debug
         self.sensitive = sensitive
         self.request = None
@@ -32,9 +32,10 @@ class DriverCommands():
         return False
         
     def handle(self, command):
+        from apitax.ah.commandtax.commands.Script import Script
         if(self.override(command)):
             return
-        self.request = Script(self.config, self.header, self.parameters, self.debug, self.sensitive)
+        self.request = Script(self.config, self.header, self.auth, self.parameters, self.debug, self.sensitive)
         path = self.basePath
         for element in command:
             path += '/' + element

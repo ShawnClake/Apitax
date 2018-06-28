@@ -1,1 +1,1 @@
-java -jar /home/tsisd/shawn/apitax-dev/Apitax/apitax/grammar/antlr-4.7.1-complete.jar -o /home/tsisd/shawn/apitax-dev/Apitax/apitax/grammar/build -lib /home/tsisd/shawn/apitax-dev/Apitax/apitax/grammar/src -listener -visitor -Dlanguage=Python3 ~/Ah2.1.g4
+java -jar antlr-4.7.1-complete.jar  -o build -listener -visitor -Dlanguage=Python3 src/Ah210.g4

@@ -8,10 +8,45 @@ from apitax.utilities.Numbers import isNumber
 class ScriptData:
     def __init__(self):
         self.dataStore = dict(
-            {"flow": {'return': False, 'exit': False, 'error': False}, "urls": {"current": ""}, "vars": {"params": {}}, "requests": {}, "exports": {"urls": {}, "vars": {}, "requests": {}, "return": None}}
+            {
+              "flow": {
+                'return': False, 
+                'exit': False, 
+                'error': False
+              }, 
+              "urls": {"current": ""}, 
+              "auth": {
+                'username': '',
+                'password': '',
+                'token': '',	
+              }, 
+              "vars": {"params": {}}, 
+              "requests": {}, 
+              "exports": {
+                "urls": {}, 
+                "vars": {}, 
+                "requests": {}, 
+                "return": None
+              }
+            }
         )
         self.name = ""
         self.index = 1
+
+    def getStore(self):
+        returner = {}
+        returner['vars'] = self.dataStore['vars']
+        returner['requests'] = self.dataStore['requests']
+        return returner
+        
+    def getStatus(self):
+        returner = {}
+        returner['vars'] = self.dataStore['vars']
+        returner['requests'] = self.dataStore['requests']
+        returner['flow'] = self.dataStore['flow']
+        returner['exports'] = self.dataStore['exports']
+        returner['urls'] = self.dataStore['urls']
+        return returner
 
     # Used for current script interactions
     def storeUrl(self, name, url):
@@ -48,6 +83,14 @@ class ScriptData:
         
     def getReturn(self):
         key = "exports.return"
+        return self.getDotNotation(key)
+        
+    def setAuth(self, value):
+        key = "auth"
+        self.storeDotNotation(value, key)
+        
+    def getAuth(self):
+        key = "auth"
         return self.getDotNotation(key)
         
     def setFlow(self, name, value):
