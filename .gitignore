@@ -19,7 +19,7 @@ log.txt
 
 dist/
 
-/apitax/drivers/plugins/scriptax/default-git/
+/apitax/drivers/plugins/scriptax/*/
 
 config.*
 
