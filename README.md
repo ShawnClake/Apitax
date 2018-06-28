@@ -12,7 +12,7 @@ Apitax is an API automation framework utilizing Commandtax and Scriptax. Command
 
 A more winded (and more detailed!) description called **Why use Apitax** is at the very bottom of this documentation.
 
-## Builds
+## Builds and Installation
 
 ### Pip
 
