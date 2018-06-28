@@ -14,6 +14,42 @@ A more winded (and more detailed!) description called **Why use Apitax** is at t
 
 ## Builds
 
+### Pip
+
+Apitax on PyPi: https://pypi.org/project/apitax/
+
+Using pip, you can bring in Apitax to your project. However, there are a couple of other commands you need to run to ensure Apitax is ready to go.
+
+* First, install Apitax using pip: `pip install apitax`
+* Then, create a small Script that calls Apitax with some predefined parameters.
+```
+setup_apitax.py
+
+from apitax import Apitax
+
+def main():
+    apitax = Apitax()
+    apitax.apitax(["--build-only", "--debug"])
+
+if __name__ == '__main__':
+    main()
+```
+* Execute that script: `python setup_apitax.py`
+    * This can take several minutes to complete. Please be patient.
+
+### Docker
+You can use the provided Docker file and requirements file to quickly bake your project into a container with Apitax. To do this, follow these steps.
+* Create a new folder, I'm going to call it `myimage`, but you can call it whatever you like.
+* Inside of the `myimage` folder, create a sub-folder called `app`. 
+    * Place all of your application and project files inside of the `app` sub-folder
+* Back inside of the `myimage` folder, copy in the `Dockerfile` and `requirements.txt` file found inside of the docker directory in this repo.
+    * Feel free to modify the `Dockerfile` and `requirements.txt` to suit your projects needs.
+* You should now have a folder called `myimage` which contains `Dockerfile`, `requirements.txt`, and a sub-folder called `app` containing all of your application/project code.
+* Ensure you have navigated to the `myimage` directory. This should be the directory where you execute the next few commands from.
+* Build the image: `docker build --no-cache -t my-amazing-image .`
+* Run the newly created image: `docker run -d -p 5080:5080 my-amazing-image`
+    * This will run the container in the background, to run the container in the foreground remove the `-d` flag.
+
 ### Jenkins
 * Jenkins is available here: https://openrubicon.com/blue/organizations/jenkins/Apitax/activity
 * This address may change in the future
