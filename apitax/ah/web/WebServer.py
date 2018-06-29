@@ -6,7 +6,7 @@ from bottle import route, run, template, request, static_file, post, Bottle
 
 # Application import
 from apitax.ah.Connector import Connector
-from apitax.drivers.HttpPlugFactory import HttpPlugFactory
+from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.logs.Log import Log
 from apitax.utilities.Files import readFile
 from apitax.utilities.Files import saveFile
@@ -81,10 +81,10 @@ def execute_api_command():
 
     if ('token' in request.json):
         connector = Connector(token=request.json['token'], command=request.json['command'],
-                              Options(debug=request.json['debug'], sensitive=request.json['sensitive']), parameters=parameters)
+                              options=Options(debug=request.json['debug'], sensitive=request.json['sensitive']), parameters=parameters)
     else:
         connector = Connector(username=request.json['user'], password=request.json['pass'],
-                              command=request.json['command'], Options(debug=request.json['debug'], sensitive=True), parameters=parameters)
+                              command=request.json['command'], options=Options(debug=request.json['debug'], sensitive=True), parameters=parameters)
 
     commandHandler = connector.execute()
 
@@ -108,9 +108,9 @@ def execute_system_status():
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/driver/status', method='GET')
 def execute_system_driver_status():
-    http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
-    driverDict = {"driver": {"name":bottleServer.config.get('driver')}}
-    driverDict['driver'].update(http.serialize())
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    driverDict = {"driver": {"name":str(driver.__class__.__name__)}}
+    driverDict['driver'].update(driver.serialize())
     return json.dumps(driverDict)
     
 # Command endpoint is used to facilitate simpler requests
@@ -163,5 +163,5 @@ class bottleServer():
         bottleServer.config = config
         bottleServer.options = options
         bottleServer.directory = config.path + '/ah/web/node/'
-        run(host=ip, port=port, reloader=reloader, debug=debug)
+        run(host=ip, port=port, reloader=reloader, debug=options.debug)
 
