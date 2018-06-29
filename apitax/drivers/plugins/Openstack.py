@@ -1,9 +1,9 @@
-from apitax.drivers.HttpPlug import HttpPlug
+from apitax.drivers.Driver import Driver
 from apitax.utilities.Files import getAllFiles
 from apitax.ah.Options import Options
 from pathlib import Path
 
-class OpenstackDriver(HttpPlug):
+class OpenstackDriver(Driver):
 	
     def getToken(self, response):
         return response.getResponseHeaders().get('X-Subject-Token')

@@ -4,7 +4,7 @@ import shlex
 # Application import
 from apitax.ah.commandtax.commands.Script import Script
 from apitax.ah.commandtax.commands.Custom import Custom
-from apitax.drivers.DriverCommandsFactory import DriverCommandsFactory
+from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.ah.Credentials import Credentials
 from apitax.ah.Options import Options
 
@@ -24,13 +24,18 @@ class Commandtax:
             options.debug = True
         if('--sensitive' in command):
             options.sensitive = True
+        if ('--driver' in command):
+            options.driver = command[command.index('--driver') + 1]
         
         if (command[0] == 'script'):
             self.request = Script(config, header, auth, parameters, options)
         elif (command[0] == 'custom'):
             self.request = Custom(config, header, auth, parameters, options)
         else:
-            customCommands = DriverCommandsFactory.make(config.get('driver') + 'Commands')
+            if(options.driver):
+                customCommands = LoadedDrivers.getCommandsDriver(options.driver)
+            else:
+                customCommands = LoadedDrivers.getDefaultCommandsDriver()
             self.request = customCommands.setup(config, header, auth, parameters, options)
             self.request = self.request.handle(command)
             return

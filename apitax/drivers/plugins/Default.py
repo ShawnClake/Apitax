@@ -1,8 +1,8 @@
-from apitax.drivers.HttpPlug import HttpPlug
+from apitax.drivers.Driver import Driver
 from apitax.utilities.Files import getAllFiles
 from pathlib import Path
 
-class DefaultDriver(HttpPlug):
+class DefaultDriver(Driver):
     def isAuthenticated(self):
         return False
         

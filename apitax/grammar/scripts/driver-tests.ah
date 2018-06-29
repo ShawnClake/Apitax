@@ -21,6 +21,10 @@ log('done: ' + temp);
 
 fish = 'dead';
 
+ct('tests bob yes', {
+  'driver': 'ApitaxTests'
+});
+
 /*get('/v3/auth/projects', {
   'auth': someAuthObj
 });*/

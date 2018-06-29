@@ -49,8 +49,19 @@ class DriverCommands():
             return
         self.request = Script(self.config, self.header, self.auth, self.parameters, self.options)
         path = self.basePath
+        i = 0
         for element in command:
-            path += '/' + element
+            element = element.strip()
+            if(element == '--driver'):
+                i += 2
+            elif(element[:2] == '--'):
+                i += 1
+                
+            if(i > 0):
+                i -= 1
+            else:
+                path += '/' + element
+            #print(element+":"+str(i))
         path += '.ah'
         path = getPath(path)
         self.request.handle([path])

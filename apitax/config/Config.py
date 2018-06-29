@@ -31,7 +31,8 @@ class Config:
         return prop
         
     def getAsList(self, param):
-        return list(str(self.cp.get(self.sectionName, param)).split(","))
+        items = list(str(self.cp.get(self.sectionName, param)).split(","))
+        return [x.strip(' ') for x in items]
 
     def has(self, param):
         return self.cp.has_option(self.sectionName, param)

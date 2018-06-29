@@ -6,7 +6,7 @@ from pathlib import Path
 
 # Base class for driver plugs
 # Defines many customizable properties for interfacing to a new API type
-class HttpPlug:
+class Driver:
 
     def __init__(self):
         self.config = ConfigConsumer.read()

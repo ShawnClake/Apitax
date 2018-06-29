@@ -30,6 +30,7 @@ from .logs.StandardLog import StandardLog
 from apitax.utilities.Numbers import round2str
 from apitax.utilities.Npm import Npm
 from apitax.ah.Options import Options
+from apitax.ah.LoadedDrivers import LoadedDrivers
 
 
 def serialize(obj):
@@ -177,6 +178,17 @@ class Apitax:
             
         log.log('')
         log.log('')
+        
+        if(options.debug):
+            log.log('>> Loading Drivers')
+            log.log('')
+            drivers = config.getAsList('drivers')
+            for driver in drivers:
+                LoadedDrivers.load(driver)
+            log.log('>> Finished Loading Drivers')
+        
+            log.log('')
+            log.log('')        
 
         if (usage == 'cli'):
             # Authentication is incorporated into Connector

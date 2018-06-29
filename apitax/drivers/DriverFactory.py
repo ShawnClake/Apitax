@@ -7,14 +7,9 @@ from apitax.drivers.Drivers import Drivers
 
 
 # Factory class for creating HttpPlug Drivers
-class HttpPlugFactory:
+class DriverFactory:
 
     @staticmethod
     def make(name):
         return Drivers.get(name)
 
-    #@staticmethod
-    #def make(name):
-    #    # import_submodules(drivers)
-    #    constructor = globals()[name]
-    #    return constructor()

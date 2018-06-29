@@ -1,6 +1,6 @@
 from apitax.ah.commandtax.Commandtax import Commandtax
 from apitax.ah.commandtax.Authentication import *
-from apitax.drivers.HttpPlugFactory import HttpPlugFactory
+from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.ah.HeaderBuilder import HeaderBuilder
 from apitax.config.Config import Config
 from apitax.logs.Log import Log
@@ -37,7 +37,11 @@ class Connector:
         self.logBuffer = []
 
         self.config = Config.read()
-        self.http = HttpPlugFactory.make(self.config.get('driver') + 'Driver')
+        
+        if(self.options.driver):
+            self.http = LoadedDrivers.getBaseDriver(self.options.driver)
+        else:
+            self.http = LoadedDrivers.getDefaultBaseDriver()
 
         self.header = HeaderBuilder()
         if (json):

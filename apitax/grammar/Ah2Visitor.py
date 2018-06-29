@@ -4,7 +4,7 @@ from apitax.ah.scriptax.ScriptData import ScriptData as DataStore
 from apitax.logs.Log import Log
 from apitax.utilities.Async import GenericExecution
 from apitax.utilities.Json import isJson
-from apitax.drivers.HttpPlugFactory import HttpPlugFactory
+from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.ah.Credentials import Credentials
 from apitax.ah.Options import Options
 
@@ -542,6 +542,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 command += " --data-path '" + json.dumps(dataArg['path']) + "'"
             if ('header' in dataArg):
                 command += " --data-header '" + json.dumps(dataArg['header']) + "'"
+            if('driver' in dataArg):
+                command += " --driver " + dataArg['driver']
             if('strict' in dataArg):
                 strict = bool(dataArg['strict'])
             if('auth' in dataArg):
@@ -664,11 +666,15 @@ class Ah2Visitor(Ah210VisitorOriginal):
         
         parameters = self.visit(ctx.optional_parameters_block())
             
+        driver = self.appOptions.driver
+        if('driver' in parameters):
+            driver = parameters['driver']
+            
         if('username' in parameters and 'password' in parameters):
             if (self.appOptions.debug):
                 self.log.log("> Logging into API with username and password.")
                 self.log.log("")
-            connector = Connector(Options(debug=self.appOptions.debug, sensitive=True), username=parameters['username'], password=parameters['password'])
+            connector = Connector(Options(debug=self.appOptions.debug, sensitive=True,driver=driver), username=parameters['username'], password=parameters['password'])
             return connector.getCredentials()
         elif('token' in parameters):
             return Credentials(token=parameters['token'])
@@ -680,8 +686,11 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#endpoint_statement.
     def visitEndpoint_statement(self, ctx:Ah210Parser.Endpoint_statementContext):
         name = self.visit(ctx.expr())
-        http = HttpPlugFactory.make(self.config.get('driver') + 'Driver')
-        endpoints = http.getCatalog(self.data.getAuth())['endpoints']
+        if(self.appOptions.driver):
+            driver = LoadedDrivers.getBaseDriver(self.appOptions.driver)
+        else:
+            driver = LoadedDrivers.getDefaultBaseDriver()
+        endpoints = driver.getCatalog(self.data.getAuth())['endpoints']
         if(name in endpoints):
             return endpoints[name]['value']
         else:
