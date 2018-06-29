@@ -80,13 +80,17 @@ while_statement : WHILE condition block ;
 
 for_statement : FOR labels IN expr block ;
 
-each_statement : EACH expr callback_block ;
+each_statement : EACH expr callback ;
 
-condition: LPAREN expr RPAREN ;
+condition : LPAREN expr RPAREN ;
 
 block : BLOCKOPEN statements BLOCKCLOSE | statement ;
 
-callback_block: EXECUTEOPEN statements EXECUTECLOSE ;
+callback : (LPAREN optional_parameters_block RPAREN ARROW)? callback_block ;
+
+callback_block : EXECUTEOPEN statements EXECUTECLOSE ;
+
+optional_parameters_block : optional_parameter? (COMMA optional_parameter)* ;
 
 sig_parameter : labels | optional_parameter ;
 
@@ -106,9 +110,9 @@ commandtax :
         | CUSTOM
       ) LPAREN expr (COMMA obj_dict)? (COMMA optional_parameter)* RPAREN ;
 
-execute : commandtax callback_block? ;
+execute : commandtax callback? ;
 
-async_execute: ASYNC commandtax callback_block? ; // (labels EQUAL)? 
+async_execute: ASYNC commandtax callback? ; // (labels EQUAL)? 
 
 await: AWAIT labels? ;
 
@@ -126,7 +130,7 @@ error_statement : ERROR expr? ;
 
 return_statement : RETURNS expr? ;
 
-login_statement : LOGIN LPAREN optional_parameter? (COMMA optional_parameter)* RPAREN ;
+login_statement : LOGIN LPAREN optional_parameters_block RPAREN ;
 
 endpoint_statement : ENDPOINT LPAREN expr RPAREN ; 
 
@@ -247,6 +251,7 @@ SCLOSE : ']';
 VARIABLE_ID : '$' ;
 TERMINATOR : ';' ;
 HASH : '#' ;
+ARROW : '->' ;
 
 
 /** KEYWORD COMBINATORS **/

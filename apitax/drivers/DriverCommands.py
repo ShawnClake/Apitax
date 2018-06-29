@@ -1,15 +1,16 @@
 # Base class for driver command classes
 
 from apitax.utilities.Files import getPath
+from apitax.utilities.Files import getAllFiles
+from apitax.ah.Options import Options
 
 class DriverCommands():
 
-    def setup(self, config, header, auth, parameters, debug=False, sensitive=False):
+    def setup(self, config, header, auth, parameters, options=Options()):
         self.config = config
         self.header = header
         self.auth = auth
-        self.debug = debug
-        self.sensitive = sensitive
+        self.options = options
         self.request = None
         self.parameters = parameters
         if(self.getDriverPath() is None):
@@ -31,11 +32,22 @@ class DriverCommands():
     def override(self, command: list):
         return False
         
+    def getCatalog(self):
+        path = self.basePath
+        baseLength = len(path)
+        files = getAllFiles(path+"/**/*.ah")
+        catalog = []
+        for file in files:
+            fPath = getPath(file)
+            command = fPath[baseLength+1:-3].replace('/', ' ').replace('\\', ' ')
+            catalog.append(command)
+        return catalog
+        
     def handle(self, command):
         from apitax.ah.commandtax.commands.Script import Script
         if(self.override(command)):
             return
-        self.request = Script(self.config, self.header, self.auth, self.parameters, self.debug, self.sensitive)
+        self.request = Script(self.config, self.header, self.auth, self.parameters, self.options)
         path = self.basePath
         for element in command:
             path += '/' + element

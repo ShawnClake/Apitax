@@ -15,11 +15,7 @@ class ScriptData:
                 'error': False
               }, 
               "urls": {"current": ""}, 
-              "auth": {
-                'username': '',
-                'password': '',
-                'token': '',	
-              }, 
+              "auth": None, 
               "vars": {"params": {}}, 
               "requests": {}, 
               "exports": {

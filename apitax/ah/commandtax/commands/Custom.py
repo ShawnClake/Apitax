@@ -8,13 +8,14 @@ import click
 # Application import
 from apitax.ah.commandtax.Request import Request
 from apitax.ah.HeaderBuilder import HeaderBuilder
+from apitax.ah.Options import Options
 
 
 # Handles custom commands
 # This allows a user to access an arbitrary endpoint
 class Custom(Request):
-    def __init__(self, config, header, auth, parameters, debug, sensitive):
-        Request.__init__(self, '', header.get(), '', debug=debug, sensitive=sensitive)
+    def __init__(self, config=None, header=None, auth=None, parameters={}, options=Options()):
+        Request.__init__(self, '', header.get(), '', options=options)
 
     # Executes the passed command
     def handle(self, command):

@@ -15,6 +15,7 @@ import sys
 import os
 import inspect
 from pathlib import Path
+from time import time
 
 # Default imports
 import click
@@ -28,6 +29,7 @@ from .logs.BufferedLog import BufferedLog
 from .logs.StandardLog import StandardLog
 from apitax.utilities.Numbers import round2str
 from apitax.utilities.Npm import Npm
+from apitax.ah.Options import Options
 
 
 def serialize(obj):
@@ -43,6 +45,8 @@ class Apitax:
         # Checks config for any overrides to those params
         # Checks cli params for any overrides to those params
         # CLI > Config > Default
+
+        t0 = time()
 
         if(len(args) == 0):
             args = sys.argv[1:]
@@ -152,7 +156,8 @@ class Apitax:
         # This is to turn the '-s' flag into a command behind the scenes
         if (script != ''):
             command = 'script ' + script
-            
+        
+        options = Options(debug=debug, sensitive=sensitive)    
         
         loggingSettings = log.getLoggerSettings()
         
@@ -176,23 +181,23 @@ class Apitax:
         if (usage == 'cli'):
             # Authentication is incorporated into Connector
             
-            if(debug):
+            if(options.debug):
                 log.log(">>> Starting Processing")
                 log.log("")
                 log.log("")
             
-            connector = Connector(debug=debug, sensitive=sensitive, command=command, username=username, password=password,
+            connector = Connector(options=options, command=command, username=username, password=password,
                                   json=True)
             result = connector.execute()
             
             #print(str(connector.http.getCatalog()))
             
-            if(debug):
+            if(options.debug):
                 log.log(">>> Finished Processing")
                 log.log("")
                 log.log("")
             
-            if(debug and command.split(' ')[0] == 'script'):
+            if(options.debug and command.split(' ')[0] == 'script'):
                 for t in result.getRequest().parser.threads:
                     t.join()
                 log.log(">> Dumping Current DataStore Status:")
@@ -203,9 +208,9 @@ class Apitax:
                 log.log("")
                 log.log("")
             # print(result.getRequest().data.getData('5.3.role_assignments.0.links.assignment'))
-
-            if(debug):
-                log.log(">> Apitax finished processing in " + round2str(connector.executionTime) + "s")
+            
+            if(options.debug):
+                log.log(">> Apitax finished processing in " + round2str(time() - t0) + "s")
                 log.log("")
                 log.log("")
 
@@ -225,13 +230,16 @@ class Apitax:
             log.log(">> Booting Up WebServer:")
             log.log("")
             bSrv = bottleServer()
-            bSrv.start(config.get("ip"), config.get("port"), config=config, debug=debug, sensitive=sensitive, reloader=reloader)
+            bSrv.start(config.get("ip"), config.get("port"), config=config, options=options, reloader=reloader)
 
         elif(usage == 'grammar-test'):
             GrammarTest(script)
         
         elif(usage == 'feature-test'):
-            pass
+            from apitax.drivers.DriverCommandsFactory import DriverCommandsFactory
+            customCommands = DriverCommandsFactory.make(config.get('driver') + 'Commands')
+            customCommands.setup(config, None, None, {}, debug, sensitive)
+            print(str(customCommands.getCatalog()))
 
         elif(usage == 'build'):
             log.log(">> Building:")

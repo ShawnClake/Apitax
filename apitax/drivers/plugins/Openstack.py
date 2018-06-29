@@ -1,5 +1,6 @@
 from apitax.drivers.HttpPlug import HttpPlug
 from apitax.utilities.Files import getAllFiles
+from apitax.ah.Options import Options
 from pathlib import Path
 
 class OpenstackDriver(HttpPlug):
@@ -27,8 +28,8 @@ class OpenstackDriver(HttpPlug):
     def getCatalog(self, auth):
         from apitax.ah.Connector import Connector
         import json
-        connector = Connector(token=auth['token'], command="custom --get --url " + self.getCatalogEndpoint(),
-                              debug=False, sensitive=True, parameters=None)
+        connector = Connector(token=auth.token, command="custom --get --url " + self.getCatalogEndpoint(),
+                              options=Options(debug=False,sensitive=True), parameters=None)
         
         commandHandler = connector.execute()
 

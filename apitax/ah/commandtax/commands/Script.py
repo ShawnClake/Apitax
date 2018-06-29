@@ -6,6 +6,7 @@ from apitax.ah.scriptax.Scriptax import Scriptax
 
 from time import time
 from apitax.utilities.Numbers import round2str
+from apitax.ah.Options import Options
 
 # TODO:
 #  Change the way request is saved to include status code & command run
@@ -14,15 +15,14 @@ from apitax.utilities.Numbers import round2str
 
 # Script is used to automate the execution of many commands
 class Script(Request):
-    def __init__(self, config, header, auth, parameters, debug, sensitive):
-        Request.__init__(self, '', header.get(), '', debug=debug, sensitive=sensitive, customResponse=True)
+    def __init__(self, config, header, auth, parameters, options):
+        Request.__init__(self, '', header.get(), '', options=options, customResponse=True)
         self.config = config
         self.header = header
         self.auth = auth
-        self.debug = debug
-        self.sensitive = sensitive
+        self.options = options
         self.parameters = parameters
-        self.scriptax = Scriptax(self.config, self.header, self.auth, self.parameters, self.debug, self.sensitive)
+        self.scriptax = Scriptax(self.config, self.header, self.auth, self.parameters, self.options)
         self.parser = None
         self.executionTime = None
         self.log = Log()
@@ -31,7 +31,7 @@ class Script(Request):
         t0 = time()
         self.parser = self.scriptax.execute(command[0])
         self.executionTime = time() - t0
-        if(self.debug):
+        if(self.options.debug):
             self.log.log('>> Script Finished Processing in ' + round2str(self.executionTime) + 's')
             self.log.log('')
         #print("thing: " + self.parser)

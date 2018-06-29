@@ -13,7 +13,13 @@ name 'DriverTests';
 
 url endpoint('keystone');
 
-log(get('/v3/auth/projects'));
+fish = 'gold';
+
+async get('/v3/auth/projects') (temp=fish) -> {%
+log('done: ' + temp);
+%};
+
+fish = 'dead';
 
 /*get('/v3/auth/projects', {
   'auth': someAuthObj

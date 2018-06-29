@@ -29,6 +29,9 @@ class Config:
         elif(isNumber(prop)):
             return float(prop)
         return prop
+        
+    def getAsList(self, param):
+        return list(str(self.cp.get(self.sectionName, param)).split(","))
 
     def has(self, param):
         return self.cp.has_option(self.sectionName, param)

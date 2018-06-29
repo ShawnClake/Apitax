@@ -17,8 +17,8 @@ class ApitaxTestsDriver(HttpPlug):
         # print(returner)
         return returner
         
-    def getCatalog(self):
-        catalog = super().getCatalog()
+    def getCatalog(self, auth):
+        catalog = super().getCatalog(auth)
         catalog['endpoints'].update({"tests": {"label": "(Test) JSONPlaceHolder - https://jsonplaceholder.typicode.com", "value": "https://jsonplaceholder.typicode.com"}})
         catalog['endpoints'].update({"reqres": {"label": "(Test) Requests - https://reqres.in/", "value": "https://reqres.in/"}})
 					

@@ -5,12 +5,13 @@ import click
 from apitax.ah.commandtax.commands.Custom import Custom
 from apitax.ah.HeaderBuilder import HeaderBuilder
 from apitax.logs.Log import Log
+from apitax.ah.Options import Options
 
 
 # Handles creating an authentication request for tokenable drivers
 # It does this by creating a command to an authentication endpoint with the applicable data
 class AuthRequest(Custom):
-    def __init__(self, username, password, http, debug, config):
+    def __init__(self, username, password, http, options, config):
         self.http = http
         self.log = Log()
 
@@ -23,12 +24,12 @@ class AuthRequest(Custom):
         if (not http.isCredentialsPosted):
             header.build(http.getPasswordAuthHeader(username, password))
 
-        Custom.__init__(self, config, header, None, None, debug, False)
+        Custom.__init__(self, config, header, None, None, Options(debug=options.debug, sensitive=True))
 
         if (http.isCredentialsPosted):
             self.setPostData(self.http.getPasswordAuthData(username, password))
 
-        if (self.debug):
+        if (self.options.debug):
             self.log.log('>> AuthRequest Created')
 
         self.custom = '--post --url ' + http.getAuthEndpoint() + ' --data-path \'{"user":"' + username + '"}\''

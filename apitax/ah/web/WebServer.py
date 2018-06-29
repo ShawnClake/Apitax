@@ -13,6 +13,7 @@ from apitax.utilities.Files import saveFile
 from apitax.utilities.Files import deleteFile
 from apitax.utilities.Files import renameFile
 from apitax.utilities.Files import getPath
+from apitax.ah.Options import Options
 
 
 # from command import Command
@@ -80,10 +81,10 @@ def execute_api_command():
 
     if ('token' in request.json):
         connector = Connector(token=request.json['token'], command=request.json['command'],
-                              debug=request.json['debug'], sensitive=request.json['sensitive'], parameters=parameters)
+                              Options(debug=request.json['debug'], sensitive=request.json['sensitive']), parameters=parameters)
     else:
         connector = Connector(username=request.json['user'], password=request.json['pass'],
-                              command=request.json['command'], debug=request.json['debug'], sensitive=True, parameters=parameters)
+                              command=request.json['command'], Options(debug=request.json['debug'], sensitive=True), parameters=parameters)
 
     commandHandler = connector.execute()
 
@@ -101,7 +102,7 @@ def execute_api_command():
 def execute_system_status():
 
     configDict = bottleServer.config.serialize(["driver", "log", "log-file", "log-colorize"])
-    configDict.update({'debug':bottleServer.debug, 'sensitive':bottleServer.sensitive})
+    configDict.update({'debug':bottleServer.options.debug, 'sensitive':bottleServer.options.sensitive})
     return json.dumps(configDict)
     
 # Command endpoint is used to facilitate simpler requests
@@ -155,14 +156,12 @@ class bottleServer():
     directory = 'apitax/ah/web/node/'
     log = Log()
     config = None
-    debug = False
-    sensitive = False
+    options = None
     
-    def start(self, ip, port, config=None, debug=False, sensitive=False, reloader=False):
+    def start(self, ip, port, config=None, options=Options(), reloader=False):
         # self.app = Bottle()
         bottleServer.config = config
-        bottleServer.debug = debug
-        bottleServer.sensitive = sensitive
+        bottleServer.options = options
         bottleServer.directory = config.path + '/ah/web/node/'
         run(host=ip, port=port, reloader=reloader, debug=debug)
 

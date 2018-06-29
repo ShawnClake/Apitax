@@ -4,6 +4,8 @@ from apitax.drivers.HttpPlugFactory import HttpPlugFactory
 from apitax.ah.HeaderBuilder import HeaderBuilder
 from apitax.config.Config import Config
 from apitax.logs.Log import Log
+from apitax.ah.Credentials import Credentials
+from apitax.ah.Options import Options
 
 from time import time
 
@@ -16,21 +18,23 @@ from time import time
 # and likely nothing else. Connector handles the rest.
 class Connector:
 
-    def __init__(self, debug=False, sensitive=False, command='', username='', password='', token='', json=True, parameters={}):
-        self.executionTime = None
-        self.debug = debug
-        self.sensitive = sensitive
-        self.command = command
-        self.username = username
-        self.password = password
-        self.token = token
-        self.commandHandler = None
+    def __init__(self, options=Options(), command='', username='', password='', token='', credentials=None, json=True, parameters={}):
+        
+        self.options=options
         self.parameters = parameters
-        self.logBuffer = []
+        
+        if(credentials):
+            self.credentials = credentials
+        else:
+            self.credentials = Credentials(username=username,password=password,token=token)
 
+        self.command = command
         self.command = self.command.replace('\\"', '"');
         self.command = self.command.replace('\\\'', '\'');
-
+        
+        self.executionTime = None 
+        self.commandHandler = None
+        self.logBuffer = []
 
         self.config = Config.read()
         self.http = HttpPlugFactory.make(self.config.get('driver') + 'Driver')
@@ -39,33 +43,30 @@ class Connector:
         if (json):
             self.header.build(self.http.getContentTypeJSON())
 
-        #self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)
-
-        if (token == ''):
+        if (self.credentials.token == ''):
             preHeader = self.header.header.copy()
             if (self.http.isTokenable()):
-                self.auth = AuthRequest(self.username, self.password, self.http, self.debug, self.config)
-                self.auth.authenticate()
-                self.token = self.auth.getToken()
+                auth = AuthRequest(self.credentials.username, self.credentials.password, self.http, self.options, self.config)
+                auth.authenticate()
+                self.credentials.token = auth.getToken()
                 self.header.header = preHeader
-                self.header.build(self.http.getTokenAuthHeader(self.token))
+                self.header.build(self.http.getTokenAuthHeader(self.credentials.token))
             else:
-                self.header.build(self.http.getPasswordAuthHeader(self.username, self.password))
+                self.header.build(self.http.getPasswordAuthHeader(self.credentials.username, self.credentials.password))
         else:
             #print(self.http.getTokenAuthHeader(self.token))
-            self.header.build(self.http.getTokenAuthHeader(self.token))
+            self.header.build(self.http.getTokenAuthHeader(self.credentials.token))
 
         # print(self.token)
 
-    def getAuthObj(self):
-        return {"username": self.username, "password": self.password, 'token': self.token}
+    def getCredentials(self):
+        return self.credentials
 
     def execute(self, command=''):
         if (command != ''):
             self.command = command
         t0 = time()
-        self.commandHandler = Commandtax(self.header, self.command, self.config, debug=self.debug,
-                                      sensitive=self.sensitive, parameters=self.parameters, auth=self.getAuthObj())
+        self.commandHandler = Commandtax(self.header, self.command, self.config, options=self.options, parameters=self.parameters, auth=self.getCredentials())
         
         self.executionTime = time() - t0
         

@@ -5,6 +5,8 @@ from apitax.logs.Log import Log
 from apitax.utilities.Async import GenericExecution
 from apitax.utilities.Json import isJson
 from apitax.drivers.HttpPlugFactory import HttpPlugFactory
+from apitax.ah.Credentials import Credentials
+from apitax.ah.Options import Options
 
 import json
 import re
@@ -14,11 +16,10 @@ import threading
 class Ah2Visitor(Ah210VisitorOriginal):
     #SMALL_VALUE = 0.00000000001;
 
-    def __init__(self, config, header, auth, parameters={}, debug=True, sensitive=False, file=''):
+    def __init__(self, config, header, auth, parameters={}, options=Options(), file=''):
         self.data = DataStore()
         self.log = Log()
-        self.debug = debug
-        self.sensitive = sensitive
+        self.appOptions = options
         self.header = header
         self.config = config
         self.parser = None
@@ -50,17 +51,21 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     def executeCommand(self, resolvedCommand, logPrefix = ''):
         from apitax.ah.Connector import Connector
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('> Executing Commandtax: \'' + resolvedCommand['command'] + '\' ' + 'with parameters: ' + str(resolvedCommand['parameters']), logPrefix)
             self.log.log('')
             
-        auth = self.data.getAuth()
+        auth = None
+        if(resolvedCommand['auth']):
+            auth = resolvedCommand['auth']
+        else:
+            auth = self.data.getAuth()
         
-        connector = Connector(debug=self.debug, sensitive=self.sensitive, command=resolvedCommand['command'], username=auth['username'], password=auth['password'],token=auth['token'],
+        connector = Connector(options=Options(debug=self.appOptions.debug, sensitive=self.appOptions.sensitive), command=resolvedCommand['command'], username=auth.username, password=auth.password,token=auth.token,
                                   parameters=resolvedCommand['parameters'], json=True)
         commandHandler = connector.execute()
 
-        #commandHandler = Commandtax(self.header, resolvedCommand['command'], self.config, debug=self.debug, sensitive=self.sensitive,
+        #commandHandler = Commandtax(self.header, resolvedCommand['command'], self.config, debug=self.appOptions.debug, sensitive=self.appOptions.sensitive,
         #                            parameters=resolvedCommand['parameters'])
 
         if (hasattr(commandHandler.getRequest(), 'parser')):
@@ -71,7 +76,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.error('Request returned non-success status code while in strict mode', logPrefix)
             
         returnResult = commandHandler.getReturnedData()
-        if(resolvedCommand['callback']):
+        if('callback' in resolvedCommand):
             returnResult = self.executeIsolatedCallback(resolvedCommand['callback'], returnResult, logPrefix)
 
         return dict({"command": resolvedCommand['command'], "commandHandler": commandHandler, "result": returnResult})
@@ -114,12 +119,15 @@ class Ah2Visitor(Ah210VisitorOriginal):
         return line
 
     def executeIsolatedCallback(self, callback, resultScope, logPrefix=''):
-        visitor = Ah2Visitor(self.config, self.header, debug=self.debug,
-                             sensitive=self.sensitive)
+        visitor = Ah2Visitor(self.config, self.header, self.data.getAuth(), options=Options(debug=self.appOptions.debug,
+                             sensitive=self.appOptions.sensitive))
         visitor.setState(file=self.state['file'])
         visitor.log.prefix = logPrefix
         visitor.data.storeVar('result', resultScope)
-        callbackResult = visitor.visit(callback)
+        for key, value in callback['params'].items():
+            visitor.data.storeVar(key, value)
+        block = callback['block']
+        callbackResult = visitor.visit(block)
         return visitor.data.getVar('result')
 
     def error(self, message, logprefix=''):
@@ -143,7 +151,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             error = self.isError()
             self.log.error(error['message'] + ' in ' + self.state['file'] + ' @' + str(self.state['line']) + ':' + str(
                 self.state['char']), prefix=error['logprefix'])
-            if(self.debug):
+            if(self.appOptions.debug):
                 self.log.log('')
                 self.log.log('')
 
@@ -167,36 +175,36 @@ class Ah2Visitor(Ah210VisitorOriginal):
         if (self.isError()):
             return
 
-        debugTemp = self.debug
-        sensitiveTemp = self.sensitive
+        debugTemp = self.appOptions.debug
+        sensitiveTemp = self.appOptions.sensitive
 
         line = ctx.getText().strip()
-        if (line != "" and self.debug):
+        if (line != "" and self.appOptions.debug):
             if(ctx.NOT()):
                 self.log.log('> Now processing: (This lines contents has been hidden via the \'!\' operator. This is usually done to hide sensitive information)')
                 self.log.log('')
                 self.log.log('> Treating the rest of this statement as sensitive and disabling debug')
                 self.log.log('')
                 
-                self.debug = False
-                self.sensitive = True
+                self.appOptions.debug = False
+                self.appOptions.sensitive = True
             else:
                 self.log.log('> Now processing: ' + line)
                 self.log.log('')
 
         temp = self.visitChildren(ctx)
 
-        if (line != "" and self.debug):
+        if (line != "" and self.appOptions.debug):
             self.log.log('')
 
         self.setState(line=ctx.start.line)  # TODO: Try to add character here as well
 
-        if(ctx.NOT()):
+        if(ctx.NOT() and line != "" and debugTemp):
             self.log.log('> Setting debug and sensitive back to their original values')
             self.log.log('')
             self.log.log('')
-            self.debug = debugTemp
-            self.sensitive = sensitiveTemp
+            self.appOptions.debug = debugTemp
+            self.appOptions.sensitive = sensitiveTemp
 
         return temp
 
@@ -295,7 +303,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
                     isinstance(right, str) and not isinstance(left, str))):
                 left = str(left)
                 right = str(right)
-                if (self.debug):
+                if (self.appOptions.debug):
                     self.log.log('> Implicit cast to string: \'' + left + '\' + \'' + right + '\'')
                     self.log.log('')
             return left + right
@@ -353,7 +361,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 value.label = label
                 value.start()
 
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('> Assigning Variable: ' + label + ' = ' + str(self.data.getVar(label)))
             self.log.log('')
 
@@ -392,11 +400,11 @@ class Ah2Visitor(Ah210VisitorOriginal):
             clause = json.loads(clause)
 
         if (isinstance(clause, list)):
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Looping through list with var ' + label)
                 self.log.log('')
             for item in clause:
-                if (self.debug):
+                if (self.appOptions.debug):
                     self.log.log('>> Assigning ' + label + ' = ' + str(item))
                     self.log.log('')
                     self.log.log('')
@@ -405,11 +413,11 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.data.deleteVar(label)
 
         elif (isinstance(clause, float) or isinstance(clause, int)):
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Looping through range with var ' + label)
                 self.log.log('')
             for i in range(0, int(clause)):
-                if (self.debug):
+                if (self.appOptions.debug):
                     self.log.log('>> Assigning ' + label + ' = ' + str(i))
                     self.log.log('')
                     self.log.log('')
@@ -418,7 +426,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.data.deleteVar(label)
 
         else:
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.error('Invalid Loop Type: ' + str(type(clause)))
                 self.log.log('')
 
@@ -430,12 +438,12 @@ class Ah2Visitor(Ah210VisitorOriginal):
             clause = json.loads(clause)
 
         if (isinstance(clause, list)):
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Looping through result')
                 self.log.log('')
-            callback = ctx.callback_block()
+            callback = self.visit(ctx.callback())
             for item in clause:
-                if (self.debug):
+                if (self.appOptions.debug):
                     self.log.log('>> Assigning result = ' + str(item))
                     self.log.log('')
                     self.log.log('')
@@ -447,7 +455,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitCondition(self, ctx: Ah210Parser.ConditionContext):
         condition = self.visit(ctx.expr())
 
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('>> Evaluated Flow Condition as: ' + str(condition))
             self.log.log('')
 
@@ -457,9 +465,26 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitBlock(self, ctx: Ah210Parser.BlockContext):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by Ah210Parser#callback.
+    def visitCallback(self, ctx:Ah210Parser.CallbackContext):
+        parameters = {}
+        if(ctx.optional_parameters_block()):
+            parameters = self.visit(ctx.optional_parameters_block())
+        return {"params": parameters, "block": ctx.callback_block()}
+
     # Visit a parse tree produced by Ah210Parser#callback_block.
     def visitCallback_block(self, ctx:Ah210Parser.Callback_blockContext):
         return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by Ah210Parser#optional_parameters_block.
+    def visitOptional_parameters_block(self, ctx:Ah210Parser.Optional_parameters_blockContext):
+        i = 0
+        parameters = {}
+        while (ctx.optional_parameter(i)):
+            opParam = self.visit(ctx.optional_parameter(i))
+            parameters[opParam['label']] = opParam['value']
+            i += 1
+        return parameters
 
     # Visit a parse tree produced by Ah210Parser#sig_parameter.
     def visitSig_parameter(self, ctx:Ah210Parser.Sig_parameterContext):
@@ -485,6 +510,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         firstArg = self.visit(ctx.expr())
         command = ""
         strict = False
+        auth = None
 
         if (not ctx.SCRIPT() and not ctx.COMMANDTAX()):
             command += "custom"
@@ -518,6 +544,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 command += " --data-header '" + json.dumps(dataArg['header']) + "'"
             if('strict' in dataArg):
                 strict = bool(dataArg['strict'])
+            if('auth' in dataArg):
+                auth = dataArg['auth']
 
         i = 0
         parameters = {}
@@ -526,19 +554,21 @@ class Ah2Visitor(Ah210VisitorOriginal):
             parameters[opParam['label']] = opParam['value']
             i += 1
 
-        return {'command': command, 'parameters': parameters, 'strict': strict}
+        return {'command': command, 'parameters': parameters, 'strict': strict, 'auth': auth}
 
     # Visit a parse tree produced by Ah210Parser#execute.
     def visitExecute(self, ctx):
         resolvedCommand = self.visit(ctx.commandtax())
-        resolvedCommand['callback'] = ctx.callback_block()
+        if(ctx.callback()):
+            resolvedCommand['callback'] = self.visit(ctx.callback())
         return self.executeCommand(resolvedCommand)
 
     # Visit a parse tree produced by Ah210Parser#async_execute.
     def visitAsync_execute(self, ctx: Ah210Parser.Async_executeContext):
         resolvedCommand = self.visit(ctx.commandtax())
-        resolvedCommand['callback'] = ctx.callback_block()
-        thread = GenericExecution(self, "Async execution and callback", resolvedCommand, log=self.log, debug=self.debug, sensitive=self.sensitive)
+        if(ctx.callback()):
+            resolvedCommand['callback'] = self.visit(ctx.callback())
+        thread = GenericExecution(self, "Async execution and callback", resolvedCommand, log=self.log, debug=self.appOptions.debug, sensitive=self.appOptions.sensitive)
         self.threads.append(thread)
         return thread
 
@@ -601,7 +631,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitDelete_statement(self, ctx:Ah210Parser.Delete_statementContext):
         label = self.visit(ctx.labels())
         self.data.deleteVar(label)
-        if(self.debug):
+        if(self.appOptions.debug):
             self.log.log('> Deleteing variable: ' + label)
             self.log.log('')
 
@@ -621,7 +651,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         else:
             self.data.setReturn({})
         self.data.setFlow('return', True)
-        if (self.debug):
+        if (self.appOptions.debug):
             if (exportation != ""):
                 self.log.log('> Returning with value: ' + str(exportation))
             else:
@@ -631,21 +661,17 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#login_statement.
     def visitLogin_statement(self, ctx:Ah210Parser.Login_statementContext):
         from apitax.ah.Connector import Connector
-        i = 0
-        parameters = {}
-        while (ctx.optional_parameter(i)):
-            opParam = self.visit(ctx.optional_parameter(i))
-            parameters[opParam['label']] = opParam['value']
-            i += 1
+        
+        parameters = self.visit(ctx.optional_parameters_block())
             
         if('username' in parameters and 'password' in parameters):
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log("> Logging into API with username and password.")
                 self.log.log("")
-            connector = Connector(sensitive=True, username=parameters['username'], password=parameters['password'])
-            return connector.getAuthObj()
+            connector = Connector(Options(debug=self.appOptions.debug, sensitive=True), username=parameters['username'], password=parameters['password'])
+            return connector.getCredentials()
         elif('token' in parameters):
-            return {'token': parameters['token'], 'username':'', 'password':''}
+            return Credentials(token=parameters['token'])
         else:
             self.error('Must pass a `username` and `password` or a `token` for authentication')
             return None
@@ -672,7 +698,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         if ctx.expr():
             self.data.name = self.visit(ctx.expr())
 
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('> Setting Script Name: ' + self.data.name)
             self.log.log('')
 
@@ -690,7 +716,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             self.importCommandRequest(commandHandler['commandHandler'], export=True)
             exportation = commandHandler['command']
 
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('> Exporting: ' + exportation)
             self.log.log('')
 
@@ -700,7 +726,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         commandHandler = self.visit(ctx.execute())['commandHandler']
         self.importCommandRequest(commandHandler)
 
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('> Importing: ' + resolvedCommand['command'])
             self.log.log('')
 
@@ -710,31 +736,31 @@ class Ah2Visitor(Ah210VisitorOriginal):
         value = self.visit(ctx.expr())
         if (ctx.TYPE_INT()):
             returner = int(value)
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Explicitly Casting \'' + str(value) + '\' to int: ' + json.dumps(returner))
                 self.log.log('')
             return returner
         if (ctx.TYPE_DEC()):
             returner = float(value)
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Explicitly Casting \'' + str(value) + '\' to number: ' + json.dumps(returner))
                 self.log.log('')
             return returner
         if (ctx.TYPE_BOOL()):
             returner = bool(value)
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Explicitly Casting \'' + str(value) + '\' to boolean: ' + json.dumps(returner))
                 self.log.log('')
             return returner
         if (ctx.TYPE_STR()):
             returner = str(value)
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Explicitly Casting \'' + str(value) + '\' to string: ' + json.dumps(returner))
                 self.log.log('')
             return returner
         if (ctx.TYPE_LIST()):
             returner = list(str(value).split(","))
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Explicitly Casting \'' + str(value) + '\' to list: ' + json.dumps(returner))
                 self.log.log('')
             return returner
@@ -753,7 +779,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 returner = dict(json.loads(str(value)))
             else:
                 returner = dict({"default": value})
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Explicitly Casting \'' + str(value) + '\' to dictionary: ' + json.dumps(returner))
                 self.log.log('')
 
@@ -763,8 +789,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitAuth(self, ctx:Ah210Parser.AuthContext):
         auth = self.visit(ctx.expr())
         self.data.setAuth(auth)
-        if (self.debug):
-            self.log.log("> Setting active auth credentials to user: " + auth['username'])
+        if (self.appOptions.debug):
+            self.log.log("> Setting active auth credentials to user: " + auth.username)
             self.log.log("")
 
     # Visit a parse tree produced by Ah210Parser#url.
@@ -772,7 +798,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         url = self.visit(ctx.expr())
         self.data.storeUrl("current", url)
 
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('> Setting URL: ' + url)
             self.log.log('')
 
@@ -789,7 +815,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#inject.
     def visitInject(self, ctx: Ah210Parser.InjectContext):
         returner = self.visit(ctx.expr())
-        if (self.debug):
+        if (self.appOptions.debug):
             self.log.log('> Injecting into: ' + ctx.getText() + ' with the value ' + str(returner))
             self.log.log('')
         return returner
@@ -844,7 +870,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             label = match[2:-2].strip()
             replacer = str(self.getVariable(label, convert=False))
             line = line.replace(match, replacer)
-            if (self.debug):
+            if (self.appOptions.debug):
                 self.log.log('> Injecting Variable into String \'' + label + '\': ' + line)
                 self.log.log('')
         return line

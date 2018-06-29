@@ -7,30 +7,30 @@ import requests
 
 # Application import
 from apitax.logs.Log import Log
+from apitax.ah.Options import Options
 
 # Request is the 'legs' of the application.
 # It is responsible to act as a facade to the 'requests' library
 # This provides additional output, logging, and logic capabilities
 class Request:
-    def __init__(self, url, headers='', postData='', paramData={}, pathData={}, debug=False, sensitive=False,
+    def __init__(self, url, headers='', postData='', paramData={}, pathData={}, options=Options(),
                  customResponse=False):
         self.url = url
         self.headers = headers
         self.postData = postData
         self.paramData = paramData
         self.pathData = pathData
-        self.debug = debug
-        self.sensitive = sensitive
+        self.options = options
         self.request = None
         self.customResponse = customResponse
         self.log = Log()
         self.humanReadable = self.log.getLoggerSettings().get('human-readable')
 
     def setDebug(self, debug):
-        self.debug = debug
+        self.options.debug = debug
 
     def setSensitive(self, sensitive):
-        self.sensitive = sensitive
+        self.options.sensitive = sensitive
 
     def setHeaders(self, headers):
         self.headers = headers
@@ -85,7 +85,7 @@ class Request:
         line = ''
         line += 'Status: ' + str(self.getResponseStatusCode()) + '\n'
         line += 'Headers:' + '\n'
-        if (self.sensitive):
+        if (self.options.sensitive):
             line += 'Headers are not shown as it contains sensitive data. ie. token' + '\n'
         else:
             line += str(self.getResponseHeaders()) + '\n'
@@ -98,12 +98,12 @@ class Request:
         line += 'Endpoint:        ' + self.url + '\n'
         line += 'Formed Endpoint: ' + self.getRequestUrl() + '\n'
         line += 'Headers:' + '\n'
-        if (self.sensitive):
+        if (self.options.sensitive):
             line += 'Headers are not shown as it contains sensitive data. ie. password' + '\n'
         else:
             line += str(self.headers) + '\n'
         line += 'Post Data:' + '\n'
-        if (self.sensitive):
+        if (self.options.sensitive):
             line += 'Post Data is not shown as it contains sensitive data. ie. password' + '\n'
         elif (not self.postData):
             line += '{}' + '\n'
@@ -123,10 +123,10 @@ class Request:
                 self.log.log('Path data did not contain key for `' + matchStr + '`')
 
     def logRequest(self):
-        if (self.debug and not self.humanReadable):
+        if (self.options.debug and not self.humanReadable):
             self.log.log('\n<==========' + '\n' + self.getDebugRequest() + '\n' + self.getDebugResponse() + '==========>' + '\n\n')
 
-        elif(self.debug):
+        elif(self.options.debug):
             self.log.log('\n<==========\n' + self.getCLIResponse() + '\n' + '==========>\n\n')
 
     def post(self):

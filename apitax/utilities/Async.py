@@ -8,7 +8,9 @@ class GenericExecution(threading.Thread):
         self.threadId = uuid.uuid4()
         self.name = name
         self.resolvedCommand = resolvedCommand
-        self.callback = resolvedCommand['callback']
+        self.callback = None
+        if('callback' in resolvedCommand):
+            self.callback = resolvedCommand['callback']
         self.result = {}
         self.log = log
         self.context = context

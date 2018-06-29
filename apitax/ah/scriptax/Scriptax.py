@@ -19,18 +19,17 @@ from antlr4 import *
 
 # Script is used to automate the execution of many commands
 class Scriptax():
-    def __init__(self, config, header, auth, parameters, debug, sensitive):
+    def __init__(self, config, header, auth, parameters, options):
         self.header = header
         self.auth = auth
-        self.debug = debug
-        self.sensitive = sensitive
+        self.options = options
         self.parameters = parameters
         self.config = config
         self.log = Log('logs/log.log')
 
     # Begins executing the script from top to bottom & handles nested scripts
     def execute(self, filepath):
-        if (self.debug):
+        if (self.options.debug):
             self.log.log('>>> Opening Script: ' + filepath)
             self.log.log('')
             self.log.log('')
@@ -42,7 +41,7 @@ class Scriptax():
         tree = parser.prog()
         printer = Ah2Listener()
 
-        visitor = Ah2Visitor(self.config, self.header, self.auth, parameters=self.parameters, debug=self.debug, sensitive=self.sensitive)
+        visitor = Ah2Visitor(self.config, self.header, self.auth, parameters=self.parameters, options=self.options)
         visitor.setState(file=getPath(filepath))
         return visitor.visit(tree)
         

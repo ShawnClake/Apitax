@@ -65,5 +65,11 @@ class HttpPlug:
         # print(returner)
         return returner
         
+    def getCommandsCatalog(self):
+        from apitax.drivers.DriverCommandsFactory import DriverCommandsFactory
+        customCommands = DriverCommandsFactory.make(config.get('driver') + 'Commands')
+        customCommands.setup(config, None, None, {}, debug, sensitive)
+        return customCommands.getCatalog()
+        
     def serialize(self):
         return {"authenticated": self.isAuthenticated(), "auth-tokens": self.isTokenable(), "auth-endpoint": self.getAuthEndpoint()}
