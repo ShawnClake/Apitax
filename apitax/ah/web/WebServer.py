@@ -116,14 +116,14 @@ def execute_system_driver_status():
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts/catalog', method='GET')
 def execute_system_scripts_catalog():
-    http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
-    return json.dumps(http.getScriptsCatalog())
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    return json.dumps(driver.getScriptsCatalog())
     
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/catalog', method='GET')
 def execute_system_catalog():
-    http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
-    return json.dumps(http.getCatalog(request.json['token']))
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    return json.dumps(driver.getCatalog(request.json['token']))
     
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts', method='POST')
