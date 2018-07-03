@@ -1,5 +1,6 @@
 import glob
 import os
+import sys
 from pathlib import Path
 
 def getAllFiles(path):
@@ -31,3 +32,6 @@ def getPath(path, asString=True):
     
 def createDir(path):
     Path(path).mkdir(parents=True, exist_ok=True) 
+    
+def getRootPath(path=''):
+    return getPath(str(os.path.dirname(sys.modules['__main__'].__file__)) + path)

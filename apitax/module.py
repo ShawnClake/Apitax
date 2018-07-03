@@ -31,6 +31,7 @@ from apitax.utilities.Numbers import round2str
 from apitax.utilities.Npm import Npm
 from apitax.ah.Options import Options
 from apitax.ah.LoadedDrivers import LoadedDrivers
+from apitax.utilities.Files import getRootPath
 
 
 def serialize(obj):
@@ -74,9 +75,11 @@ class Apitax:
         logPrefixes = True
         logHumanReadable = False
         
-        config = ConfigConsumer.read()
+        #print(getRootPath('/config.txt'))
+        configFile = getRootPath('/config.txt')
+        config = ConfigConsumer.read(configFile)
         config.path = str(Path(os.path.dirname(os.path.abspath(inspect.stack()[0][1]))).resolve())
-        #print(config.path)
+        #print(getRootPath())
 
         if (config.has('default-username')):
             username = config.get('default-username')
@@ -163,6 +166,8 @@ class Apitax:
         loggingSettings = log.getLoggerSettings()
         
         log.log('>> Runtime Settings:')
+
+        log.log('    * Using config: ' + configFile)
 
         log.log('    * Debug: ' + str(debug))
                
