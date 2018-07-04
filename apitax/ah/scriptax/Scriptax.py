@@ -8,6 +8,7 @@ from apitax.grammar.build.Ah210Parser import Ah210Parser
 from apitax.grammar.Ah2Listener import Ah2Listener
 from apitax.grammar.Ah2Visitor import Ah2Visitor
 from apitax.utilities.Files import getPath
+from apitax.ah.LoadedDrivers import LoadedDrivers
 
 from antlr4 import *
 
@@ -29,11 +30,20 @@ class Scriptax():
 
     # Begins executing the script from top to bottom & handles nested scripts
     def execute(self, filepath):
+        
+        if(filepath[:1] != '/'):  
+            if(self.options.driver):
+                driver = LoadedDrivers.getBaseDriver(self.options.driver)
+            else:
+                driver = LoadedDrivers.getDefaultBaseDriver()
+        
+            filepath = driver.getScriptsPath(filepath)
+        
         if (self.options.debug):
             self.log.log('>>> Opening Script: ' + filepath)
             self.log.log('')
             self.log.log('')
-            
+
         input = FileStream(filepath)
         lexer = Ah210Lexer(input)
         stream = CommonTokenStream(lexer)

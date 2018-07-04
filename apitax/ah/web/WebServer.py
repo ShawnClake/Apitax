@@ -123,7 +123,10 @@ def execute_system_scripts_catalog():
 @route('/apitax/system/catalog', method='GET')
 def execute_system_catalog():
     driver = LoadedDrivers.getDefaultBaseDriver()
-    return json.dumps(driver.getCatalog(request.json['token']))
+    auth = None
+    if(request.json):
+        auth = request.json['token']
+    return json.dumps(driver.getCatalog(auth))
     
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts', method='POST')

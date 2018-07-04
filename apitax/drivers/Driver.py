@@ -1,6 +1,7 @@
 import base64
 import json
 from apitax.utilities.Files import getAllFiles
+from apitax.utilities.Files import getPath
 from apitax.config.Config import Config as ConfigConsumer
 from pathlib import Path
 
@@ -10,12 +11,34 @@ class Driver:
 
     def __init__(self):
         self.config = ConfigConsumer.read()
+        self.driverConfig = None
+        if(self.isConfigurable):
+            #print(self.__class__.__name__)
+            self.driverConfig = ConfigConsumer.read(sectionName=self.__class__.__name__)
+        
+    def isConfigurable(self):
+        return False
+
+    def getDefaultUsername(self):
+        return self.driverConfig.get('default-username')
+        
+    def getDefaultPassword(self):
+        return self.driverConfig.get('default-password')
 
     def getAuthEndpoint(self):
-        return self.config.get('base-endpoint') + self.config.get('auth-endpoint')
+        try:
+            return self.driverConfig.get('base-endpoint') + self.driverConfig.get('auth-endpoint')
+        except:
+            return '`base-endpoint` and/or `auth-endpoint` not specified in driver configuration.'
         
     def getCatalogEndpoint(self):
-        return self.config.get('base-endpoint') + self.config.get('catalog-endpoint')
+        try:
+            return self.driverConfig.get('base-endpoint') + self.driverConfig.get('catalog-endpoint')
+        except:
+            return '`base-endpoint` and/or `catalog-endpoint` not specified in driver configuration.'
+
+    def getScriptsPath(self, append=''):
+        return getPath(self.config.path + '/drivers/plugins/scriptax/' + self.__class__.__name__ + '/' + append)
 
     def getPasswordAuthHeader(self, username, password):
         if(not self.isAuthenticated()):
@@ -58,10 +81,10 @@ class Driver:
         return {"endpoints": {"tests": {"label": "Placeholder Test", "value": "https://jsonplaceholder.typicode.com"}}, "selected": "https://jsonplaceholder.typicode.com"}
         	
     def getScriptsCatalog(self):
-        files = getAllFiles("scripts/**/*.ah")
+        files = getAllFiles(self.getScriptsPath("scripts/**/*.ah"))
         returner = {"scripts": []}
         for file in files:
-            returner['scripts'].append({"label": file.split('/')[-1].split('.')[0].title(),"relative-path":file,"path": str(Path(file).resolve())})
+            returner['scripts'].append({"label": file.split('/')[-1].split('.')[0].title(),"relative-path":file,"path": getPath(file)})
         # print(returner)
         return returner
         

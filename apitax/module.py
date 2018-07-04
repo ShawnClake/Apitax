@@ -34,6 +34,7 @@ from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.utilities.Files import getRootPath
 
 
+
 def serialize(obj):
     return obj.serialize()
 
@@ -70,22 +71,16 @@ class Apitax:
         build = True
         
         doLog = True
-        logPath = 'logs/apitax.log'
+        logPath = '/logs/apitax.log'
         logColorize = True
         logPrefixes = True
         logHumanReadable = False
         
         #print(getRootPath('/config.txt'))
         configFile = getRootPath('/config.txt')
-        config = ConfigConsumer.read(configFile)
+        config = ConfigConsumer.read()
         config.path = str(Path(os.path.dirname(os.path.abspath(inspect.stack()[0][1]))).resolve())
         #print(getRootPath())
-
-        if (config.has('default-username')):
-            username = config.get('default-username')
-
-        if (config.has('default-password')):
-            password = config.get('default-password')
 
         if (config.has('default-mode')):
             usage = config.get('default-mode')
@@ -104,7 +99,12 @@ class Apitax:
             
         if (config.has('log-prefixes')):
             logPrefixes = config.get('log-prefixes')
-
+        
+        if(logPath[:1] != '/'):
+            logPath = '/' + logPath
+        
+        logPath = getRootPath(logPath)
+        
         log = Log(StandardLog(), logFile=logPath, doLog=doLog, logColorize=logColorize, logPrefixes=logPrefixes, logHumanReadable=logHumanReadable)
         
         log.log('')
@@ -183,17 +183,27 @@ class Apitax:
             
         log.log('')
         log.log('')
-        
+            
         if(options.debug):
             log.log('>> Loading Drivers')
             log.log('')
-            drivers = config.getAsList('drivers')
-            for driver in drivers:
-                LoadedDrivers.load(driver)
+
+        drivers = config.getAsList('drivers')
+        for driver in drivers:
+            LoadedDrivers.load(driver)
+            
+        if(options.debug):
             log.log('>> Finished Loading Drivers')
-        
+            
             log.log('')
-            log.log('')        
+            log.log('')   
+
+        if (username=='' and config.has('default-username')):
+            username = LoadedDrivers.getDefaultBaseDriver().getDefaultUsername() #config.get('default-username')
+
+        if (password=='' and config.has('default-password')):
+            password = LoadedDrivers.getDefaultBaseDriver().getDefaultPassword() #config.get('default-password')
+
 
         if (usage == 'cli'):
             # Authentication is incorporated into Connector

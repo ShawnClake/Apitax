@@ -34,4 +34,4 @@ def createDir(path):
     Path(path).mkdir(parents=True, exist_ok=True) 
     
 def getRootPath(path=''):
-    return getPath(str(os.path.dirname(sys.modules['__main__'].__file__)) + path)
+    return getPath(os.path.dirname(getPath(sys.modules['__main__'].__file__)) + path)

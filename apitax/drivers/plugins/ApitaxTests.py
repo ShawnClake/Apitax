@@ -9,8 +9,8 @@ class ApitaxTestsDriver(Driver):
     def isTokenable(self):
         return False
         
-    def getScriptsCatalog(self, config):
-        files = getAllFiles(config.path + "/grammar/scripts/**/*.ah")
+    def getScriptsCatalog(self):
+        files = getAllFiles(self.config.path + "/grammar/scripts/**/*.ah")
         returner = {"scripts": []}
         for file in files:
             returner['scripts'].append({"label": file.split('/')[-1].split('.')[0].title(),"relative-path":file,"path": str(Path(file).resolve())})

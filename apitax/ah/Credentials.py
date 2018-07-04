@@ -8,3 +8,6 @@ class Credentials:
         
     def getAuthObj(self):
         return {'username': self.username, 'password': self.password, 'token': self.token}
+        	
+    def serialize(self):
+        return str(self.username)

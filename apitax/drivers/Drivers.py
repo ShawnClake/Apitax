@@ -2,6 +2,7 @@ from apitax.drivers.plugins.ApitaxTests import ApitaxTestsDriver
 from apitax.drivers.plugins.commandtax.ApitaxTestsCommands import ApitaxTestsCommands
 from apitax.drivers.plugins.Openstack import OpenstackDriver
 from apitax.drivers.plugins.Default import DefaultDriver
+from apitax.drivers.plugins.DefaultGit import DefaultGitDriver
 
 from apitax.logs.Log import Log
 
@@ -11,6 +12,7 @@ class Drivers:
         "ApitaxTestsCommands": ApitaxTestsCommands(),
         "OpenstackDriver": OpenstackDriver(),
         "DefaultDriver": DefaultDriver(),
+        "DefaultGitDriver": DefaultGitDriver(),
     }
     
     def add(name, driver):

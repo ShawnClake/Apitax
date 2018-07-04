@@ -30,7 +30,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         self.threads = []
 
         # Replace the below functionality if possible
-        self.regexVar = '{{[ ]{0,}[A-z0-9_.\-]{1,}[ ]{0,}}}'
+        self.regexVar = '{{[ ]{0,}[A-z0-9_$.\-]{1,}[ ]{0,}}}'
 
     def setState(self, file='', line=-1, char=-1):
         if (file != ''):
@@ -61,7 +61,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         else:
             auth = self.data.getAuth()
         
-        connector = Connector(options=Options(debug=self.appOptions.debug, sensitive=self.appOptions.sensitive), command=resolvedCommand['command'], username=auth.username, password=auth.password,token=auth.token,
+        connector = Connector(options=Options(debug=self.appOptions.debug, sensitive=self.appOptions.sensitive, driver=resolvedCommand['driver']), command=resolvedCommand['command'], username=auth.username, password=auth.password,token=auth.token,
                                   parameters=resolvedCommand['parameters'], json=True)
         commandHandler = connector.execute()
 
@@ -511,6 +511,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         command = ""
         strict = False
         auth = None
+        driver = None
 
         if (not ctx.SCRIPT() and not ctx.COMMANDTAX()):
             command += "custom"
@@ -544,6 +545,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 command += " --data-header '" + json.dumps(dataArg['header']) + "'"
             if('driver' in dataArg):
                 command += " --driver " + dataArg['driver']
+                driver = dataArg['driver']
             if('strict' in dataArg):
                 strict = bool(dataArg['strict'])
             if('auth' in dataArg):
@@ -556,7 +558,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
             parameters[opParam['label']] = opParam['value']
             i += 1
 
-        return {'command': command, 'parameters': parameters, 'strict': strict, 'auth': auth}
+        return {'command': command, 'parameters': parameters, 'strict': strict, 'auth': auth, 'driver': driver}
 
     # Visit a parse tree produced by Ah210Parser#execute.
     def visitExecute(self, ctx):
@@ -686,10 +688,17 @@ class Ah2Visitor(Ah210VisitorOriginal):
     # Visit a parse tree produced by Ah210Parser#endpoint_statement.
     def visitEndpoint_statement(self, ctx:Ah210Parser.Endpoint_statementContext):
         name = self.visit(ctx.expr())
-        if(self.appOptions.driver):
-            driver = LoadedDrivers.getBaseDriver(self.appOptions.driver)
-        else:
-            driver = LoadedDrivers.getDefaultBaseDriver()
+        driver = None
+        try:
+            name.find('@')
+            name = name.split('@')
+            driver = LoadedDrivers.getBaseDriver(name[1])
+            name = name[0]
+        except:
+            if(self.appOptions.driver):
+                driver = LoadedDrivers.getBaseDriver(self.appOptions.driver)
+            else:
+                driver = LoadedDrivers.getDefaultBaseDriver()
         endpoints = driver.getCatalog(self.data.getAuth())['endpoints']
         if(name in endpoints):
             return endpoints[name]['value']
@@ -877,6 +886,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         matches = re.findall(self.regexVar, line)
         for match in matches:
             label = match[2:-2].strip()
+            label = label.replace('$', '')
             replacer = str(self.getVariable(label, convert=False))
             line = line.replace(match, replacer)
             if (self.appOptions.debug):

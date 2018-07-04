@@ -33,6 +33,7 @@ class ScriptData:
         returner = {}
         returner['vars'] = self.dataStore['vars']
         returner['requests'] = self.dataStore['requests']
+        returner['return'] = self.getDotNotation('exports.return')
         return returner
         
     def getStatus(self):
@@ -161,6 +162,7 @@ class ScriptData:
         return self.getDotNotation("exports")
 
     def storeDotNotation(self, data, key):
+        key = key.replace('$', '')
         components = key.split('.')
         #finalIndex = components[-1]
         finalIndex = components.pop()

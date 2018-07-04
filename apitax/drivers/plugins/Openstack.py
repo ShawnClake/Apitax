@@ -16,7 +16,10 @@ class OpenstackDriver(Driver):
     
     def isCredentialsPosted(self):
        	return True  	
-  	   
+
+    def isConfigurable(self):
+        return True
+
     def getScriptsCatalog(self):
         files = getAllFiles(self.config.path + "/grammar/scripts/**/*.ah")
         returner = {"scripts": []}
@@ -28,8 +31,8 @@ class OpenstackDriver(Driver):
     def getCatalog(self, auth):
         from apitax.ah.Connector import Connector
         import json
-        connector = Connector(token=auth.token, command="custom --get --url " + self.getCatalogEndpoint(),
-                              options=Options(debug=False,sensitive=True), parameters=None)
+        connector = Connector(token=auth.token, command="custom --get --driver OpenstackDriver --url " + self.getCatalogEndpoint(),
+                              options=Options(debug=False,sensitive=True,driver='OpenstackDriver'), parameters=None)
         
         commandHandler = connector.execute()
 
@@ -37,6 +40,8 @@ class OpenstackDriver(Driver):
         
         catalog = {}
         catalog['endpoints'] = {}
+        
+        #print(services)
         
         for service in services['catalog']:
             endpoints = service['endpoints']

@@ -9,6 +9,9 @@ import requests
 from apitax.logs.Log import Log
 from apitax.ah.Options import Options
 
+def serialize(obj):
+    return obj.serialize()
+
 # Request is the 'legs' of the application.
 # It is responsible to act as a facade to the 'requests' library
 # This provides additional output, logging, and logic capabilities

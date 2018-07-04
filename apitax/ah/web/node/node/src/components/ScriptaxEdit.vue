@@ -179,19 +179,25 @@
 				    renderParams() {
 						    var scriptContents = this.script.code.replace(/\s/g, "").replace(/\n/g, "").replace(/\r/g, "");
         				
-        				var reg = /options{[A-z0-9":\[\]{},]{0,}};/g;
+        				var reg = /sig[A-z0-9=,$'" ]{1,};/g;
 								var result;
 								var detected = false;
-								
 								while((result = reg.exec(scriptContents)) !== null) {
 										detected = true;
-								    var params = JSON.parse(result[0].slice(7, -1))['params'];
+								    var params = result[0].slice(3, -1);
+								    params = params.split(',');
 								    if(params)
 								    {
 								    		var newParams = {};
 										    for (var i = 0; i < params.length; i++) {
-										    		var label = params[i];
-														newParams[label] = {"label": label, "value": "", "id": "id_param_"+label};
+										        var comps = params[i].split('=');
+										    		var label = comps[0].replace(/\$/g, "");
+										    		var value = "";
+										    		if(comps.length > 1){
+										    		    value = comps[1].replace(/'/g, "").replace(/"/g, "");
+										    		}
+										    		 
+														newParams[label] = {"label": label, "value": value, "id": "id_param_"+label};
 												}
 												this.script.params = newParams;
 								    } 
@@ -246,14 +252,16 @@
 				    },
 				    
 				    doScript() {
-				    		var params = []
+				    		var params = {}
         		
         		    if(!(Object.keys(this.script.params).length === 0 && this.script.params.constructor === Object))
 				        {
 				        		Object.keys(this.script.params).forEach(key => {
-											params.push(this.script.params[key]['value']);
+											params[this.script.params[key]['label']] = this.script.params[key]['value'];
 										});
 				        }
+				        
+				        console.log(params);
         		
         		    let command = 'script ' + this.script.path;
         				api.request(this, function(context, response) { 

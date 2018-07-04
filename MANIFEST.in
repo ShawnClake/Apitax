@@ -1,4 +1,3 @@
-include config.txt
 include build.sh
 include install_python.sh
 include install_node.sh
