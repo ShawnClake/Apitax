@@ -2,17 +2,21 @@ from apitax.drivers.Driver import Driver
 from apitax.utilities.Files import getAllFiles
 from apitax.ah.Options import Options
 from pathlib import Path
+from apitax.ah.Credentials import Credentials
 
 class OpenstackDriver(Driver):
 	
     def getToken(self, response):
         return response.getResponseHeaders().get('X-Subject-Token')
 
-    def getTokenAuthHeader(self, token):
-        return {'X-Auth-Token': token}
+    def getTokenAuthHeader(self, credentials):
+        return {'X-Auth-Token': credentials.token}
     
-    def getPasswordAuthData(self, username, password):
-        return {'auth': {'identity': {'methods': ['password'], 'password': {'user': {'domain': {'id': 'default'}, 'password': password, 'name': username}}} }}
+    def getPasswordAuthData(self, credentials):
+        authObj = {'auth': {'identity': {'methods': ['password'], 'password': {'user': {'domain': {'id': 'default'}, 'password': credentials.password, 'name': credentials.username}}} }}
+        if("project_id" in credentials.extra):
+            authObj['auth'].update({"scope": {"project": {"id": credentials.extra['project_id']}}})
+        return authObj
     
     def isCredentialsPosted(self):
        	return True  	
@@ -31,18 +35,17 @@ class OpenstackDriver(Driver):
     def getCatalog(self, auth):
         from apitax.ah.Connector import Connector
         import json
-        connector = Connector(token=auth.token, command="custom --get --driver OpenstackDriver --url " + self.getCatalogEndpoint(),
-                              options=Options(debug=False,sensitive=True,driver='OpenstackDriver'), parameters=None)
+
+        connector = Connector(credentials=Credentials(token=auth.token), command="custom --get --driver OpenstackDriver --url " + self.getCatalogEndpoint(),
+                         options=Options(debug=False,sensitive=True,driver='OpenstackDriver'), parameters=None)
         
         commandHandler = connector.execute()
-
+        
         services = json.loads(commandHandler.getRequest().getResponseBody())
         
         catalog = {}
         catalog['endpoints'] = {}
-        
-        #print(services)
-        
+      
         for service in services['catalog']:
             endpoints = service['endpoints']
             if(len(endpoints) > 0):

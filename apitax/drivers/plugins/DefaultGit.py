@@ -1,4 +1,4 @@
-from apitax.integrations.Git import Git
+from apitax.integrations.BasicGit import BasicGit as Git
 from apitax.drivers.Driver import Driver
 from apitax.utilities.Files import getAllFiles
 from apitax.utilities.Files import getPath

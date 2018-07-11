@@ -8,12 +8,9 @@ from bottle import route, run, template, request, static_file, post, Bottle
 from apitax.ah.Connector import Connector
 from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.logs.Log import Log
-from apitax.utilities.Files import readFile
-from apitax.utilities.Files import saveFile
-from apitax.utilities.Files import deleteFile
-from apitax.utilities.Files import renameFile
 from apitax.utilities.Files import getPath
 from apitax.ah.Options import Options
+from apitax.ah.Credentials import Credentials
 
 
 # from command import Command
@@ -55,7 +52,7 @@ def serve_js_files(jsFile):
 # Authentication endpoint is used to facilitate simpler authentication
 @route('/apitax/auth/', method='POST')
 def execute_api_auth():
-    connector = Connector(sensitive=True, username=request.json['user'], password=request.json['pass'])
+    connector = Connector(sensitive=True, credentials=Credentials(username=request.json['user'], password=request.json['pass']))
 
     if (connector.http.isTokenable()):
         return json.dumps({"status": 201, "auth": "presumed success", "token": connector.token,
@@ -79,12 +76,20 @@ def execute_api_command():
     if(request.json['parameters']):
         parameters = request.json['parameters']
 
+    credentials = Credentials()
+    options = Options(debug=request.json['debug'], sensitive=request.json['sensitive'])
+    
     if ('token' in request.json):
-        connector = Connector(token=request.json['token'], command=request.json['command'],
-                              options=Options(debug=request.json['debug'], sensitive=request.json['sensitive']), parameters=parameters)
+        credentials.token = request.json['token']
     else:
-        connector = Connector(username=request.json['user'], password=request.json['pass'],
-                              command=request.json['command'], options=Options(debug=request.json['debug'], sensitive=True), parameters=parameters)
+        credentials.username = request.json['user']
+        credentials.password =	request.json['pass']
+        options.sensitive = True
+        
+    if ('extra' in request.json):
+        credentials.extra = request.json['extra']
+    
+    connector = Connector(options=options, credentials=credentials, command=request.json['command'], parameters=parameters)
 
     commandHandler = connector.execute()
 
@@ -131,27 +136,30 @@ def execute_system_catalog():
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts', method='POST')
 def execute_system_scripts():
-    # http = HttpPlugFactory.make(bottleServer.config.get('driver') + 'Driver')
-    return json.dumps({'status':200, "contents": readFile(request.json['file-name'])})
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    return json.dumps({'status':200, "contents": driver.readScript(request.json['file-name'])})
     	
     	
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts/save', method='POST')
 def execute_system_scripts_save():
-    saveFile(request.json['file-name'], request.json['file'])
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    driver.saveScript(request.json['file-name'], request.json['file'])
     return json.dumps({'status':200, 'file-name': getPath(request.json['file-name'])})
     	
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts/rename', method='POST')
 def execute_system_scripts_rename():
-    if(not renameFile(request.json['file-name-original'], request.json['file-name-new'])):
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    if(not driver.renameScript(request.json['file-name-original'], request.json['file-name-new'])):
         return json.dumps({'status':500,'message':'Cannot rename to an existing file.'})
     return json.dumps({'status':200, 'file-name': getPath(request.json['file-name-new'])})
     	
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/system/scripts/delete', method='POST')
 def execute_system_scripts_delete():
-    deleteFile(request.json['file-name'])
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    driver.deleteScript(request.json['file-name'])
     return json.dumps({'status':200})
 
 class bottleServer():

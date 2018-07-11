@@ -39,7 +39,6 @@ class Commandtax:
             self.request = customCommands.setup(config, header, auth, parameters, options)
             self.request = self.request.handle(command)
             return
-            #command.insert(0, 'driver')
             
         self.request.handle(command[1:])
 

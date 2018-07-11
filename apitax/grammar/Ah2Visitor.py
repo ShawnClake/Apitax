@@ -14,7 +14,6 @@ import threading
 
 
 class Ah2Visitor(Ah210VisitorOriginal):
-    #SMALL_VALUE = 0.00000000001;
 
     def __init__(self, config, header, auth, parameters={}, options=Options(), file=''):
         self.data = DataStore()
@@ -61,12 +60,10 @@ class Ah2Visitor(Ah210VisitorOriginal):
         else:
             auth = self.data.getAuth()
         
-        connector = Connector(options=Options(debug=self.appOptions.debug, sensitive=self.appOptions.sensitive, driver=resolvedCommand['driver']), command=resolvedCommand['command'], username=auth.username, password=auth.password,token=auth.token,
-                                  parameters=resolvedCommand['parameters'], json=True)
+        connector = Connector(options=Options(debug=self.appOptions.debug, sensitive=self.appOptions.sensitive, driver=resolvedCommand['driver']), 
+            credentials=Credentials(username=auth.username, password=auth.password,token=auth.token), 
+               command=resolvedCommand['command'], parameters=resolvedCommand['parameters'], json=True)
         commandHandler = connector.execute()
-
-        #commandHandler = Commandtax(self.header, resolvedCommand['command'], self.config, debug=self.appOptions.debug, sensitive=self.appOptions.sensitive,
-        #                            parameters=resolvedCommand['parameters'])
 
         if (hasattr(commandHandler.getRequest(), 'parser')):
             if (commandHandler.getRequest().parser.isError()):
@@ -91,8 +88,6 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 return self.data.getVar(label)
         except:
 
-            # self.error('Injection Failure. Cannot access variable: ' + json.dumps(label) + ' - Does it exist?')
-            # self.log.log('')
             return None
 
     def useOptions(self):
@@ -102,8 +97,6 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 self.error(
                     'Insufficient parameters. Expected: ' + str(self.options['params']) + ' but received: ' + str(
                         self.data.getVar('params.passed')))
-                # self.log.error(errorMessage)
-                # self.data.setFlow('error', {'message': errorMessage})
             else:
                 i = 0
                 for param in self.options['params']:
@@ -161,10 +154,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
     def visitStatements(self, ctx):
         if (self.isReturn() or self.isError()):
             return
-
-        # self.log.log("")
         temp = self.visitChildren(ctx)
-        # print('result: '+str(temp))
         return temp
 
     # Visit a parse tree produced by Ah210Parser#statement.
@@ -210,10 +200,6 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
     # Visit a parse tree produced by Ah210Parser#terminated.
     def visitTerminated(self, ctx: Ah210Parser.TerminatedContext):
-        #temp = None
-
-        #temp = 
-
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by Ah210Parser#non_terminated.
@@ -255,7 +241,6 @@ class Ah2Visitor(Ah210VisitorOriginal):
 
         if (ctx.labels()):
             return self.getVariable(ctx.labels(), isRequest=ctx.REQUEST())
-            #return self.data.getVar(self.visit(ctx.labels()))
 
         if (ctx.inject()):
             return self.visit(ctx.inject())
@@ -509,7 +494,7 @@ class Ah2Visitor(Ah210VisitorOriginal):
         from apitax.ah.commandtax.commands.Script import Script as ScriptCommand
         firstArg = self.visit(ctx.expr())
         command = ""
-        strict = False
+        strict = True
         auth = None
         driver = None
 
@@ -669,14 +654,19 @@ class Ah2Visitor(Ah210VisitorOriginal):
         parameters = self.visit(ctx.optional_parameters_block())
             
         driver = self.appOptions.driver
+        extra = {}
+        
         if('driver' in parameters):
             driver = parameters['driver']
+        
+        if('extra' in parameters):
+            extra = parameters['extra']
             
         if('username' in parameters and 'password' in parameters):
             if (self.appOptions.debug):
                 self.log.log("> Logging into API with username and password.")
                 self.log.log("")
-            connector = Connector(Options(debug=self.appOptions.debug, sensitive=True,driver=driver), username=parameters['username'], password=parameters['password'])
+            connector = Connector(options=Options(debug=self.appOptions.debug, sensitive=True, driver=driver), credentials=Credentials(username=parameters['username'], password=parameters['password'], extra=extra))
             return connector.getCredentials()
         elif('token' in parameters):
             return Credentials(token=parameters['token'])

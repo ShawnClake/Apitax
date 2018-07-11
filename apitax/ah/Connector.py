@@ -18,15 +18,12 @@ from time import time
 # and likely nothing else. Connector handles the rest.
 class Connector:
 
-    def __init__(self, options=Options(), command='', username='', password='', token='', credentials=None, json=True, parameters={}):
+    def __init__(self, options=Options(), credentials=None, command='', json=True, parameters={}):
         
         self.options=options
         self.parameters = parameters
         
-        if(credentials):
-            self.credentials = credentials
-        else:
-            self.credentials = Credentials(username=username,password=password,token=token)
+        self.credentials = credentials
 
         self.command = command
         self.command = self.command.replace('\\"', '"');
@@ -50,18 +47,15 @@ class Connector:
         if (self.credentials.token == ''):
             preHeader = self.header.header.copy()
             if (self.http.isTokenable()):
-                auth = AuthRequest(self.credentials.username, self.credentials.password, self.http, self.options, self.config)
+                auth = AuthRequest(self.credentials, self.http, self.options, self.config)
                 auth.authenticate()
                 self.credentials.token = auth.getToken()
                 self.header.header = preHeader
-                self.header.build(self.http.getTokenAuthHeader(self.credentials.token))
+                self.header.build(self.http.getTokenAuthHeader(self.credentials))
             else:
-                self.header.build(self.http.getPasswordAuthHeader(self.credentials.username, self.credentials.password))
+                self.header.build(self.http.getPasswordAuthHeader(self.credentials))
         else:
-            #print(self.http.getTokenAuthHeader(self.token))
-            self.header.build(self.http.getTokenAuthHeader(self.credentials.token))
-
-        # print(self.token)
+            self.header.build(self.http.getTokenAuthHeader(self.credentials))
 
     def getCredentials(self):
         return self.credentials

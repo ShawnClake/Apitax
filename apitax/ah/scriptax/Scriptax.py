@@ -12,12 +12,6 @@ from apitax.ah.LoadedDrivers import LoadedDrivers
 
 from antlr4 import *
 
-
-# TODO:
-#  Change the way request is saved to include status code & command run
-#  Add additional syntaxes for import & exporting
-
-
 # Script is used to automate the execution of many commands
 class Scriptax():
     def __init__(self, config, header, auth, parameters, options):

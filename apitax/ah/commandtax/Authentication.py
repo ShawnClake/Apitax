@@ -11,7 +11,7 @@ from apitax.ah.Options import Options
 # Handles creating an authentication request for tokenable drivers
 # It does this by creating a command to an authentication endpoint with the applicable data
 class AuthRequest(Custom):
-    def __init__(self, username, password, http, options, config):
+    def __init__(self, credentials, http, options, config):
         self.http = http
         self.log = Log()
 
@@ -22,17 +22,17 @@ class AuthRequest(Custom):
         header.build(http.getContentTypeJSON())
 
         if (not http.isCredentialsPosted):
-            header.build(http.getPasswordAuthHeader(username, password))
+            header.build(http.getPasswordAuthHeader(credentials))
 
         Custom.__init__(self, config, header, None, None, Options(debug=options.debug, sensitive=True))
 
         if (http.isCredentialsPosted):
-            self.setPostData(self.http.getPasswordAuthData(username, password))
+            self.setPostData(self.http.getPasswordAuthData(credentials))
 
         if (self.options.debug):
             self.log.log('>> AuthRequest Created')
 
-        self.custom = '--post --url ' + http.getAuthEndpoint() + ' --data-path \'{"user":"' + username + '"}\''
+        self.custom = '--post --url ' + http.getAuthEndpoint() + ' --data-path \'{"user":"' + credentials.username + '"}\''
 
     def authenticate(self):
         if(not self.http.isAuthenticated()):

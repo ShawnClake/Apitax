@@ -32,6 +32,9 @@ from apitax.utilities.Npm import Npm
 from apitax.ah.Options import Options
 from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.utilities.Files import getRootPath
+from apitax.ah.Credentials import Credentials
+
+
 
 
 
@@ -213,7 +216,7 @@ class Apitax:
                 log.log("")
                 log.log("")
             
-            connector = Connector(options=options, command=command, username=username, password=password,
+            connector = Connector(options=options, command=command, credentials=Credentials(username=username, password=password),
                                   json=True)
             result = connector.execute()
             
@@ -263,10 +266,7 @@ class Apitax:
             GrammarTest(script)
         
         elif(usage == 'feature-test'):
-            from apitax.drivers.DriverCommandsFactory import DriverCommandsFactory
-            customCommands = DriverCommandsFactory.make(config.get('driver') + 'Commands')
-            customCommands.setup(config, None, None, {}, debug, sensitive)
-            print(str(customCommands.getCatalog()))
+            pass
 
         elif(usage == 'build'):
             log.log(">> Building:")

@@ -1,6 +1,10 @@
 import base64
 import json
 from apitax.utilities.Files import getAllFiles
+from apitax.utilities.Files import readFile
+from apitax.utilities.Files import saveFile
+from apitax.utilities.Files import deleteFile
+from apitax.utilities.Files import renameFile
 from apitax.utilities.Files import getPath
 from apitax.config.Config import Config as ConfigConsumer
 from pathlib import Path
@@ -40,21 +44,21 @@ class Driver:
     def getScriptsPath(self, append=''):
         return getPath(self.config.path + '/drivers/plugins/scriptax/' + self.__class__.__name__ + '/' + append)
 
-    def getPasswordAuthHeader(self, username, password):
+    def getPasswordAuthHeader(self, credentials):
         if(not self.isAuthenticated()):
             return {}
-        temp = username + ':' + password
+        temp = credentials.username + ':' + credentials.password
         return {'Authorization': 'Basic ' + base64.b64encode(temp.encode('utf-8'))}
 
-    def getPasswordAuthData(self, username, password):
+    def getPasswordAuthData(self, credentials):
         if(not self.isAuthenticated()):
             return {}
-        return {'username': username, 'password': password}
+        return {'username': credentials.username, 'password': credentials.password}
 
-    def getTokenAuthHeader(self, token):
+    def getTokenAuthHeader(self, credentials):
         if(not self.isAuthenticated()):
             return {}
-        return {'Authorization': 'Token token="' + token + '"'}
+        return {'Authorization': 'Token token="' + credentials.token + '"'}
 
     def getContentTypeJSON(self):
         #if(not self.isAuthenticated()):
@@ -93,6 +97,19 @@ class Driver:
         customCommands = DriverCommandsFactory.make(config.get('driver') + 'Commands')
         customCommands.setup(config, None, None, {}, debug, sensitive)
         return customCommands.getCatalog()
+        
+    def readScript(self, path):
+        return readFile(path)
+        
+    def renameScript(self, pathOriginal, pathNew):
+        return renameFile(pathOriginal, pathNew)
+        
+    # Save does update and create
+    def saveScript(self, path, content):
+        return saveFile(path, content)
+    
+    def deleteScript(self, path):
+        return deleteFile(path)
         
     def serialize(self):
         return {"authenticated": self.isAuthenticated(), "auth-tokens": self.isTokenable(), "auth-endpoint": self.getAuthEndpoint()}
