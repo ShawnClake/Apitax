@@ -70,7 +70,8 @@ class Ah2Visitor(Ah210VisitorOriginal):
                 self.error('Subscript contains error: ' + commandHandler.getRequest().parser.isError()['message'], logPrefix)
 
         if(resolvedCommand['strict'] and commandHandler.getRequest().getResponseStatusCode() >= 300):
-            self.error('Request returned non-success status code while in strict mode', logPrefix)
+            self.error('Request returned non-success status code while in strict mode. Request returned: Status ' + 
+                  str(commandHandler.getRequest().getResponseStatusCode()) + ' ' + commandHandler.getRequest().getResponseBody(), logPrefix)
             
         returnResult = commandHandler.getReturnedData()
         if('callback' in resolvedCommand):

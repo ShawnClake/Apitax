@@ -25,20 +25,27 @@ class Scriptax():
     # Begins executing the script from top to bottom & handles nested scripts
     def execute(self, filepath):
         
-        if(filepath[:1] != '/'):  
-            if(self.options.driver):
-                driver = LoadedDrivers.getBaseDriver(self.options.driver)
-            else:
-                driver = LoadedDrivers.getDefaultBaseDriver()
-        
-            filepath = driver.getScriptsPath(filepath)
+        #if(filepath[:1] != '/'):  
+        #    if(self.options.driver):
+        #        driver = LoadedDrivers.getBaseDriver(self.options.driver)
+        #    else:
+        #        driver = LoadedDrivers.getDefaultBaseDriver()
+        # 
+        #    filepath = driver.getScriptsPath(filepath)
         
         if (self.options.debug):
             self.log.log('>>> Opening Script: ' + filepath)
             self.log.log('')
             self.log.log('')
 
-        input = FileStream(filepath)
+        if(self.options.driver):
+            driver = LoadedDrivers.getBaseDriver(self.options.driver)
+        else:
+            driver = LoadedDrivers.getDefaultBaseDriver()
+
+        input = InputStream(driver.readScript(filepath))
+
+        #input = FileStream(filepath)
         lexer = Ah210Lexer(input)
         stream = CommonTokenStream(lexer)
         parser = Ah210Parser(stream)

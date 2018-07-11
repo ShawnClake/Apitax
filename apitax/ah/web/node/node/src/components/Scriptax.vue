@@ -44,8 +44,14 @@
 		    <hr>
 		    
 		    <section>
+		    <div class="row" style="padding-right:15px;"><div class="col-8">
 		    		<p class="lead">Available Scripts</p>
-		    		
+		    		</div><div class="col-4">
+		    		<button v-on:click="openScriptCreator($event.target)" style="margin-left:10px;" class="btn btn-sm btn-primary float-right" ><i class="fas fa-plus"></i></button>
+		    		<button v-on:click="getScriptsList()" class="btn btn-sm btn-success float-right" ><i class="fas fa-sync-alt"></i></button>
+		    	</div></div>	
+		    	
+		    	<div class="row"><div class="col">
 		    		<b-alert :show="alert.dismiss.countdown"
 				             dismissible
 				             :variant="alert.style"
@@ -58,11 +64,18 @@
 				                  height="4px">
 				      </b-progress>
 				    </b-alert>
-		    		
-		    		
-		    		<div class="row" style="padding-left:15px;padding-right:15px;">
+				    </div></div>
+
+						<div class="row" style="padding-left:15px;padding-right:15px;">
 		    		<div class="col" >
-		    		  <b-table hover striped small :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :items="scripts">
+		    		<b-form-input v-model="filter" placeholder="Type to Filter the table (Search)" />
+		    		
+						</div>
+					   </div>
+					   
+		    		<div class="row" style="padding-left:15px;padding-right:15px;margin-top:15px;">
+		    		<div class="col" >
+		    		  <b-table hover striped small @filtered="onFiltered" :filter="filter" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :current-page="currentPage" :per-page="perPage" :items="scripts">
 					       <!---<span slot="options" slot-scope="data" v-html="data.value"> -->
 					       <template slot="options" slot-scope="data">
 					       <b-btn size="sm" @click.stop="doScript(data.value,$event.target)" class="btn-success"><i class="fas fa-play"></i></b-btn>  
@@ -70,6 +83,8 @@
 					       </template>  
 					     <!--- </span>--->
 					    </b-table>
+					    <b-pagination align="center" size="md" :total-rows="totalRows" v-model="currentPage" :per-page="perPage">
+    					</b-pagination>
 					   </div>
 					   </div>
 		    
@@ -109,6 +124,23 @@
 		      </div>
 		    </b-modal>
 		    
+		    <b-modal ref="scriptCreatorModal" hide-footer centered title="Script Creator">
+		      <div class="d-block">
+		      <label class="lead" for="scriptCreatorName"><strong>Script Name</strong></label>
+
+          <input type="text" v-model="creator.name" placeholder="Type a name" class="form-control" id="scriptCreatorName">
+
+		        <div class="row" style="margin-top:15px;">
+		        <div class="col">
+		        <codemirror ref="scriptCreatorMirror" v-model="creator.code" :options="cmOptions"></codemirror>
+		        </div></div>
+		        <hr>
+		        		        <div class="row">
+		        <div class="col">
+		        <button v-on:click="createCode(creator.name,false,$event.target)" class="btn btn-success float-right">Create</button>
+ 						</div></div>
+		      </div>
+		    </b-modal>
 		    
 		    <b-modal ref="scriptParamsModal" hide-footer centered title="Parameters are required to run this script">
 		      <div class="d-block">
@@ -119,10 +151,10 @@
 		        
 		        <div v-for="scriptparam in data.params" class="row" style="margin-top:15px;">
                                       
-              <div class="col-2">
+              <div class="col-4">
                   <label style="text-transform:capitalize;" class="lead" :for="scriptparam.id"><strong>{{scriptparam.label}}:</strong></label>
                   </div>
-                  <div class="col-10">
+                  <div class="col-8">
                   <input type="text" v-model="scriptparam.value" placeholder="Type a value here"
                          class="form-control"
                          :id="scriptparam.id">
@@ -162,11 +194,12 @@
                 authenticated: Api.authenticated,
                 response: '',
                 selectedScript: {label:'', code:'', name:''},
+                creator: {label:'', code:'', name:''},
                 data: {params: {}},
                 codeMirror : {},
                 timer: '',
                 alert: {text: '', style: 'success', dismiss: {secs:10, countdown:0}},
-                globals: {debug:false, sensitive:false},
+                globals: {debug:true, sensitive:false},
                 globalOptions: [],
                 cmOptions: {
 					        tabSize: 4,
@@ -175,6 +208,10 @@
 					        line: true,
 					      },
                 scripts: [],
+                currentPage: 1,
+                perPage: 10,
+                totalRows: 0,
+                filter: null,
                 fields: [{key: 'options',label: '',tdClass:'align-middle'},{key: 'label',label: 'Script Name',tdClass:'align-middle',sortable:true},{key: 'relative-path',label: 'Script File',tdClass:'align-middle'},],
                 scriptstemp: [{text: 'This is <i>escaped</i> content',html: 'This is <i>raw <strong>HTML</strong></i> <span style="color:red">content</span>'}],
 
@@ -210,6 +247,17 @@
         				},
         				{'file-name': scriptName, 'file':this.selectedScript.code});
         		},
+        		createCode: function(scriptName, execute, event)
+        		{
+        				console.log('CREATING: ' + scriptName);
+        				api.saveScript(this, function(context, response) { 
+		        				console.log(response); 
+		        				context.$refs.scriptCreatorModal.hide();
+		        				context.showAlert('The script was created.', 'success');
+		        				context.getScriptsList();
+        				},
+        				{'file-name': scriptName, 'file':this.creator.code});
+        		},
         		codeChange: function()
         		{
         				this.codeMirror.refresh()
@@ -220,12 +268,12 @@
         		
         				this.$refs.scriptParamsModal.hide()
         		
-        			  var params = []
+        			  var params = {}
         		
         		    if(!(Object.keys(this.data.params).length === 0 && this.data.params.constructor === Object))
 				        {
 				        		Object.keys(this.data.params).forEach(key => {
-											params.push(this.data.params[key]['value']);
+											params[this.data.params[key]['label']] = this.data.params[key]['value'];
 										});
 				        }
         		
@@ -233,9 +281,10 @@
         				api.request(this, function(context, response) { 
 		        				console.log(response); 
 		        				context.response = response.data 
-		        				if(response.data.status == 500)
+		        				if(response.data.status > 299)
 		        				{
-		        						context.showAlert(response.data.body.flow.error.message, 'danger');
+		        				
+		        						context.showAlert(response.data.body.error.message, 'danger');
 		        				} else {
 		        						context.showAlert("Request was executed successfully", 'success');
 		        				}
@@ -268,20 +317,26 @@
 		        				
 		        				console.log(scriptContents);
 		        				
-		        				var reg = /options{[A-z0-9":\[\]{},]{0,}};/g;
+		        				var reg = /sig[A-z0-9=,$'" ]{1,};/g;
 										var result;
 										var detected = false;
 										while((result = reg.exec(scriptContents)) !== null) {
 												detected = true;
 										    console.log(result);
-										    var params = JSON.parse(result[0].slice(7, -1))['params'];
+										    var params = result[0].slice(3, -1);
+										    params = params.split(',');
 										    console.log(params)
 										    if(params)
 										    {
 										    		var newParams = {};
 												    for (var i = 0; i < params.length; i++) {
-												    		var label = params[i];
-																newParams[label] = {"label": label, "value": "", "id": "id_param_"+label};
+												    		var comps = params[i].split('=');
+										    		    var label = comps[0].replace(/\$/g, "");
+										    		    var value = "";
+										    		    if(comps.length > 1){
+										    		        value = comps[1].replace(/'/g, "").replace(/"/g, "");
+										    		    }
+																newParams[label] = {"label": label, "value": value, "id": "id_param_"+label};
 																//console.log(JSON.stringify(context.data))
 														}
 														context.data.params = newParams;
@@ -306,7 +361,6 @@
         		viewScript: function(scriptName, event)
         		{
         				this.$store.commit('useScript', {script: scriptName});
-        				//let command = 'script ' + scriptName;
         				api.getScriptContents(this, function(context, response) { 
 		        				console.log(response); 
 		        				//context.response = response.data 
@@ -318,8 +372,35 @@
         				{'file-name': scriptName});
         		},
         		
+        		openScriptCreator: function(event)
+        		{		
+        				this.creator.label = "";
+        				this.creator.name = "";
+        				this.creator.code = "";
+        		    this.$refs.scriptCreatorModal.show();
+        		
+        		},
+        		
+        		getScriptsList: function()
+        		{
+        		
+	        			api.catalogScripts(this, function(context, response) { 			        		
+			        		let catalog = response.data.scripts; 
+			        		
+									var arrayLength = catalog.length;
+									for (var i = 0; i < arrayLength; i++) {
+											let optionsHtml = ''
+											optionsHtml = catalog[i].path
+									    catalog[i] = {...{options: optionsHtml}, ...catalog[i]};
+									}
+											        		
+			        		context.scripts = catalog;
+			        		context.totalRows = catalog.length;
+			          });
+        		
+        		},
+        		
         		onCmReady(cm) {
-				      //console.log('Code Mirror Initialized!', cm)
 				      this.codeMirror = cm;
 				    },
 				    
@@ -331,26 +412,19 @@
 				    	this.alert.style = style;
 				      this.alert.dismiss.countdown = this.alert.dismiss.secs;
 				    },
+				    
+				    
+				    onFiltered (filteredItems) {
+				      // Trigger pagination to update the number of buttons/pages due to filtering
+				      this.totalRows = filteredItems.length
+				      this.currentPage = 1
+				    },
 
 				},
 						
 				
         mounted() {
-		        api.catalogScripts(this, function(context, response) { 
-		        		console.log(response); 
-		        		//context.endpointPicker.endpoints = {...context.endpointPicker.endpoints, ...response.data.endpoints};
-		        		
-		        		let catalog = response.data.scripts; 
-		        		
-								var arrayLength = catalog.length;
-								for (var i = 0; i < arrayLength; i++) {
-										let optionsHtml = ''
-										optionsHtml = catalog[i].path
-								    catalog[i] = {...{options: optionsHtml}, ...catalog[i]};
-								}
-										        		
-		        		context.scripts = catalog;
-		        });
+		        this.getScriptsList();
         },
         created() {
 					this.timer = setInterval(this.codeChange, 250)

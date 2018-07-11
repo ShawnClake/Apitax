@@ -1,5 +1,5 @@
 *.cpython-36.pyc
-
+v8-compile-cache-0/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
