@@ -194,8 +194,8 @@ cp $grammardir/src/$1 $apitaxdir/src
     * Exits the script immediately and returns some expression
 * options
     * Used to specify options for the script
-    * Commonly used to define parameters for the script: 
-        * `options {"params": ["first"]};`
+* sig param1Required, thisParam=isOptional, thisOneisRequired;
+    * Specify parameters for a script
 * if (condition) {}
     * IF statement
 * while (condition) {}
@@ -258,6 +258,7 @@ cp $grammardir/src/$1 $apitaxdir/src
     * --cli : (Optional) Quickly select CLI mode
     * -- web : (Optional) Quickly select web server mode
     * --debug : (Optional) Output the request response status, headers, and body
+    * --no-build : (Optional) Will not rebuild the UI assets on launch
     * -u <input> : (Optional) Specify the authentication username - Only applicable in CLI mode
     * -p : (Optional) Ask for password input right away. If -u is specified, but this is not, the application will ask for a new set of credentials for authentication. But, it will use the -u value for any username fields within further requests. This allows someone to authenticate as admin, but run commands applicable to another user.
     * -r <Input> : (Optional) The request - Only applicable in CLI mode
@@ -269,34 +270,7 @@ cp $grammardir/src/$1 $apitaxdir/src
 * Grammar Test : Run a test of the parsing and grammars
 	
 ### Configuration
-* Please utilize the config file found in the main apitax directory
-* Eventually these parameters will be programmatically assignable
-* Eventually a custom config file path will be able to be passed in
-
-Example Configuration File:
-```
-config.txt
-
-[Apitax]
-base-endpoint = http://42.42.42.42:4242
-auth-endpoint = /auth
-catalog-endpoint = /catalog
-driver = Default
-port = 5080
-ip = 0.0.0.0
-log = true
-log-file = logs/apitax.log
-log-colorize = true
-log-human-readable = false
-log-prefixes = false
-default-mode = cli
-default-username = api_admin
-default-password = apiadmin123
-
-github-access-token = <YourGithubAccessToken>
-gitlab-access-token = <YourGitlabAccessToken>
-git-repo-clone-url = https://github.com/ShawnClake/ApitaxScripts.git
-```
+* An example configuration file is stored in the repo root
 
 ### Supported Authentication
 * Authentication is prebuilt for HTTP Basic and Token based authentication
