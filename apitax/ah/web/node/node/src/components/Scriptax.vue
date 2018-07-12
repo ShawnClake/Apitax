@@ -317,7 +317,7 @@
 		        				
 		        				console.log(scriptContents);
 		        				
-		        				var reg = /sig[A-z0-9=,$'" ]{1,};/g;
+		        				var reg = /sig[A-z0-9=,$./'" ]{1,};/g;
 										var result;
 										var detected = false;
 										while((result = reg.exec(scriptContents)) !== null) {

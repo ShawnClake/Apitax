@@ -13,6 +13,8 @@ from apitax.ah.Options import Options
 from apitax.ah.Credentials import Credentials
 
 
+import traceback
+
 # from command import Command
 # from ahRequests.authentication import *
 
@@ -69,37 +71,46 @@ def serve_dummy(filename):
 # Command endpoint is used to facilitate simpler requests
 @route('/apitax/command/', method='POST')
 def execute_api_command():
-    connector = None
+    try:
+        connector = None
 
-    parameters = []
+        parameters = []
     
-    if(request.json['parameters']):
-        parameters = request.json['parameters']
+        if(request.json['parameters']):
+            parameters = request.json['parameters']
 
-    credentials = Credentials()
-    options = Options(debug=request.json['debug'], sensitive=request.json['sensitive'])
+        credentials = Credentials()
+        options = Options(debug=request.json['debug'], sensitive=request.json['sensitive'])
     
-    if ('token' in request.json):
-        credentials.token = request.json['token']
-    else:
-        credentials.username = request.json['user']
-        credentials.password =	request.json['pass']
-        options.sensitive = True
+        if ('token' in request.json):
+            credentials.token = request.json['token']
+        else:
+            credentials.username = request.json['user']
+            credentials.password =	request.json['pass']
+            options.sensitive = True
         
-    if ('extra' in request.json):
-        credentials.extra = request.json['extra']
+        if ('extra' in request.json):
+            credentials.extra = request.json['extra']
     
-    connector = Connector(options=options, credentials=credentials, command=request.json['command'], parameters=parameters)
+        connector = Connector(options=options, credentials=credentials, command=request.json['command'], parameters=parameters)
 
-    commandHandler = connector.execute()
+        commandHandler = connector.execute()
 
-    returner = {"status": commandHandler.getRequest().getResponseStatusCode(),
-                       "body": json.loads(commandHandler.getRequest().getResponseBody())}
+        returner = {"status": commandHandler.getRequest().getResponseStatusCode(),
+                           "body": json.loads(commandHandler.getRequest().getResponseBody())}
                        	
-    if(request.json['debug']):
-         returner.update({"log": connector.logBuffer})
+        if(request.json['debug']):
+             returner.update({"log": connector.logBuffer})
 
-    return json.dumps(returner)
+        return json.dumps(returner)
+    except:
+        bottleServer.log.error(traceback.format_exc())
+        if('debug' in request.json and request.json['debug']):
+            return json.dumps({"status": 500, "body": {"error": {"state": "Uncaught exception occured during processing. To get a larger stack trace, visit the logs.", "message": traceback.format_exc(3)}}})
+        else:
+            return json.dumps({"status": 500, "body": {}})
+        
+    	
 
 
 # Command endpoint is used to facilitate simpler requests

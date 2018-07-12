@@ -179,7 +179,7 @@
 				    renderParams() {
 						    var scriptContents = this.script.code.replace(/\s/g, "").replace(/\n/g, "").replace(/\r/g, "");
         				
-        				var reg = /sig[A-z0-9=,$'" ]{1,};/g;
+        				var reg = /sig[A-z0-9=,$./'" ]{1,};/g;
 								var result;
 								var detected = false;
 								while((result = reg.exec(scriptContents)) !== null) {
@@ -266,9 +266,9 @@
         		    let command = 'script ' + this.script.path;
         				api.request(this, function(context, response) { 
 		        				context.script.response = response.data 
-		        				if(response.data.status == 500)
+		        				if(response.data.status >= 300)
 		        				{
-		        						context.showAlert(response.data.body.flow.error.message, 'danger');
+		        						context.showAlert(response.data.body.error.message, 'danger');
 		        				} else {
 		        						context.showAlert("Request was executed successfully", 'success');
 		        				}
