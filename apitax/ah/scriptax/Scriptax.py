@@ -5,8 +5,8 @@ from apitax.logs.Log import Log
 
 from apitax.grammar.build.Ah210Lexer import Ah210Lexer
 from apitax.grammar.build.Ah210Parser import Ah210Parser
-from apitax.grammar.Ah2Listener import Ah2Listener
-from apitax.grammar.Ah2Visitor import Ah2Visitor
+from apitax.grammar.AhListener import AhListener
+from apitax.grammar.AhVisitor import AhVisitor
 from apitax.utilities.Files import getPath
 from apitax.ah.LoadedDrivers import LoadedDrivers
 
@@ -24,15 +24,6 @@ class Scriptax():
 
     # Begins executing the script from top to bottom & handles nested scripts
     def execute(self, filepath):
-        
-        #if(filepath[:1] != '/'):  
-        #    if(self.options.driver):
-        #        driver = LoadedDrivers.getBaseDriver(self.options.driver)
-        #    else:
-        #        driver = LoadedDrivers.getDefaultBaseDriver()
-        # 
-        #    filepath = driver.getScriptsPath(filepath)
-        
         if (self.options.debug):
             self.log.log('>>> Opening Script: ' + filepath)
             self.log.log('')
@@ -50,9 +41,8 @@ class Scriptax():
         stream = CommonTokenStream(lexer)
         parser = Ah210Parser(stream)
         tree = parser.prog()
-        printer = Ah2Listener()
+        printer = AhListener()
 
-        visitor = Ah2Visitor(self.config, self.header, self.auth, parameters=self.parameters, options=self.options)
+        visitor = AhVisitor(self.config, self.header, self.auth, parameters=self.parameters, options=self.options)
         visitor.setState(file=getPath(filepath))
         return visitor.visit(tree)
-        

@@ -1,4 +1,4 @@
-# Generated from src/Ah210.g4 by ANTLR 4.7.1
+# Generated from D:/Programming/Projects/Apitax/apitax/grammar/src\Ah210.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Ah210Parser import Ah210Parser

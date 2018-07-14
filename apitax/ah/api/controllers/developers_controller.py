@@ -1,0 +1,96 @@
+import connexion
+import six
+
+from apitax.ah.api.models.create import Create  # noqa: E501
+from apitax.ah.api.models.delete import Delete  # noqa: E501
+from apitax.ah.api.models.error import Error  # noqa: E501
+from apitax.ah.api.models.rename import Rename  # noqa: E501
+from apitax.ah.api.models.response import Response  # noqa: E501
+from apitax.ah.api.models.save import Save  # noqa: E501
+from apitax.ah.api import util
+
+from apitax.ah.State import State
+from apitax.ah.LoadedDrivers import LoadedDrivers
+
+def create_script(create=None):  # noqa: E501
+    """Create a new script
+
+    Create a new script # noqa: E501
+
+    :param Scripts: The data needed to create this script
+    :type Scripts: dict | bytes
+
+    :rtype: Response
+    """
+    if connexion.request.is_json:
+        create = Create.from_dict(connexion.request.get_json())  # noqa: E501
+
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    driver.saveScript(create.script.name, create.script.content)
+    return Response(status=200, body={'file-name': create.script.name})
+
+
+def delete_script(delete=None):  # noqa: E501
+    """Delete a script
+
+    Delete a script # noqa: E501
+
+    :param delete: The data needed to delete this script
+    :type delete: dict | bytes
+
+    :rtype: Response
+    """
+    if connexion.request.is_json:
+        delete = Delete.from_dict(connexion.request.get_json())  # noqa: E501
+
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    driver.deleteScript(delete.script.name)
+    return Response(status=200, body={})
+
+
+def display_developer_dashboard():  # noqa: E501
+    """Displays the developer dashboard page
+
+    Displays the user dashboard page # noqa: E501
+
+
+    :rtype: None
+    """
+    return 'do some magic!'
+
+
+def rename_script(rename=None):  # noqa: E501
+    """Rename a script
+
+    Rename a script # noqa: E501
+
+    :param rename: The data needed to save this script
+    :type rename: dict | bytes
+
+    :rtype: Response
+    """
+    if connexion.request.is_json:
+        rename = Rename.from_dict(connexion.request.get_json())  # noqa: E501
+
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    if(not driver.renameScript(rename.original.name, rename.new.name)):
+        return Error(status=500, message='Cannot rename to an existing file.')
+    return Response(status=200, body={'file-name': rename.new.name})
+
+
+def save_script(save=None):  # noqa: E501
+    """Save a script
+
+    Save a script # noqa: E501
+
+    :param Scripts: The data needed to save this script
+    :type Scripts: dict | bytes
+
+    :rtype: Response
+    """
+    if connexion.request.is_json:
+        save = Save.from_dict(connexion.request.get_json())  # noqa: E501
+
+    driver = LoadedDrivers.getDefaultBaseDriver()
+    driver.saveScript(save.script.name, save.script.content)
+    return Response(status=200, body={'file-name': save.script.name})

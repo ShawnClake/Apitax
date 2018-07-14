@@ -2,8 +2,8 @@ import sys
 from antlr4 import *
 from apitax.grammar.build.Ah210Lexer import Ah210Lexer
 from apitax.grammar.build.Ah210Parser import Ah210Parser
-from apitax.grammar.Ah2Listener import Ah2Listener
-from apitax.grammar.Ah2Visitor import Ah2Visitor
+from apitax.grammar.AhListener import AhListener
+from apitax.grammar.AhVisitor import AhVisitor
 
 
 def GrammarTest(filepath):
@@ -13,9 +13,9 @@ def GrammarTest(filepath):
     stream = CommonTokenStream(lexer)
     parser = Ah210Parser(stream)
     tree = parser.prog()
-    printer = Ah2Listener()
+    printer = AhListener()
 
-    visitor = Ah2Visitor(None, None)
+    visitor = AhVisitor(None, None)
     result = visitor.visit(tree)
     # print(result)
 

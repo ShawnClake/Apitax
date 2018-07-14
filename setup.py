@@ -27,6 +27,9 @@ setup(
     'antlr4-python3-runtime',
     'python-gitlab',
     'pygithub',
-    'gitpython'
+    'gitpython',
+    'connexion == 1.1.15',
+    'python_dateutil == 2.6.0',
+    'typing == 3.5.2.2',
   ],
 )
