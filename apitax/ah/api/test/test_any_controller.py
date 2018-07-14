@@ -5,7 +5,8 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from apitax.ah.api.models.error import Error  # noqa: E501
+from apitax.ah.api.models.auth_response import AuthResponse  # noqa: E501
+from apitax.ah.api.models.error_response import ErrorResponse  # noqa: E501
 from apitax.ah.api.models.user_auth import UserAuth  # noqa: E501
 from apitax.ah.api.test import BaseTestCase
 
@@ -46,6 +47,17 @@ class TestAnyController(BaseTestCase):
         response = self.client.open(
             '/apitax/2/assets/{name}'.format(name='name_example'),
             method='GET')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_refresh_token(self):
+        """Test case for refresh_token
+
+        Refreshes login token using refresh token
+        """
+        response = self.client.open(
+            '/apitax/2/token/refresh',
+            method='POST')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 

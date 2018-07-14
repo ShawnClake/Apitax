@@ -9,7 +9,7 @@ class GenericExecution(threading.Thread):
         self.name = name
         self.resolvedCommand = resolvedCommand
         self.callback = None
-        if('callback' in resolvedCommand):
+        if ('callback' in resolvedCommand):
             self.callback = resolvedCommand['callback']
         self.result = {}
         self.log = log
@@ -26,10 +26,8 @@ class GenericExecution(threading.Thread):
         # Execute command
         self.result = self.context.executeCommand(self.resolvedCommand, '(In Thread: ' + str(self.threadId) + ')')
 
-        if(self.label):
+        if (self.label):
             self.context.data.storeVar(self.label, self.result['result'])
-            
-
 
     def serialize(self):
         return str(self.threadId)

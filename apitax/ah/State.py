@@ -1,7 +1,11 @@
-
-
 class State:
     config = None
     options = None
     log = None
-    paths = {}
+    paths = {
+        "node": "",
+        "config": "",
+        "root": "",
+        "log": "",
+    }
+    baseUrl = "/apitax/2/"

@@ -5,9 +5,10 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from apitax.ah.api.models.command import Command  # noqa: E501
-from apitax.ah.api.models.error import Error  # noqa: E501
+from apitax.ah.api.models.error_response import ErrorResponse  # noqa: E501
+from apitax.ah.api.models.execute import Execute  # noqa: E501
 from apitax.ah.api.models.response import Response  # noqa: E501
+from apitax.ah.api.models.user_auth import UserAuth  # noqa: E501
 from apitax.ah.api.test import BaseTestCase
 
 
@@ -19,11 +20,11 @@ class TestUsersController(BaseTestCase):
 
         Execute a Command
         """
-        command = Command()
+        execute = Execute()
         response = self.client.open(
             '/apitax/2/command',
             method='POST',
-            data=json.dumps(command),
+            data=json.dumps(execute),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -44,9 +45,12 @@ class TestUsersController(BaseTestCase):
 
         Retrieve the endpoint catalog
         """
+        catalog = UserAuth()
         response = self.client.open(
             '/apitax/2/system/endpoint/catalog',
-            method='GET')
+            method='GET',
+            data=json.dumps(catalog),
+            content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 

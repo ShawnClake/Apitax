@@ -4,26 +4,27 @@ import re
 
 from apitax.utilities.Numbers import isNumber
 
+
 # Container for all the data returned by a sequence of script requests
 class ScriptData:
     def __init__(self):
         self.dataStore = dict(
             {
-              "flow": {
-                'return': False, 
-                'exit': False, 
-                'error': False
-              }, 
-              "urls": {"current": ""}, 
-              "auth": None, 
-              "vars": {"params": {}}, 
-              "requests": {}, 
-              "exports": {
-                "urls": {}, 
-                "vars": {}, 
-                "requests": {}, 
-                "return": None
-              }
+                "flow": {
+                    'return': False,
+                    'exit': False,
+                    'error': False
+                },
+                "urls": {"current": ""},
+                "auth": None,
+                "vars": {"params": {}},
+                "requests": {},
+                "exports": {
+                    "urls": {},
+                    "vars": {},
+                    "requests": {},
+                    "return": None
+                }
             }
         )
         self.name = ""
@@ -35,7 +36,7 @@ class ScriptData:
         returner['requests'] = self.dataStore['requests']
         returner['return'] = self.getDotNotation('exports.return')
         return returner
-        
+
     def getStatus(self):
         returner = {}
         returner['vars'] = self.dataStore['vars']
@@ -66,44 +67,44 @@ class ScriptData:
     def getVar(self, name):
         key = "vars." + name
         return self.getDotNotation(key)
-        
+
     def deleteVar(self, name):
         key = "vars." + name
         return self.deleteDotNotation(key)
-        
+
     def isVarExist(self, name):
         return self.isExistDotNotation("vars." + name)
-        
+
     def setReturn(self, value):
         key = "exports.return"
         self.storeDotNotation(value, key)
-        
+
     def getReturn(self):
         key = "exports.return"
         return self.getDotNotation(key)
-        
+
     def setAuth(self, value):
         key = "auth"
         self.storeDotNotation(value, key)
-        
+
     def getAuth(self):
         key = "auth"
         return self.getDotNotation(key)
-        
+
     def setFlow(self, name, value):
-        key = "flow." + name 
+        key = "flow." + name
         self.storeDotNotation(value, key)
-        
+
     def getFlow(self, name):
         key = "flow." + name
         return self.getDotNotation(key)
 
     def error(self, message, logprefix=''):
-        if(isinstance(message, dict)):
+        if (isinstance(message, dict)):
             self.setFlow('error', message)
         else:
             self.setFlow('error', {'message': message, 'logprefix': logprefix})
-    
+
     def getError(self):
         return self.getFlow('error')
 
@@ -164,14 +165,14 @@ class ScriptData:
     def storeDotNotation(self, data, key):
         key = key.replace('$', '')
         components = key.split('.')
-        #finalIndex = components[-1]
+        # finalIndex = components[-1]
         finalIndex = components.pop()
         navigation = self.dataStore
 
         for component in components:
             if (component not in navigation):
                 if (isinstance(navigation, list)):
-                    if(not(isNumber(component) and len(navigation) > int(component))):
+                    if (not (isNumber(component) and len(navigation) > int(component))):
                         navigation[int(component)] = {}
                 else:
                     navigation[component] = {}
@@ -180,16 +181,15 @@ class ScriptData:
             else:
                 navigation = navigation[str(component)]
 
-
-        #if (finalIndex not in navigation):
+        # if (finalIndex not in navigation):
         #    navigation[finalIndex] = {}
 
         if (self.isJson(data)):
             data = json.loads(data)
-            
-        if(isinstance(navigation, list)):
+
+        if (isinstance(navigation, list)):
             finalIndex = int(finalIndex)
-            if(len(navigation) <= finalIndex):
+            if (len(navigation) <= finalIndex):
                 navigation.insert(finalIndex, data)
             else:
                 navigation[finalIndex] = data
@@ -200,11 +200,11 @@ class ScriptData:
         components = key.split('.')
         navigation = self.dataStore
         for component in components:
-            if(navigation is None):
-                self.error('Cannot access variable past a None type parent => \'' + key+'\'')
+            if (navigation is None):
+                self.error('Cannot access variable past a None type parent => \'' + key + '\'')
 
             if (component not in navigation and not isinstance(navigation, list)):
-                self.error('Variable does not exist | Variable access is undefined => \'' + key+'\'')
+                self.error('Variable does not exist | Variable access is undefined => \'' + key + '\'')
 
             if (isinstance(navigation, list)):
                 navigation = navigation[int(component)]
@@ -225,17 +225,17 @@ class ScriptData:
                 navigation = navigation[str(component)]
 
         return True
-        
+
     def deleteDotNotation(self, key):
         components = key.split('.')
         navigation = self.dataStore
         for component in components[:-1]:
-            if(navigation is None):
-                self.error('Cannot access variable past a None type parent => \'' + key+'\'')
+            if (navigation is None):
+                self.error('Cannot access variable past a None type parent => \'' + key + '\'')
 
             if (component not in navigation and not isinstance(navigation, list)):
-                self.error('Variable does not exist | Variable access is undefined => \'' + key+'\'')
-                #pass
+                self.error('Variable does not exist | Variable access is undefined => \'' + key + '\'')
+                # pass
 
             if (isinstance(navigation, list)):
                 navigation = navigation[int(component)]
@@ -243,11 +243,11 @@ class ScriptData:
                 navigation = navigation[str(component)]
 
         if (components[-1] not in navigation):
-            self.error('Variable does not exist | Variable access is undefined => \'' + key+'\'')
+            self.error('Variable does not exist | Variable access is undefined => \'' + key + '\'')
 
         return navigation.pop(components[-1])
 
-        #return navigation
+        # return navigation
 
     def importScriptsExports(self, scriptData, prefix="", export=False):
         if (prefix == ""):

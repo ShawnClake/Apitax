@@ -15,7 +15,7 @@ class AuthRequest(Custom):
         self.http = http
         self.log = Log()
 
-        if(not self.http.isAuthenticated()):
+        if (not self.http.isAuthenticated()):
             return
 
         header = HeaderBuilder()
@@ -35,11 +35,11 @@ class AuthRequest(Custom):
         self.custom = '--post --url ' + http.getAuthEndpoint() + ' --data-path \'{"user":"' + credentials.username + '"}\''
 
     def authenticate(self):
-        if(not self.http.isAuthenticated()):
+        if (not self.http.isAuthenticated()):
             return
         self.handle(self.custom)
 
     def getToken(self):
-        if(not self.http.isAuthenticated()):
+        if (not self.http.isAuthenticated()):
             return None
         return self.http.getToken(self)  # request.headers.get('X-Subject-Token')

@@ -15,11 +15,13 @@ class Response(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, status=None, body=None, log=None):  # noqa: E501
+    def __init__(self, status=None, message=None, body=None, log=None):  # noqa: E501
         """Response - a model defined in Swagger
 
         :param status: The status of this Response.  # noqa: E501
         :type status: int
+        :param message: The message of this Response.  # noqa: E501
+        :type message: str
         :param body: The body of this Response.  # noqa: E501
         :type body: object
         :param log: The log of this Response.  # noqa: E501
@@ -27,17 +29,20 @@ class Response(Model):
         """
         self.swagger_types = {
             'status': int,
+            'message': str,
             'body': object,
             'log': str
         }
 
         self.attribute_map = {
             'status': 'status',
+            'message': 'message',
             'body': 'body',
             'log': 'log'
         }
 
         self._status = status
+        self._message = message
         self._body = body
         self._log = log
 
@@ -74,6 +79,27 @@ class Response(Model):
             raise ValueError("Invalid value for `status`, must not be `None`")  # noqa: E501
 
         self._status = status
+
+    @property
+    def message(self):
+        """Gets the message of this Response.
+
+
+        :return: The message of this Response.
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message):
+        """Sets the message of this Response.
+
+
+        :param message: The message of this Response.
+        :type message: str
+        """
+
+        self._message = message
 
     @property
     def body(self):

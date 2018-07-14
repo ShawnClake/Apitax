@@ -10,6 +10,7 @@ from apitax.drivers.plugins.commandtax.ApitaxInfoCommands import ApitaxInfoComma
 
 from apitax.logs.Log import Log
 
+
 class Drivers:
     drivers = {
         "ApitaxTestsDriver": ApitaxTestsDriver(),
@@ -20,15 +21,13 @@ class Drivers:
         "GithubDriver": GithubDriver(),
         "ApitaxInfoDriver": ApitaxInfoDriver(),
         "ApitaxInfoCommands": ApitaxInfoCommands(),
-        	
+
     }
-    
+
     def add(name, driver):
         Drivers.drivers[name] = driver
-    
+
     def get(name):
-        if(name not in Drivers.drivers):
+        if (name not in Drivers.drivers):
             Log().error("Driver '" + name + "' does not exist or has not been imported/added.")
         return Drivers.drivers[name]
-    
-        

@@ -40,15 +40,45 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
+      x-swagger-router-controller: "apitax.ah.api.controllers.any_controller"
+  /token/refresh:
+    post:
+      tags:
+      - "any"
+      summary: "Refreshes login token using refresh token"
+      description: "Refreshes login token using refresh token"
+      operationId: "refresh_token"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "Authentication successful"
+          schema:
+            $ref: "#/definitions/UserAuth"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: "The specified resource was not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "Server Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.any_controller"
   /dashboard:
     get:
@@ -68,15 +98,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.users_controller"
@@ -98,15 +128,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.developers_controller"
@@ -128,15 +158,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.admins_controller"
@@ -163,12 +193,50 @@ paths:
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       x-swagger-router-controller: "apitax.ah.api.controllers.any_controller"
+  /system/endpoint/catalog:
+    get:
+      tags:
+      - "users"
+      summary: "Retrieve the endpoint catalog"
+      description: "Retrieve the endpoint catalog"
+      operationId: "endpoint_catalog"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "catalog"
+        description: "The data needed to get a catalog"
+        required: false
+        schema:
+          $ref: "#/definitions/UserAuth"
+      responses:
+        200:
+          description: "Response Returned Ok"
+          schema:
+            $ref: "#/definitions/Response"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: "The specified resource was not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "Server Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - Bearer: []
+      x-swagger-router-controller: "apitax.ah.api.controllers.users_controller"
   /auth:
     post:
       tags:
@@ -189,21 +257,21 @@ paths:
           $ref: "#/definitions/UserAuth"
       responses:
         200:
-          description: "Authentication successful"
+          description: "Auth Response"
           schema:
-            $ref: "#/definitions/UserAuth"
+            $ref: "#/definitions/AuthResponse"
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       x-swagger-router-controller: "apitax.ah.api.controllers.any_controller"
   /command:
     post:
@@ -218,11 +286,11 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "command"
-        description: "The command object."
+        name: "execute"
+        description: "The data needed to execute this command"
         required: false
         schema:
-          $ref: "#/definitions/Command"
+          $ref: "#/definitions/execute"
       responses:
         200:
           description: "Response Returned Ok"
@@ -231,15 +299,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.users_controller"
@@ -261,15 +329,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.admins_controller"
@@ -296,15 +364,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.admins_controller"
@@ -326,15 +394,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.users_controller"
@@ -363,15 +431,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.users_controller"
@@ -400,15 +468,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.developers_controller"
@@ -437,15 +505,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.developers_controller"
@@ -474,15 +542,15 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.developers_controller"
@@ -511,48 +579,18 @@ paths:
         401:
           description: "Unauthorized"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "The specified resource was not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server Error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       security:
       - Bearer: []
       x-swagger-router-controller: "apitax.ah.api.controllers.developers_controller"
-  /system/endpoint/catalog:
-    get:
-      tags:
-      - "users"
-      summary: "Retrieve the endpoint catalog"
-      description: "Retrieve the endpoint catalog"
-      operationId: "endpoint_catalog"
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        200:
-          description: "Response Returned Ok"
-          schema:
-            $ref: "#/definitions/Response"
-        401:
-          description: "Unauthorized"
-          schema:
-            $ref: "#/definitions/Error"
-        404:
-          description: "The specified resource was not found"
-          schema:
-            $ref: "#/definitions/Error"
-        500:
-          description: "Server Error"
-          schema:
-            $ref: "#/definitions/Error"
-      security:
-      - Bearer: []
-      x-swagger-router-controller: "apitax.ah.api.controllers.users_controller"
 securityDefinitions:
   Bearer:
     type: "apiKey"
@@ -566,29 +604,16 @@ definitions:
         type: "string"
       password:
         type: "string"
-      token:
+      api_token:
         type: "string"
-    example:
-      password: "password"
-      username: "username"
-      token: "token"
-  Response:
-    type: "object"
-    required:
-    - "body"
-    - "status"
-    properties:
-      status:
-        type: "integer"
-      body:
+      extra:
         type: "object"
         properties: {}
-      log:
-        type: "string"
     example:
-      log: "log"
-      body: "{}"
-      status: 0
+      password: "password"
+      api_token: "api_token"
+      extra: "{}"
+      username: "username"
   Command:
     type: "object"
     required:
@@ -603,10 +628,6 @@ definitions:
         properties: {}
       command:
         type: "string"
-    example:
-      options: "{}"
-      parameters: "{}"
-      command: "command"
   Script:
     type: "object"
     properties:
@@ -614,10 +635,31 @@ definitions:
         type: "string"
       name:
         type: "string"
-  Error:
+  Response:
+    type: "object"
+    required:
+    - "body"
+    - "status"
+    properties:
+      status:
+        type: "integer"
+      message:
+        type: "string"
+      body:
+        type: "object"
+        properties: {}
+      log:
+        type: "string"
+    example:
+      log: "log"
+      message: "message"
+      body: "{}"
+      status: 0
+  ErrorResponse:
     type: "object"
     required:
     - "message"
+    - "status"
     properties:
       status:
         type: "integer"
@@ -625,6 +667,41 @@ definitions:
         type: "string"
       state:
         type: "string"
+  AuthResponse:
+    type: "object"
+    required:
+    - "message"
+    - "status"
+    properties:
+      status:
+        type: "integer"
+      message:
+        type: "string"
+      access_token:
+        type: "string"
+      refresh_token:
+        type: "string"
+      auth:
+        $ref: "#/definitions/UserAuth"
+    example:
+      access_token: "access_token"
+      refresh_token: "refresh_token"
+      auth:
+        password: "password"
+        api_token: "api_token"
+        extra: "{}"
+        username: "username"
+      message: "message"
+      status: 0
+  execute:
+    type: "object"
+    required:
+    - "command"
+    properties:
+      command:
+        $ref: "#/definitions/Command"
+      auth:
+        $ref: "#/definitions/UserAuth"
   save:
     type: "object"
     required:
@@ -657,10 +734,14 @@ definitions:
       new:
         $ref: "#/definitions/Script"
 responses:
+  Auth:
+    description: "Auth Response"
+    schema:
+      $ref: "#/definitions/AuthResponse"
   NotFound:
     description: "The specified resource was not found"
     schema:
-      $ref: "#/definitions/Error"
+      $ref: "#/definitions/ErrorResponse"
   Ok:
     description: "Response Returned Ok"
     schema:
@@ -668,8 +749,8 @@ responses:
   ServerError:
     description: "Server Error"
     schema:
-      $ref: "#/definitions/Error"
+      $ref: "#/definitions/ErrorResponse"
   Unauthorized:
     description: "Unauthorized"
     schema:
-      $ref: "#/definitions/Error"
+      $ref: "#/definitions/ErrorResponse"

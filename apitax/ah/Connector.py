@@ -9,6 +9,7 @@ from apitax.ah.Options import Options
 
 from time import time
 
+
 # The 'heart' of the application
 # Connector facilitates the initialization of the connection to an API
 # Connector handles setting up the driver, authetnication, headers, and then
@@ -19,23 +20,23 @@ from time import time
 class Connector:
 
     def __init__(self, options=Options(), credentials=None, command='', json=True, parameters={}):
-        
-        self.options=options
+
+        self.options = options
         self.parameters = parameters
-        
+
         self.credentials = credentials
 
         self.command = command
         self.command = self.command.replace('\\"', '"');
         self.command = self.command.replace('\\\'', '\'');
-        
-        self.executionTime = None 
+
+        self.executionTime = None
         self.commandHandler = None
         self.logBuffer = []
 
         self.config = Config.read()
-        
-        if(self.options.driver):
+
+        if (self.options.driver):
             self.http = LoadedDrivers.getBaseDriver(self.options.driver)
         else:
             self.http = LoadedDrivers.getDefaultBaseDriver()
@@ -64,13 +65,13 @@ class Connector:
         if (command != ''):
             self.command = command
         t0 = time()
-        self.commandHandler = Commandtax(self.header, self.command, self.config, options=self.options, parameters=self.parameters, auth=self.getCredentials())
-        
+        self.commandHandler = Commandtax(self.header, self.command, self.config, options=self.options,
+                                         parameters=self.parameters, auth=self.getCredentials())
+
         self.executionTime = time() - t0
-        
+
         log = Log()
         self.logBuffer = log.getLoggerDriver().buffer
         log.getLoggerDriver().outputLog()
-        
+
         return self.commandHandler
-        

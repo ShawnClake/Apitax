@@ -1,7 +1,7 @@
 import connexion
 import six
 
-from apitax.ah.api.models.error import Error  # noqa: E501
+from apitax.ah.api.models.error_response import ErrorResponse  # noqa: E501
 from apitax.ah.api.models.response import Response  # noqa: E501
 from apitax.ah.api import util
 

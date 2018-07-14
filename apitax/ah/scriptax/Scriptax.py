@@ -12,6 +12,7 @@ from apitax.ah.LoadedDrivers import LoadedDrivers
 
 from antlr4 import *
 
+
 # Script is used to automate the execution of many commands
 class Scriptax():
     def __init__(self, config, header, auth, parameters, options):
@@ -29,14 +30,14 @@ class Scriptax():
             self.log.log('')
             self.log.log('')
 
-        if(self.options.driver):
+        if (self.options.driver):
             driver = LoadedDrivers.getBaseDriver(self.options.driver)
         else:
             driver = LoadedDrivers.getDefaultBaseDriver()
 
         input = InputStream(driver.readScript(filepath))
 
-        #input = FileStream(filepath)
+        # input = FileStream(filepath)
         lexer = Ah210Lexer(input)
         stream = CommonTokenStream(lexer)
         parser = Ah210Parser(stream)

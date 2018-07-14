@@ -15,31 +15,36 @@ class UserAuth(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, username=None, password=None, token=None):  # noqa: E501
+    def __init__(self, username=None, password=None, api_token=None, extra=None):  # noqa: E501
         """UserAuth - a model defined in Swagger
 
         :param username: The username of this UserAuth.  # noqa: E501
         :type username: str
         :param password: The password of this UserAuth.  # noqa: E501
         :type password: str
-        :param token: The token of this UserAuth.  # noqa: E501
-        :type token: str
+        :param api_token: The api_token of this UserAuth.  # noqa: E501
+        :type api_token: str
+        :param extra: The extra of this UserAuth.  # noqa: E501
+        :type extra: object
         """
         self.swagger_types = {
             'username': str,
             'password': str,
-            'token': str
+            'api_token': str,
+            'extra': object
         }
 
         self.attribute_map = {
             'username': 'username',
             'password': 'password',
-            'token': 'token'
+            'api_token': 'api_token',
+            'extra': 'extra'
         }
 
         self._username = username
         self._password = password
-        self._token = token
+        self._api_token = api_token
+        self._extra = extra
 
     @classmethod
     def from_dict(cls, dikt):
@@ -95,22 +100,43 @@ class UserAuth(Model):
         self._password = password
 
     @property
-    def token(self):
-        """Gets the token of this UserAuth.
+    def api_token(self):
+        """Gets the api_token of this UserAuth.
 
 
-        :return: The token of this UserAuth.
+        :return: The api_token of this UserAuth.
         :rtype: str
         """
-        return self._token
+        return self._api_token
 
-    @token.setter
-    def token(self, token):
-        """Sets the token of this UserAuth.
+    @api_token.setter
+    def api_token(self, api_token):
+        """Sets the api_token of this UserAuth.
 
 
-        :param token: The token of this UserAuth.
-        :type token: str
+        :param api_token: The api_token of this UserAuth.
+        :type api_token: str
         """
 
-        self._token = token
+        self._api_token = api_token
+
+    @property
+    def extra(self):
+        """Gets the extra of this UserAuth.
+
+
+        :return: The extra of this UserAuth.
+        :rtype: object
+        """
+        return self._extra
+
+    @extra.setter
+    def extra(self, extra):
+        """Sets the extra of this UserAuth.
+
+
+        :param extra: The extra of this UserAuth.
+        :type extra: object
+        """
+
+        self._extra = extra

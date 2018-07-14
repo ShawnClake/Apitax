@@ -19,27 +19,27 @@ class Commandtax:
         if (len(command) < 1):
             return
         self.request = None
-        
-        if('--debug' in command):
+
+        if ('--debug' in command):
             options.debug = True
-        if('--sensitive' in command):
+        if ('--sensitive' in command):
             options.sensitive = True
         if ('--driver' in command):
             options.driver = command[command.index('--driver') + 1]
-        
+
         if (command[0] == 'script'):
             self.request = Script(config, header, auth, parameters, options)
         elif (command[0] == 'custom'):
             self.request = Custom(config, header, auth, parameters, options)
         else:
-            if(options.driver):
+            if (options.driver):
                 customCommands = LoadedDrivers.getCommandsDriver(options.driver)
             else:
                 customCommands = LoadedDrivers.getDefaultCommandsDriver()
             self.request = customCommands.setup(config, header, auth, parameters, options)
             self.request = self.request.handle(command)
             return
-            
+
         self.request.handle(command[1:])
 
     def getRequest(self):

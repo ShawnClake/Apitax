@@ -3,7 +3,7 @@ import six
 
 from apitax.ah.api.models.create import Create  # noqa: E501
 from apitax.ah.api.models.delete import Delete  # noqa: E501
-from apitax.ah.api.models.error import Error  # noqa: E501
+from apitax.ah.api.models.error_response import ErrorResponse  # noqa: E501
 from apitax.ah.api.models.rename import Rename  # noqa: E501
 from apitax.ah.api.models.response import Response  # noqa: E501
 from apitax.ah.api.models.save import Save  # noqa: E501

@@ -29,6 +29,7 @@ setup(
     'pygithub',
     'gitpython',
     'connexion == 1.1.15',
+    'flask-jwt-extended',
     'python_dateutil == 2.6.0',
     'typing == 3.5.2.2',
   ],

@@ -9,8 +9,10 @@ import requests
 from apitax.logs.Log import Log
 from apitax.ah.Options import Options
 
+
 def serialize(obj):
     return obj.serialize()
+
 
 # Request is the 'legs' of the application.
 # It is responsible to act as a facade to the 'requests' library
@@ -64,11 +66,11 @@ class Request:
 
     def getResponseBody(self):
         if (self.customResponse):
-            if(isinstance(self.request['text'], dict)):
+            if (isinstance(self.request['text'], dict)):
                 return json.dumps(self.request['text'], separators=(',', ':'), indent=None).replace("\n", "")
             return self.request['text'].replace("\n", "")
         else:
-            if(isinstance(self.request.text, dict) or isinstance(self.request.text, list)):
+            if (isinstance(self.request.text, dict) or isinstance(self.request.text, list)):
                 return json.dumps(self.request.text, separators=(',', ':'), indent=None).replace("\n", "")
             return self.request.text.replace("\n", "")
 
@@ -111,7 +113,7 @@ class Request:
         elif (not self.postData):
             line += '{}' + '\n'
         else:
-           line += str(self.postData) + '\n'
+            line += str(self.postData) + '\n'
         return line
 
     def injectPathData(self):
@@ -127,9 +129,10 @@ class Request:
 
     def logRequest(self):
         if (self.options.debug and not self.humanReadable):
-            self.log.log('\n<==========' + '\n' + self.getDebugRequest() + '\n' + self.getDebugResponse() + '==========>' + '\n\n')
+            self.log.log(
+                '\n<==========' + '\n' + self.getDebugRequest() + '\n' + self.getDebugResponse() + '==========>' + '\n\n')
 
-        elif(self.options.debug):
+        elif (self.options.debug):
             self.log.log('\n<==========\n' + self.getCLIResponse() + '\n' + '==========>\n\n')
 
     def post(self):

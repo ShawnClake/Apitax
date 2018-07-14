@@ -7,7 +7,7 @@ class SystemCommands:
         self.args = sys.argv[1:]
 
     def isEmpty(self):
-        if(len(self.args) < 1):
+        if (len(self.args) < 1):
             return True
         return False
 

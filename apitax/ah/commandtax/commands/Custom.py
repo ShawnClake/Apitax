@@ -53,7 +53,7 @@ class Custom(Request):
 
         if ('--data-post' in command):
             postData = command[command.index('--data-post') + 1]
-        elif(self.postData != {}):
+        elif (self.postData != {}):
             postData = json.dumps(self.postData)
         else:
             postData = {}
