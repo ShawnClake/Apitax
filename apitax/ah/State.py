@@ -6,6 +6,7 @@ class State:
         "node": "",
         "config": "",
         "root": "",
+        "apitax": "",
         "log": "",
     }
     baseUrl = "/apitax/2/"

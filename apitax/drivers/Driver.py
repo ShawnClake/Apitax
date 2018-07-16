@@ -6,8 +6,8 @@ from apitax.utilities.Files import saveFile
 from apitax.utilities.Files import deleteFile
 from apitax.utilities.Files import renameFile
 from apitax.utilities.Files import getPath
+from apitax.ah.State import State
 from apitax.config.Config import Config as ConfigConsumer
-from pathlib import Path
 
 
 # Base class for driver plugs
@@ -15,10 +15,9 @@ from pathlib import Path
 class Driver:
 
     def __init__(self):
-        self.config = ConfigConsumer.read()
+        self.config = State.config
         self.driverConfig = None
         if (self.isConfigurable):
-            # print(self.__class__.__name__)
             self.driverConfig = ConfigConsumer.read(sectionName=self.__class__.__name__)
 
     def isConfigurable(self):
@@ -46,18 +45,18 @@ class Driver:
         return getPath(self.config.path + '/drivers/plugins/scriptax/' + self.__class__.__name__ + '/' + append)
 
     def getPasswordAuthHeader(self, credentials):
-        if (not self.isAuthenticated()):
+        if (not self.isApiAuthenticated()):
             return {}
         temp = credentials.username + ':' + credentials.password
         return {'Authorization': 'Basic ' + base64.b64encode(temp.encode('utf-8'))}
 
     def getPasswordAuthData(self, credentials):
-        if (not self.isAuthenticated()):
+        if (not self.isApiAuthenticated()):
             return {}
         return {'username': credentials.username, 'password': credentials.password}
 
     def getTokenAuthHeader(self, credentials):
-        if (not self.isAuthenticated()):
+        if (not self.isApiAuthenticated()):
             return {}
         return {'Authorization': 'Token token="' + credentials.token + '"'}
 
@@ -67,7 +66,7 @@ class Driver:
         return {'Content-type': 'application/json'}
 
     def getToken(self, response):
-        return json.loads(response.getResponseBody())['token']
+        return None
 
     # Whether or not authentication can produce a usable token or
     # whether to use the username and password for each further request
@@ -79,8 +78,21 @@ class Driver:
     def isCredentialsPosted(self):
         return False
 
-    def isAuthenticated(self):
+    def isApiAuthenticated(self):
         return True
+
+    def piggyBackOffApiAuth(self):
+        return False
+
+    def apitaxAuth(self, authObj):
+        authObj = authObj['credentials']
+        try:
+            if(authObj.password == self.users[authObj.username]['password']):
+                return self.users[authObj.username]['role']
+        except:
+            return None
+        return None
+
 
     def getCatalog(self, auth):
         return {"endpoints": {"tests": {"label": "Placeholder Test", "value": "https://jsonplaceholder.typicode.com"}},
@@ -97,8 +109,8 @@ class Driver:
 
     def getCommandsCatalog(self):
         from apitax.drivers.DriverCommandsFactory import DriverCommandsFactory
-        customCommands = DriverCommandsFactory.make(config.get('driver') + 'Commands')
-        customCommands.setup(config, None, None, {}, debug, sensitive)
+        customCommands = DriverCommandsFactory.make(self.config.get('driver') + 'Commands')
+        customCommands.setup(self.config, None, None, {}, False, False)
         return customCommands.getCatalog()
 
     def readScript(self, path):
@@ -115,5 +127,5 @@ class Driver:
         return deleteFile(path)
 
     def serialize(self):
-        return {"authenticated": self.isAuthenticated(), "auth-tokens": self.isTokenable(),
+        return {"authenticated": self.isApiAuthenticated(), "auth-tokens": self.isTokenable(),
                 "auth-endpoint": self.getAuthEndpoint()}

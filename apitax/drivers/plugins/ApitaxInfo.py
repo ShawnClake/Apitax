@@ -6,7 +6,7 @@ from apitax.ah.Credentials import Credentials
 
 
 class ApitaxInfoDriver(Driver):
-    def isAuthenticated(self):
+    def isApiAuthenticated(self):
         return False
 
     def isTokenable(self):

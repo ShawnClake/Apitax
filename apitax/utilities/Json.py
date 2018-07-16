@@ -15,3 +15,10 @@ def isJsonable(x):
         return True
     except:
         return False
+
+
+def read(file):
+    with open(file) as jsonfile:
+        # `json.loads` parses a string in json format
+        return json.load(jsonfile)
+

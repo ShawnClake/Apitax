@@ -1,5 +1,5 @@
 from apitax.ah.commandtax.Commandtax import Commandtax
-from apitax.ah.commandtax.Authentication import *
+from apitax.ah.commandtax.ApiAuthentication import *
 from apitax.ah.LoadedDrivers import LoadedDrivers
 from apitax.ah.HeaderBuilder import HeaderBuilder
 from apitax.config.Config import Config
@@ -27,8 +27,8 @@ class Connector:
         self.credentials = credentials
 
         self.command = command
-        self.command = self.command.replace('\\"', '"');
-        self.command = self.command.replace('\\\'', '\'');
+        self.command = self.command.replace('\\"', '"')
+        self.command = self.command.replace('\\\'', '\'')
 
         self.executionTime = None
         self.commandHandler = None

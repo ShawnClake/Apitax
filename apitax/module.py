@@ -9,7 +9,9 @@
 # It includes a CLI as well as web interface
 # However the web interface will need to be customized per API usage
 
+from apitax.ah.Setup import Setup
 from apitax.ah.Startup import Startup
+
 
 class Apitax:
 
@@ -20,6 +22,8 @@ class Apitax:
         # Checks config for any overrides to those params
         # Checks cli params for any overrides to those params
         # CLI > Config > Default
-        Startup(args).execute()
+        setup = Setup(args)
+        startup = Startup(setup.usage, setup.username, setup.password, setup.watcher, setup.build, setup.script)
+        startup.execute(setup.command)
 
 

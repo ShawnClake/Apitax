@@ -14,7 +14,8 @@ class Config:
         self.sectionName = sectionName
         self.cp.read(self.cFilePath)
         self.path = ''
-        
+
+    @staticmethod
     def read(path=getRootPath('/config.txt'), sectionName='Apitax'):
         #print('> Config path: ' + path)
         if(path+sectionName in Config.configs):

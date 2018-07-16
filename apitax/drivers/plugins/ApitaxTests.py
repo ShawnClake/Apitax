@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 class ApitaxTestsDriver(Driver):
-    def isAuthenticated(self):
+    def isApiAuthenticated(self):
         return False
 
     def isTokenable(self):

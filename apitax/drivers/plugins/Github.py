@@ -12,7 +12,7 @@ class GithubDriver(Driver):
         super().__init__()
         self.git = Github(self.driverConfig.get('personal-access-token'), self.driverConfig.get('repo'))
 
-    def isAuthenticated(self):
+    def isApiAuthenticated(self):
         return False
 
     def isTokenable(self):
