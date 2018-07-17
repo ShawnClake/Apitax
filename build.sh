@@ -10,7 +10,7 @@ source venv/bin/activate
 python setup.py sdist bdist_wheel
 
 /bin/bash install_node.sh
-npm --prefix apitax/ah/web/node/node run build-jenkins
+npm --prefix apitax/ah/api/dashboard run build-jenkins
 
 /bin/bash test.sh
 #zip -r -qq $BUILD_TAG-commit-$GIT_COMMIT-dep.zip .

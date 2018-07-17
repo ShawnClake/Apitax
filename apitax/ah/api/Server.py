@@ -44,4 +44,4 @@ def redirectUnauthorized(page="login", code=303):
 
 
 def startDevServer(ip, port):
-    app.run(port=port, host=ip, debug=True)
+    app.run(port=port, host=ip, debug=False)

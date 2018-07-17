@@ -2,11 +2,16 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: {
+  	landing: './src/entry_points/landing.ts',
+  	user_dashboard: './src/entry_points/user_dashboard.ts',
+  	developer_dashboard: './src/entry_points/dev_dashboard.ts',
+  	admin_dashboard: './src/entry_points/admin_dashboard.ts',
+  },
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+    //publicPath: '/dist/',
+    filename: '[name].js'
   },
   module: {
     rules: [

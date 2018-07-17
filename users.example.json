@@ -1,14 +1,14 @@
 {
   "apitax-admin": {
     "password": "test123",
-    "role": "admin",
+    "role": "admin"
   },
   "apitax-developer": {
     "password": "test123",
-    "role": "developer",
+    "role": "developer"
   },
   "apitax-user": {
     "password": "test123",
-    "role": "user",
+    "role": "user"
   }
 }

@@ -242,7 +242,7 @@
 </template>
 
 <script>
-    import Api from '../js/api'
+    import Api from '../../js/api'
     import axios from 'axios';
 
     var api = new Api();

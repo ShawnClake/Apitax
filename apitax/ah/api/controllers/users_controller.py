@@ -82,7 +82,7 @@ def command(execute=None):  # noqa: E501
             return ErrorResponse(status=500, message="")
 
 
-@jwt_required
+#@jwt_required
 def display_dashboard():  # noqa: E501
     """Displays the user dashboard page
 
@@ -92,10 +92,10 @@ def display_dashboard():  # noqa: E501
     :rtype: None
     """
 
-    if(not hasAccess()):
-        return redirectUnauthorized()
+ #   if(not hasAccess()):
+  #      return redirectUnauthorized()
 
-    return flask.send_from_directory('dashboard/src/pages', 'dashboard.html')
+    return flask.send_from_directory('dashboard/src/pages', 'user_dashboard.html')
 
 
 @jwt_required

@@ -45,7 +45,8 @@ def display_login():  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+    
+    return flask.send_from_directory('dashboard/src/pages', 'landing.html')
 
 
 def get_asset(name):  # noqa: E501

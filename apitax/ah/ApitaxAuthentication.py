@@ -27,6 +27,8 @@ class ApitaxAuthentication:
         else:
             role = driver.apitaxAuth({"credentials": credentials})
 
+        if(not role):
+            return None
         return {"role": role, "credentials": credentials}
 
 

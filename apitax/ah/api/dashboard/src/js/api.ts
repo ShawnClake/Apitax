@@ -8,7 +8,7 @@ const SCRIPTS_URL = '/apitax/2/system/script';
 const API_URL = '/apitax/2/command';
 const AUTH_URL = '/apitax/2/auth';
 
-import {router} from '../index'
+//import {router} from '../entry_points/index'
 import axios from 'axios';
 // user, pass, command, debug
 export default class Api {
@@ -44,7 +44,7 @@ export default class Api {
         axios.post(API_URL, data)
             .then(function (response) {
                 if (redirect) {
-                    router.push(redirect)
+                    //router.push(redirect)
                 }
                 callback(context, response);
             })
@@ -166,7 +166,7 @@ export default class Api {
     logout() {
         localStorage.removeItem('authenticated')
         Api.authenticated = false
-        router.push('home')
+        //router.push('home')
     }
 
     checkAuth() {

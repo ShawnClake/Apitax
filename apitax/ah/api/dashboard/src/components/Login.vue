@@ -1,7 +1,14 @@
 <template>
     <div class="row">
         <div class="col">
-            <h4>API Login</h4>
+        <div v-if="response" class="row">
+        <div class="col">
+        <b-alert variant="danger" show>{{response.message}}</b-alert>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col">
+            <h4>Apitax Login</h4>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input v-model="credentials.username" type="text" class="form-control" id="username"
@@ -12,51 +19,53 @@
                 <label for="password">Password</label>
                 <input v-model="credentials.password" type="password" class="form-control" id="password"
                        placeholder="Password">
-                <br>
-                <input type="checkbox" id="catalog" value="Catalog" checked>
-                <label for="catalog">Catalog</label>
-                <small id="catalogHelp" class="form-text text-muted">Returns the catalog. Usually it is best to leave
-                    this on.
-                </small>
             </div>
-            <button @click="submit()" class="btn btn-primary">Login</button>
+            <button @click="login()" class="btn btn-primary">Login</button>
         </div>
+    </div>
+    </div>
     </div>
 </template>
 
 <script>
-
-    import 'bootstrap';
-    import 'bootstrap/dist/css/bootstrap.min.css';
-    import Api from '../js/api';
-
+    import axios from 'axios';
     export default {
-        data() {
+        data: function () {
             return {
-                // We need to initialize the component with any
-                // properties that will be used in it
                 credentials: {
                     username: '',
                     password: ''
                 },
-                error: ''
+                response: null,
             }
         },
+
         methods: {
-            submit() {
-                var credentials = {
-                    user: this.credentials.username,
-                    pass: this.credentials.password,
-                    debug: true,
-                    command: "custom --get --url http://sdibcportal.ims.tsisd.ca/com.broadsoft.xsi-actions/v2.0/user/3067190005@imstas.stb1.com/services?format=json"
-                }
-                // We need to pass the component's this context
-                // to properly make use of http in the auth service
-                var api = new Api()
-                api.request(this, null, credentials, 'dashboard')
-            }
+					login() {
+					   axios.post(`/apitax/2/auth`, {
+            			"username": this.credentials.username,
+            			"password": this.credentials.password,
+            		})
+	              .then(response => {
+	                  this.response = response.data;
+	                  console.log(response.data)
+	                  if(response.data.status == 201)
+	                  {
+	                  	localStorage.setItem('access_token', response.data.access_token);
+	                  	localStorage.setItem('refresh_token', response.data.refresh_token);
+	                  	localStorage.setItem('api_token', response.data.auth.api_token);
+	                  	localStorage.setItem('username', response.data.auth.username);
+	                  	console.log('here')
+	                  	window.location.href = '/apitax/2/dashboard';
+	                  }
+	              })
+	              .catch(e => {
+	                  this.response = e;
+	          })
+					},
+        },
+        created() {
+
         }
     }
-
-
 </script>
