@@ -72,5 +72,7 @@ def refresh_token():  # noqa: E501
     :rtype: UserAuth
     """
     current_user = get_jwt_identity()
+    if(not current_user):
+        return ErrorResponse(status=401, message="Not logged in")
     access_token = create_access_token(identity=current_user)
     return AuthResponse(status=201, message='Refreshed Access Token', access_token=access_token, auth=UserAuth())

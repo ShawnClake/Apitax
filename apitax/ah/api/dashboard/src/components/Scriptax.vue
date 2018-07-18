@@ -209,20 +209,18 @@
 
 
 <script>
-    import Api from '../js/api'
+    import * as apitax from 'apitax'
 
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    var api = new Api();
     export default {
         data: function () {
             return {
                 sortBy: 'label',
                 sortDesc: false,
                 errors: [],
-                authenticated: Api.authenticated,
                 response: '',
                 selectedScript: {label: '', code: '', name: ''},
                 creator: {label: '', code: '', name: ''},
@@ -272,7 +270,7 @@
             },
             saveCode: function (scriptName, execute, event) {
                 console.log('SAVING: ' + scriptName);
-                api.saveScript(this, function (context, response) {
+                apitax.saveScript(this, function (context, response) {
                         console.log(response);
                         context.$refs.scriptCodeModal.hide();
                         context.showAlert('The script was saved.', 'success');
@@ -285,7 +283,7 @@
             },
             createCode: function (scriptName, execute, event) {
                 console.log('CREATING: ' + scriptName);
-                api.createScript(this, function (context, response) {
+                apitax.createScript(this, function (context, response) {
                         console.log(response);
                         context.$refs.scriptCreatorModal.hide();
                         context.showAlert('The script was created.', 'success');
@@ -310,7 +308,7 @@
                 }
 
                 let command = 'script ' + scriptName;
-                api.request(this, function (context, response) {
+                apitax.request(this, function (context, response) {
                     console.log(response);
                     context.response = response.data;
                     if (response.data.status > 299) {
@@ -321,12 +319,14 @@
                     }
 
                 }, {
-                    'options': {
-                        'debug': this.globals.debug,
-                        'sensitive': this.globals.sensitive,
+                    'command': {'command': command, 'parameters': params, 'options': {
+                        		'debug': this.globals.debug,
+                        		'sensitive': this.globals.sensitive,
+                    		},
                     },
-                    'command': command,
-                    'parameters': params,
+										'auth': {
+												'api_token': apitax.getApiToken(),
+										},
                 }, null);
 
             },
@@ -337,7 +337,7 @@
 
                 this.data.params = {};
 
-                api.getScriptContents(this, function (context, response) {
+                apitax.getScriptContents(this, function (context, response) {
 
                         context.selectedScript.label = scriptName;
                         context.selectedScript.name = scriptName.split("/").slice(-1)[0].split('.')[0];
@@ -388,7 +388,7 @@
 
             viewScript: function (scriptName, event) {
                 this.$store.commit('useScript', {script: scriptName});
-                api.getScriptContents(this, function (context, response) {
+                apitax.getScriptContents(this, function (context, response) {
                         context.selectedScript.label = scriptName;
                         context.selectedScript.name = scriptName.split("/").slice(-1)[0].split('.')[0];
                         context.selectedScript.code = response.data.body;
@@ -407,7 +407,7 @@
 
             getScriptsList: function () {
 
-                api.catalogScripts(this, function (context, response) {
+                apitax.catalogScripts(this, function (context, response) {
                     let catalog = response.data.body.scripts;
 
                     var arrayLength = catalog.length;
@@ -450,7 +450,7 @@
             this.getScriptsList();
         },
         created() {
-            this.timer = setInterval(this.codeChange, 250)
+            this.timer = setInterval(this.codeChange, 500)
         },
     }
 </script>

@@ -61,3 +61,15 @@ class OpenstackDriver(Driver):
         catalog['selected'] = "http://172.25.190.14:5000"
 
         return catalog
+        
+    def piggyBackOffApiAuth(self):
+        return True
+
+    def apitaxAuth(self, authObj):
+        authObj = authObj['credentials']
+        authRequest = ['apiAuthRequest']
+        try:
+            return self.users[authObj.username]['role']
+        except:
+            return None
+        return None

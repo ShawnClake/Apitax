@@ -21,7 +21,7 @@ class ApitaxAuthentication:
             if(not apiAuth.isAuthenticated()):
                 return None
 
-            role = driver.apitaxAuth({"credentials": credentials, "apiAuthDriver": apiAuth})
+            role = driver.apitaxAuth({"credentials": credentials, "apiAuthRequest": apiAuth})
             if(apiDriver.isTokenable()):
                 credentials.token = apiAuth.getToken()
         else:

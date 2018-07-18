@@ -81,7 +81,7 @@ const store = new Vuex.Store({
 import VueRouter from 'vue-router'
 
 Vue.use(VueRouter);
-export var router: any = new VueRouter({
+export var router = new VueRouter({
     routes: [
         {path: '*', redirect: '/home'},
         {path: '/home', component: Home},

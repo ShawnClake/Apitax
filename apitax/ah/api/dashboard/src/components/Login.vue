@@ -28,7 +28,7 @@
 </template>
 
 <script>
-    import axios from 'axios';
+    import * as apitax from 'apitax'
     export default {
         data: function () {
             return {
@@ -42,26 +42,28 @@
 
         methods: {
 					login() {
-					   axios.post(`/apitax/2/auth`, {
+						apitax.login(this.credentials.username, this.credentials.password, this, function(context, response) {
+							context.response = response;
+						}, '/apitax/2/dashboard');
+						
+					   /*axios.post(`/apitax/2/auth`, {
             			"username": this.credentials.username,
             			"password": this.credentials.password,
             		})
 	              .then(response => {
 	                  this.response = response.data;
-	                  console.log(response.data)
 	                  if(response.data.status == 201)
 	                  {
 	                  	localStorage.setItem('access_token', response.data.access_token);
 	                  	localStorage.setItem('refresh_token', response.data.refresh_token);
 	                  	localStorage.setItem('api_token', response.data.auth.api_token);
 	                  	localStorage.setItem('username', response.data.auth.username);
-	                  	console.log('here')
 	                  	window.location.href = '/apitax/2/dashboard';
 	                  }
 	              })
 	              .catch(e => {
 	                  this.response = e;
-	          })
+	          })*/
 					},
         },
         created() {

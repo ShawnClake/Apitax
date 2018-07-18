@@ -114,9 +114,7 @@
 
 
 <script>
-    import Api from '../js/api'
-
-    var api = new Api();
+		import * as apitax from 'apitax'
 
     export default {
         data: function () {
@@ -210,7 +208,7 @@
 
                 console.log(newName);
 
-                api.renameScript(this, function (context, response) {
+                apitax.renameScript(this, function (context, response) {
 
                         if (response.data.body.status == 500) {
                             context.showAlert(response.data.body.message, 'danger');
@@ -238,7 +236,7 @@
                 console.log(params);
 
                 let command = 'script ' + this.script.path;
-                api.request(this, function (context, response) {
+                apitax.request(this, function (context, response) {
                     context.script.response = response.data.body
                     if (response.data.body.status >= 300) {
                         context.showAlert(response.data.body.error.message, 'danger');
@@ -247,16 +245,19 @@
                     }
 
                 }, {
-                    'token': '',
-                    'debug': true,
-                    'sensitive': false,
-                    'command': command,
-                    'parameters': params,
+                    'command': {'command': command, 'parameters': params, 'options': {
+                        		'debug': true,
+                        		'sensitive': false,
+                    		},
+                    },
+										'auth': {
+												'api_token': apitax.getApiToken(),
+										},
                 }, null);
             },
 
             deleteScript(dialog) {
-                api.deleteScript(this, function (context, response) {
+                apitax.deleteScript(this, function (context, response) {
                         context.showAlert("Script was deleted.", 'success');
                         dialog.close();
                         context.$store.commit('useScript', {script: ''});
@@ -268,7 +269,7 @@
             },
 
             saveScript() {
-                api.saveScript(this, function (context, response) {
+                apitax.saveScript(this, function (context, response) {
                         context.showAlert('The script was saved.', 'success');
                     },
                     {'script': {'name': this.script.path, 'content': this.script.code}});
@@ -304,7 +305,7 @@
         mounted() {
             this.updateScript();
 
-            api.getScriptContents(this, function (context, response) {
+            apitax.getScriptContents(this, function (context, response) {
                     context.script.code = response.data.body;
                     context.renderParams();
                 },

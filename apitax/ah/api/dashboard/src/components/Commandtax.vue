@@ -227,7 +227,8 @@
 
 
 <script>
-    import Api from '../js/api'
+
+		import * as apitax from 'apitax'
 
     function encodeHTML(s) {
         return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -311,10 +312,10 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    var api = new Api();
+
     export default {
         data: function () {
-            //var api = new Api();
+
             return {
                 errors: [],
                 command: '',
@@ -342,7 +343,6 @@
                 username: '',
                 response: '',
                 globals: {debug: false, sensitive: false},
-                authenticated: Api.authenticated
 
             }
         },
@@ -357,7 +357,7 @@
                 if (this.commandtaxParams.includes('Sensitive'))
                     sensitive = true;
 
-                var something = api.request(this, function (context, response) {
+                var something = apitax.request(this, function (context, response) {
                     console.log(response);
                     context.response = response.data
                 }, {
@@ -431,7 +431,7 @@
 
         },
         mounted() {
-            api.catalogEndpoints(this, function (context, response) {
+            apitax.catalogEndpoints(this, function (context, response) {
                 console.log(response);
                 context.endpointPicker.endpoints = {...context.endpointPicker.endpoints, ...response.data.endpoints};
                 context.endpointPicker.selected = response.data.selected;

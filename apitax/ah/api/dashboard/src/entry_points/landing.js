@@ -5,13 +5,9 @@ Vue.config.devtools = true;
 //Vue.config.debug = true;
 
 // Component Imports
-import Login from "../components/Login.vue";
-import Dashboard from "../components/Dashboard.vue";
-import App from "../components/apps/App.vue";
+import LandingApp from "../components/apps/LandingApp.vue";
 import Home from "../components/Home.vue";
-import Commandtax from "../components/Commandtax.vue";
-import Scriptax from "../components/Scriptax.vue";
-import ScriptaxEdit from "../components/ScriptaxEdit.vue";
+import Login from "../components/Login.vue";
 
 // Bootstrap
 import BootstrapVue from 'bootstrap-vue';
@@ -35,24 +31,7 @@ import '../../src/css/main.css'
 
 // Vue Confirmation
 import VuejsDialog from "vuejs-dialog"
-
 Vue.use(VuejsDialog)
-
-// JSON Tree View
-import TreeView from "vue-json-tree-view"
-
-Vue.use(TreeView)
-import '../../src/css/vue-json-tree-view.css'
-
-// Code Mirror
-import VueCodemirror from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/display/autorefresh.js'
-import '../../src/css/code-mirror.css'
-
-Vue.use(VueCodemirror, {
-    options: {theme: 'Paraiso-Light', autoRefresh: true},
-})
 
 // Persist Vuex Store
 import createPersistedState from 'vuex-persistedstate'
@@ -81,15 +60,11 @@ const store = new Vuex.Store({
 import VueRouter from 'vue-router'
 
 Vue.use(VueRouter);
-export var router: any = new VueRouter({
+export var router = new VueRouter({
     routes: [
         {path: '*', redirect: '/home'},
         {path: '/home', component: Home},
         {path: '/login', component: Login},
-        {path: '/dashboard', component: Dashboard},
-        {path: '/commandtax', component: Commandtax},
-        {path: '/scriptax', component: Scriptax},
-        {path: '/scriptax/edit', component: ScriptaxEdit},
     ],
 });
 
@@ -102,6 +77,6 @@ const unsync = sync(store, router)
 const app = new Vue({
     router,
     store,
-    render: h => h(App)
+    render: h => h(LandingApp)
 }).$mount('#app');
 

@@ -3,10 +3,10 @@ var webpack = require('webpack')
 
 module.exports = {
   entry: {
-  	landing: './src/entry_points/landing.ts',
-  	user_dashboard: './src/entry_points/user_dashboard.ts',
-  	developer_dashboard: './src/entry_points/dev_dashboard.ts',
-  	admin_dashboard: './src/entry_points/admin_dashboard.ts',
+  	landing: './src/entry_points/landing.js',
+  	user_dashboard: './src/entry_points/user_dashboard.js',
+  	developer_dashboard: './src/entry_points/dev_dashboard.js',
+  	admin_dashboard: './src/entry_points/admin_dashboard.js',
   },
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -54,7 +54,8 @@ module.exports = {
     extensions: ['.ts', '.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
-    }
+    },
+    modules: [path.resolve(__dirname, "./src/js"), path.resolve(__dirname, "./src"), "node_modules"],
   },
   devServer: {
     historyApiFallback: true,
