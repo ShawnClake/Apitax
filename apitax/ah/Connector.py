@@ -48,7 +48,7 @@ class Connector:
         if (self.credentials.token == ''):
             preHeader = self.header.header.copy()
             if (self.http.isTokenable()):
-                auth = AuthRequest(self.credentials, self.http, self.options, self.config)
+                auth = AuthRequest(self.credentials, self.http, self.options)
                 auth.authenticate()
                 self.credentials.token = auth.getToken()
                 self.header.header = preHeader

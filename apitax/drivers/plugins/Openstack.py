@@ -3,9 +3,16 @@ from apitax.utilities.Files import getAllFiles
 from apitax.ah.Options import Options
 from pathlib import Path
 from apitax.ah.Credentials import Credentials
+from apitax.utilities.Json import read
+from apitax.ah.State import State
+from apitax.utilities.Files import getPath
 
 
 class OpenstackDriver(Driver):
+
+    def __init__(self):
+        super().__init__()
+        self.users = read(getPath(State.paths['root'] + "/users.json"))
 
     def getToken(self, response):
         return response.getResponseHeaders().get('X-Subject-Token')
@@ -62,12 +69,16 @@ class OpenstackDriver(Driver):
 
         return catalog
         
+    def isApiAuthenticated(self):
+        return True
+        
     def piggyBackOffApiAuth(self):
         return True
 
     def apitaxAuth(self, authObj):
         authObj = authObj['credentials']
         authRequest = ['apiAuthRequest']
+        #print(authRequest)
         try:
             return self.users[authObj.username]['role']
         except:

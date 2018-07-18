@@ -10,11 +10,11 @@ class ApitaxAuthentication:
         driver = LoadedDrivers.getAuthDriver()
         role = None
         if(driver.piggyBackOffApiAuth()):
-            apiDriver = LoadedDrivers.getPrimaryDriver()
+            #apiDriver = LoadedDrivers.getPrimaryDriver()
+            apiDriver = driver
 
             if('driver' in credentials.extra):
                 apiDriver = LoadedDrivers.getBaseDriver(credentials.extra['driver'])
-
             apiAuth = AuthRequest(credentials, apiDriver, State.options)
             apiAuth.authenticate()
 
