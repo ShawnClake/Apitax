@@ -31,7 +31,7 @@ users.json
 /dist/
 
 # Node distribution folder
-/apitax/ah/web/node/dist/
+/apitax/ah/api/dashboard/dist/
 
 *-lock.json
 
