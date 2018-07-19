@@ -14,7 +14,7 @@ from apitax.drivers.Drivers import Drivers
 
 from apitax.ah.Options import Options
 from apitax.ah.LoadedDrivers import LoadedDrivers
-from apitax.utilities.Files import getRootPath
+from apitax.utilities.Files import getRoot
 
 
 from apitax.logs.Log import Log
@@ -25,7 +25,7 @@ from apitax.ah.State import State
 
 
 class Setup:
-    def __init__(self, passedArgs: list):
+    def __init__(self, passedArgs: list = []):
 
         if (len(passedArgs) == 0):
             self.args = sys.argv[1:]
@@ -49,13 +49,19 @@ class Setup:
         self.build = True
 
         self.doLog = True
-        self.logPath = '/logs/apitax.log'
+        if(State.paths['log'] != ""):
+            self.logPath = State.paths['log']
+        else:
+            self.logPath = '/logs/apitax.log'
         self.logColorize = True
         self.logPrefixes = True
         self.logHumanReadable = False
 
         # print(getRootPath('/config.txt'))
-        configFile = getRootPath('/config.txt')
+        if(State.paths['config'] != ""):
+            configFile = State.paths['config']
+        else:
+            configFile = getRoot('/config.txt')
         self.config = ConfigConsumer.read()
         self.config.path = str(Path(os.path.dirname(os.path.abspath(inspect.stack()[0][1]))).resolve())
         # print(getRootPath())
@@ -81,7 +87,7 @@ class Setup:
         if (self.logPath[:1] != '/'):
             self.logPath = '/' + self.logPath
 
-        self.logPath = getRootPath(self.logPath)
+        #self.logPath = getRootPath(self.logPath)
 
         self.log = Log(StandardLog(), logFile=self.logPath, doLog=self.doLog, logColorize=self.logColorize, logPrefixes=self.logPrefixes,
                   logHumanReadable=self.logHumanReadable)
@@ -172,11 +178,16 @@ class Setup:
         State.config = self.config
         State.options = self.options
         State.log = self.log
-        State.paths['node'] = getRootPath('/apitax/ah/api/dashboard')
-        State.paths['logs'] = self.logPath
-        State.paths['root'] = getRootPath()
-        State.paths['apitax'] = self.config.path
-        State.paths['config'] = configFile
+        if(State.paths['node'] == ""):
+            State.paths['node'] = getRoot('/apitax/ah/api/dashboard')
+        if(State.paths['log'] == ""):
+            State.paths['log'] = self.logPath
+        if(State.paths['root'] == ""):
+            State.paths['root'] = getRoot()
+        if(State.paths['apitax'] == ""):    
+            State.paths['apitax'] = str(Path(os.path.dirname(os.path.abspath(inspect.stack()[0][1]))).resolve())
+        if(State.paths['config'] == ""):
+            State.paths['config'] = configFile
 
         if (self.options.debug):
             self.log.log('>> Loading Drivers')

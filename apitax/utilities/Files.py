@@ -41,5 +41,5 @@ def createDir(path):
     Path(path).mkdir(parents=True, exist_ok=True)
 
 
-def getRootPath(path=''):
+def getRoot(path=''):
     return getPath(os.path.dirname(getPath(sys.modules['__main__'].__file__)) + path)

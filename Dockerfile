@@ -55,6 +55,6 @@ EXPOSE 5080
 #CMD ["python3", "app/main.py", "--web", "--debug", "--no-build"]
 
 #CMD uwsgi --socket 127.0.0.1:3031 --wsgi-file /app/apitax/ah/api/Server.py --callable app --processes 4 --threads 2 --stats 127.0.0.1:9191
-CMD uwsgi --http :5080 --wsgi-file /app/apitax/ah/api/Server.py --callable app --processes 4 --threads 2
+CMD uwsgi --http :5080 --wsgi-file /app/main.py --callable app --processes 4 --threads 2
 
 

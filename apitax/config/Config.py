@@ -1,7 +1,8 @@
 import configparser
 from apitax.utilities.Numbers import isNumber
 from apitax.utilities.Booleans import isBoolean, str2bool
-from apitax.utilities.Files import getRootPath
+from apitax.utilities.Files import getRoot
+from apitax.ah.State import State
 
 # Reads the config and allows us to retrieve values from it
 class Config:
@@ -16,8 +17,11 @@ class Config:
         self.path = ''
 
     @staticmethod
-    def read(path=getRootPath('/config.txt'), sectionName='Apitax'):
-        #print('> Config path: ' + path)
+    def read(path="", sectionName='Apitax'):
+        if(State.paths['config'] != "" and path == ""):
+            path = State.paths['config']
+        elif(path == ""):
+            path = getRoot('/config.txt')
         if(path+sectionName in Config.configs):
             return Config.configs[path+sectionName]
         config = Config(path, sectionName)

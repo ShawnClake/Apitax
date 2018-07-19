@@ -1,47 +1,28 @@
 #!/usr/bin/env python
 
-import connexion
-
-from apitax.ah.api import encoder
-from flask_jwt_extended import JWTManager
-
 from apitax.ah.State import State
+from apitax.ah.Setup import Setup
 
-from flask import redirect
+# Put Driver imports here
 
-app = connexion.App(__name__, specification_dir='./swagger/')
-app.app.json_encoder = encoder.JSONEncoder
-app.add_api('swagger.yaml', arguments={'title': 'Apitax'})
+# End Driver imports
 
-app.app.config['JWT_SECRET_KEY'] = State.config.get("secret") # More config here: http://flask-jwt-extended.readthedocs.io/en/latest/options.html#configuration-options
-jwt = JWTManager(app.app)
+State.paths['root'] = '/home/sclake/apitax/Apitax'
+State.paths['config'] = '/home/sclake/apitax/Apitax/config.txt'
 
-@jwt.user_claims_loader
-def add_claims_to_access_token(identity):
-    return {
-        'username': identity['username'],
-        'role': identity['role']
-    }
+# Set drivers
+
+# End set drivers
 
 
-@jwt.unauthorized_loader
-def unauthorized_loader(reason): # More types here: http://flask-jwt-extended.readthedocs.io/en/latest/changing_default_behavior.html
-    return redirectUnauthorized()
+# Put your custom logic here
+
+# End custom logic
 
 
-@jwt.invalid_token_loader
-def invalid_token_loader(reason): # More types here: http://flask-jwt-extended.readthedocs.io/en/latest/changing_default_behavior.html
-    return redirectUnauthorized()
-
-
-@jwt.expired_token_loader
-def expired_token_loader(reason): # More types here: http://flask-jwt-extended.readthedocs.io/en/latest/changing_default_behavior.html
-    return redirectUnauthorized()
-
-
-def redirectUnauthorized(page="login", code=303):
-    return redirect(State.baseUrl + page, code=code)
-
-
-def startDevServer(ip, port):
-    app.run(port=port, host=ip, debug=False)
+# These should probably be the last lines of your file
+# Setup must run before importing the 'app' object from the API Server
+setup = Setup()
+from apitax.ah.api.Server import *
+# Uncomment to debug without uwsgi or nginx
+#app.run(port=5082, host='0.0.0.0')
