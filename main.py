@@ -7,8 +7,9 @@ from apitax.ah.Setup import Setup
 
 # End Driver imports
 
-State.paths['root'] = '/home/sclake/apitax/Apitax'
-State.paths['config'] = '/home/sclake/apitax/Apitax/config.txt'
+State.paths['root'] = '/app'
+State.paths['config'] = '/app/config.txt'
+State.paths['node'] = '/app/apitax/ah/api/dashboard'
 
 # Set drivers
 

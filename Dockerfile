@@ -4,6 +4,9 @@ FROM ubuntu:18.04
 # Update repo listings
 RUN apt-get update
 
+# Install system level things
+RUN apt-get -y install git pandoc
+
 # Install build tools
 RUN apt-get -y install build-essential python-dev
 
