@@ -1,4 +1,25 @@
 from setuptools import setup, find_packages
+from setuptools.command.develop import develop
+from setuptools.command.install import install
+
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+    def run(self):
+        #check_call("apt-get install this-package".split())
+        develop.run(self)
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        check_call("npm install --prefix apitax/ah/spi/dashboard".split())
+        check_call("npm run --prefix apitax/ah/spi/dashboard build".split())
+        install.run(self)
+        
+#class NPMInstall():
+#    def run(self):
+#        self.run_command('npm install --prefix apitax/ah/spi/dashboard')
+#        self.run_command('npm run --prefix apitax/ah/spi/dashboard build')
+#        build_py.run(self)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -33,4 +54,8 @@ setup(
     'python_dateutil == 2.6.0',
     'typing == 3.5.2.2',
   ],
+  cmdclass={
+    'develop': PostDevelopCommand,
+    'install': PostInstallCommand,
+  },
 )
