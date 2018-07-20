@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
+from subprocess import check_call
 
 class PostDevelopCommand(develop):
     """Post-installation for development mode."""
@@ -11,14 +12,14 @@ class PostDevelopCommand(develop):
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
-        check_call("npm install --prefix apitax/ah/spi/dashboard".split())
-        check_call("npm run --prefix apitax/ah/spi/dashboard build".split())
+        check_call("npm install --prefix apitax/ah/api/dashboard".split())
+        check_call("npm run --prefix apitax/ah/api/dashboard build".split())
         install.run(self)
         
 #class NPMInstall():
 #    def run(self):
-#        self.run_command('npm install --prefix apitax/ah/spi/dashboard')
-#        self.run_command('npm run --prefix apitax/ah/spi/dashboard build')
+#        self.run_command('npm install --prefix apitax/ah/api/dashboard')
+#        self.run_command('npm run --prefix apitax/ah/api/dashboard build')
 #        build_py.run(self)
 
 with open("README.md", "r") as fh:
@@ -27,7 +28,7 @@ with open("README.md", "r") as fh:
 setup(
   name = 'Apitax',
   packages = find_packages(), # this must be the same as the name above
-  version = '2.1.5',
+  version = '2.2.6',
   description = 'Apitax combines the power of Scriptax and Commandtax into a quick and easy to use Python package to facillitate powerful Restful API Request Scripting',
   long_description=long_description,
   long_description_content_type="text/markdown",
@@ -54,8 +55,8 @@ setup(
     'python_dateutil == 2.6.0',
     'typing == 3.5.2.2',
   ],
-  cmdclass={
-    'develop': PostDevelopCommand,
-    'install': PostInstallCommand,
-  },
+  #cmdclass={
+  #  'develop': PostDevelopCommand,
+  #  'install': PostInstallCommand,
+  #},
 )

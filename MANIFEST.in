@@ -5,8 +5,8 @@ include test.sh
 include LICENSE
 include readme.docx
 include README.md
-include apitax/ah/web/node/node/package.json
-include apitax/ah/web/node/node/tsconfig.json
-include apitax/ah/web/node/node/webpack.config.js
-include apitax/ah/web/node/index.html
-recursive-include apitax/ah/web/node/node/src *
+include apitax/ah/api/dashboard/package.json
+include apitax/ah/api/dashboard/tsconfig.json
+include apitax/ah/api/dashboard/webpack.config.js
+include apitax/ah/api/swagger/swagger.yaml
+recursive-include apitax/ah/api/dashboard/src *

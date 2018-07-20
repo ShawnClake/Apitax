@@ -20,11 +20,17 @@ WORKDIR /app
 # This folder should contain ['requirements.txt', 'Dockerfile', 'App/']
 ADD . /app
 
+# Get pip setup
+RUN pip install wheel setuptools
+
+# Install Apitax
+RUN pip install apitax
+
 # Install any needed packages specified in requirements.txt
-RUN cd /app && pip install .
+RUN cd /app && pip install . ; exit 0
 
 # Navigate to the web directory and install npm packages and build using webpack
-RUN cd /app/apitax/ah/api/dashboard && npm install && npm run build
+RUN cd /usr/local/lib/python3.6/site-packages/apitax/ah/api/dashboard && npm install && npm run build
 
 # Return to the working directory
 WORKDIR /app
