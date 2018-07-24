@@ -194,6 +194,8 @@ class Setup:
             self.log.log('')
 
         Drivers.initialize()
+
+    def load(self):
         drivers = self.config.getAsList('drivers')
         for driver in drivers:
             LoadedDrivers.load(driver)

@@ -22,7 +22,7 @@ class Apitax:
         # Checks config for any overrides to those params
         # Checks cli params for any overrides to those params
         # CLI > Config > Default
-        setup = Setup(args)
+        setup = Setup(args).load()
         startup = Startup(setup.usage, setup.username, setup.password, setup.watcher, setup.build, setup.script)
         startup.execute(setup.command)
 
