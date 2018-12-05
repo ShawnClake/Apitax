@@ -1,3 +1,9 @@
+# Apitax Has Moved
+
+Please see the new Apitax Organization for more details: https://github.com/Apitax
+
+This repository will no longer be maintained or used and the code inside of it should be considered extremeley outdated. 
+
 # Apitax
 
 Pronounced: *ahhp-ehh-tax*
